@@ -19,6 +19,27 @@ The project contains:
 - [C# Collections Complete Guide](docs/CSharp-Collections-Complete-Guide.md) - Detailed technical documentation covering all C# collection types, performance considerations, and interview questions
 - [C# Design Patterns Complete Guide](docs/CSharp-Design-Patterns-Complete-Guide.md) - Comprehensive guide covering all 23 GoF design patterns with modern C# implementations, real-world examples, and interview questions
 
+### SOLID Design Principles (Object-Oriented Design Foundation)
+
+#### **SOLID Overview**
+- [SOLID Design Principles Introduction](docs/solid-principles/SOLID-Design-Principles-Introduction.md) - Complete guide to SOLID principles introduced by Robert C. Martin, including history, cross-principle comparisons, and real-world ASP.NET Core applications
+
+#### **The Five SOLID Principles**
+- [Single Responsibility Principle (SRP)](docs/solid-principles/single-responsibility-principle.md) - One class, one responsibility - ensure each class has only one reason to change
+- [Open/Closed Principle (OCP)](docs/solid-principles/open-closed-principle.md) - Open for extension, closed for modification - add features without changing existing code
+- [Liskov Substitution Principle (LSP)](docs/solid-principles/liskov-substitution-principle.md) - Subtypes must be substitutable for base types - maintain contracts in inheritance
+- [Interface Segregation Principle (ISP)](docs/solid-principles/interface-segregation-principle.md) - Many small interfaces over one fat interface - clients shouldn't depend on unused methods
+- [Dependency Inversion Principle (DIP)](docs/solid-principles/dependency-inversion-principle.md) - Depend on abstractions, not concretions - high-level and low-level modules depend on interfaces
+
+**What You'll Learn:**
+- Historical context and evolution of each principle
+- Detailed before/after code examples with violations and corrections
+- Real-world enterprise scenarios in ASP.NET Core applications
+- Interview questions with comprehensive answers
+- Cross-principle relationships and how they work together
+- Common anti-patterns and how to avoid them
+- Performance and maintainability impact analysis
+
 ### Design Patterns (Academic & Practical)
 
 #### **Pattern Overview**
@@ -60,3 +81,4 @@ The project contains:
 - **Data Structures**: Array manipulation, duplicate detection
 - **C# Concepts**: Interface implementation, abstract classes, inheritance, collections
 - **Best Practices**: SOLID principles, design patterns, performance considerations
+- **Object-Oriented Design**: SOLID principles, design patterns, clean architecture
