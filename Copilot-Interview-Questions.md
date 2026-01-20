@@ -1,12 +1,5 @@
 ﻿# Generative AI & GitHub Copilot – Advanced Interview Questions (100+)
 
-This is the description of what the code block changes:
-Replacing with advanced, experience-based questions including MCP, model settings, and challenging scenarios
-
-This is the code block that represents the suggested code change:
-
-# Generative AI & GitHub Copilot – Advanced Interview Questions (100+)
-
 ## 1. What is Generative AI (GenAI)?
 Generative AI refers to AI systems that can **create new content** such as text, code, images, or audio using learned patterns from large datasets.
 
