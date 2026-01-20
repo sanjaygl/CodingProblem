@@ -84,6 +84,22 @@
 - [13.2 Design Order Management System](#132-design-order-management-system)
 - [13.3 Design Payment Processing System](#133-design-payment-processing-system)
 
+### 14. Advanced Database & Stored Procedures
+- [14.1 Nested Stored Procedures with Temp Tables and Variables](#141-nested-stored-procedures-with-temp-tables-and-variables)
+
+### 15. Apache Kafka Integration in .NET Core
+- [15.1 Kafka NuGet Package](#151-kafka-nuget-package)
+- [15.2 Kafka Consumer Project Type](#152-kafka-consumer-project-type)
+- [15.3 Kafka Use Cases](#153-kafka-use-cases)
+- [15.4 Kafka Producer and Consumer](#154-kafka-producer-and-consumer)
+
+### 16. MediatR and CQRS Patterns
+- [16.1 MediatR Pattern](#161-mediatr-pattern)
+- [16.2 CQRS Pattern](#162-cqrs-pattern)
+
+### 17. Dependency Injection in .NET Core
+- [17.1 Types of Dependency Injection with Real-Time Examples](#171-types-of-dependency-injection-with-real-time-examples)
+
 ---
 
 ## 1. Collections & LINQ
