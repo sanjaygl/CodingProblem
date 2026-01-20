@@ -1,4 +1,4 @@
-# C# / .NET Core – Must-Know Coding Questions (7+ Years Experience)
+# C# / .NET Core – Must-Know Coding Questions (10+ Years Experience)
 
 ## Table of Contents
 
@@ -5190,7 +5190,2303 @@ public class FunctionalStyleDemo
 
 ---
 
-I'll continue with the remaining sections in the next part. Would you like me to continue now?
+## 14. Advanced Database & Stored Procedures
 
-Due to the length of this document, I'll continue with the remaining sections. Let me create the file and continue...
+### 14.1 Nested Stored Procedures with Temp Tables and Variables
+
+**Question:** I have 3 stored procedures called nested one inside one with temp table and temp variable. Will the temp table and temp variable be accessible in the 3rd stored procedure?
+
+**Answer:**
+
+**Temp Tables (#Table):**
+- ✅ **YES** - Temp tables created in an outer stored procedure are accessible in nested stored procedures
+- Temp tables have session scope and are visible to all nested levels
+- They exist for the duration of the session or until explicitly dropped
+
+**Temp Variables (@Table):**
+- ❌ **NO** - Table variables have limited scope and are NOT accessible in nested stored procedures
+- Table variables are local to the batch, function, or stored procedure where they are defined
+- They cannot be passed to nested procedures unless passed as parameters (not common)
+
+**Example:**
+
+```sql
+-- Stored Procedure 1 (Outer)
+CREATE PROCEDURE SP1
+AS
+BEGIN
+    -- Create temp table (accessible in nested SPs)
+    CREATE TABLE #TempTable
+    (
+        Id INT,
+        Name NVARCHAR(100)
+    );
+    
+    INSERT INTO #TempTable VALUES (1, 'John'), (2, 'Jane');
+    
+    -- Declare table variable (NOT accessible in nested SPs)
+    DECLARE @TableVariable TABLE
+    (
+        Id INT,
+        Status NVARCHAR(50)
+    );
+    
+    INSERT INTO @TableVariable VALUES (1, 'Active'), (2, 'Inactive');
+    
+    -- Call second stored procedure
+    EXEC SP2;
+    
+    -- Clean up
+    DROP TABLE #TempTable;
+END
+GO
+
+-- Stored Procedure 2 (Middle)
+CREATE PROCEDURE SP2
+AS
+BEGIN
+    -- Can access #TempTable from SP1
+    SELECT * FROM #TempTable;
+    
+    -- Add more data to temp table
+    INSERT INTO #TempTable VALUES (3, 'Bob');
+    
+    -- Call third stored procedure
+    EXEC SP3;
+    
+    -- Cannot access @TableVariable from SP1
+    -- This would cause an error:
+    -- SELECT * FROM @TableVariable;
+END
+GO
+
+-- Stored Procedure 3 (Inner/Nested)
+CREATE PROCEDURE SP3
+AS
+BEGIN
+    -- ✅ Can still access #TempTable from SP1
+    SELECT * FROM #TempTable;
+    
+    -- Can see all data including what was added in SP2
+    SELECT COUNT(*) as TotalRecords FROM #TempTable; -- Returns 3
+    
+    -- ❌ Cannot access @TableVariable from SP1
+    -- This would cause an error:
+    -- SELECT * FROM @TableVariable;
+END
+GO
+```
+
+**Key Differences:**
+
+| Feature | Temp Table (#Table) | Table Variable (@Table) |
+|---------|---------------------|-------------------------|
+| **Scope** | Session-wide | Batch/Procedure-level |
+| **Accessible in Nested SPs** | ✅ Yes | ❌ No |
+| **Statistics** | Yes (better for large data) | No |
+| **Indexes** | Can create explicitly | Only at declaration |
+| **Transactions** | Participates | Limited participation |
+| **Performance** | Better for large datasets | Better for small datasets |
+
+**Real-World Example with 3 Nested SPs:**
+
+```sql
+-- SP1: Order Processing Entry Point
+CREATE PROCEDURE ProcessOrder @OrderId INT
+AS
+BEGIN
+    -- Create temp table for order items (accessible in all nested SPs)
+    CREATE TABLE #OrderItems
+    (
+        ItemId INT,
+        ProductName NVARCHAR(100),
+        Quantity INT,
+        Price DECIMAL(18,2),
+        TotalAmount DECIMAL(18,2)
+    );
+    
+    -- Populate order items
+    INSERT INTO #OrderItems
+    SELECT ItemId, ProductName, Quantity, Price, Quantity * Price
+    FROM OrderItems WHERE OrderId = @OrderId;
+    
+    -- Call validation SP
+    EXEC ValidateOrderItems @OrderId;
+END
+GO
+
+-- SP2: Validate Order Items
+CREATE PROCEDURE ValidateOrderItems @OrderId INT
+AS
+BEGIN
+    -- ✅ Can access #OrderItems from ProcessOrder
+    DECLARE @TotalAmount DECIMAL(18,2);
+    
+    SELECT @TotalAmount = SUM(TotalAmount) FROM #OrderItems;
+    
+    -- Add validation results to temp table
+    ALTER TABLE #OrderItems ADD ValidationStatus NVARCHAR(50);
+    
+    UPDATE #OrderItems 
+    SET ValidationStatus = 'Valid' 
+    WHERE Quantity > 0 AND Price > 0;
+    
+    -- Call calculation SP
+    EXEC CalculateOrderTotals @OrderId;
+END
+GO
+
+-- SP3: Calculate Totals
+CREATE PROCEDURE CalculateOrderTotals @OrderId INT
+AS
+BEGIN
+    -- ✅ Can still access #OrderItems from ProcessOrder
+    -- Can see all modifications made in ValidateOrderItems
+    
+    DECLARE @SubTotal DECIMAL(18,2);
+    DECLARE @Tax DECIMAL(18,2);
+    DECLARE @GrandTotal DECIMAL(18,2);
+    
+    SELECT @SubTotal = SUM(TotalAmount) 
+    FROM #OrderItems 
+    WHERE ValidationStatus = 'Valid';
+    
+    SET @Tax = @SubTotal * 0.10;
+    SET @GrandTotal = @SubTotal + @Tax;
+    
+    -- Return final results
+    SELECT 
+        @OrderId as OrderId,
+        @SubTotal as SubTotal,
+        @Tax as Tax,
+        @GrandTotal as GrandTotal;
+END
+GO
+```
+
+**C# Code to Call Nested SPs:**
+
+```csharp
+public class OrderService
+{
+    private readonly string _connectionString;
+    
+    public async Task<OrderTotals> ProcessOrderAsync(int orderId)
+    {
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+        
+        using var command = new SqlCommand("ProcessOrder", connection)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+        
+        command.Parameters.AddWithValue("@OrderId", orderId);
+        
+        using var reader = await command.ExecuteReaderAsync();
+        
+        if (await reader.ReadAsync())
+        {
+            return new OrderTotals
+            {
+                OrderId = reader.GetInt32(0),
+                SubTotal = reader.GetDecimal(1),
+                Tax = reader.GetDecimal(2),
+                GrandTotal = reader.GetDecimal(3)
+            };
+        }
+        
+        return null;
+    }
+}
+
+public class OrderTotals
+{
+    public int OrderId { get; set; }
+    public decimal SubTotal { get; set; }
+    public decimal Tax { get; set; }
+    public decimal GrandTotal { get; set; }
+}
+```
+
+---
+
+## 15. Apache Kafka Integration in .NET Core
+
+### 15.1 Kafka NuGet Package
+
+**Question:** What is the NuGet package for Kafka topic?
+
+**Answer:**
+
+The primary NuGet package for Apache Kafka in .NET is:
+
+```xml
+<PackageReference Include="Confluent.Kafka" Version="2.3.0" />
+```
+
+**Additional Related Packages:**
+
+```xml
+<!-- Core Kafka client -->
+<PackageReference Include="Confluent.Kafka" Version="2.3.0" />
+
+<!-- For Avro serialization -->
+<PackageReference Include="Confluent.SchemaRegistry.Serdes.Avro" Version="2.3.0" />
+
+<!-- For JSON serialization -->
+<PackageReference Include="Confluent.SchemaRegistry.Serdes.Json" Version="2.3.0" />
+
+<!-- For Protobuf serialization -->
+<PackageReference Include="Confluent.SchemaRegistry.Serdes.Protobuf" Version="2.3.0" />
+```
+
+**Installation:**
+
+```powershell
+dotnet add package Confluent.Kafka
+```
+
+---
+
+### 15.2 Kafka Consumer Project Type
+
+**Question:** Which project type is used for Kafka consumer?
+
+**Answer:**
+
+For Kafka consumers in .NET, you typically use:
+
+1. **Worker Service (.NET)** - **Most Common for Background Processing**
+   ```powershell
+   dotnet new worker -n KafkaConsumerService
+   ```
+
+2. **Console Application** - For simple consumers or testing
+   ```powershell
+   dotnet new console -n KafkaConsumer
+   ```
+
+3. **ASP.NET Core Web API with Background Service** - When you need both API and consumer
+   ```powershell
+   dotnet new webapi -n KafkaConsumerApi
+   ```
+
+**Recommended: Worker Service Example**
+
+```xml
+<!-- KafkaConsumerService.csproj -->
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Confluent.Kafka" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+  </ItemGroup>
+</Project>
+```
+
+```csharp
+// Program.cs
+using KafkaConsumerService;
+
+var builder = Host.CreateApplicationBuilder(args);
+builder.Services.AddHostedService<KafkaConsumerWorker>();
+
+var host = builder.Build();
+host.Run();
+```
+
+```csharp
+// KafkaConsumerWorker.cs
+public class KafkaConsumerWorker : BackgroundService
+{
+    private readonly ILogger<KafkaConsumerWorker> _logger;
+    private readonly IConsumer<string, string> _consumer;
+
+    public KafkaConsumerWorker(ILogger<KafkaConsumerWorker> logger)
+    {
+        _logger = logger;
+        
+        var config = new ConsumerConfig
+        {
+            BootstrapServers = "localhost:9092",
+            GroupId = "my-consumer-group",
+            AutoOffsetReset = AutoOffsetReset.Earliest
+        };
+        
+        _consumer = new ConsumerBuilder<string, string>(config).Build();
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        _consumer.Subscribe("my-topic");
+        
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            try
+            {
+                var result = _consumer.Consume(stoppingToken);
+                _logger.LogInformation($"Received: {result.Message.Value}");
+                
+                // Process message here
+                await ProcessMessageAsync(result.Message.Value);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error consuming message");
+            }
+        }
+        
+        _consumer.Close();
+    }
+    
+    private async Task ProcessMessageAsync(string message)
+    {
+        // Your business logic here
+        await Task.Delay(100); // Simulate processing
+    }
+}
+```
+
+---
+
+### 15.3 Kafka Use Cases
+
+**Question:** What is the use case of Kafka?
+
+**Answer:**
+
+Apache Kafka is used for:
+
+**1. Event-Driven Architecture**
+```csharp
+// Example: Order processing system
+public class OrderCreatedEvent
+{
+    public int OrderId { get; set; }
+    public string CustomerId { get; set; }
+    public decimal TotalAmount { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
+
+// Producer (Order Service)
+await _producer.ProduceAsync("order-created", new Message<string, string>
+{
+    Key = order.OrderId.ToString(),
+    Value = JsonSerializer.Serialize(new OrderCreatedEvent
+    {
+        OrderId = order.OrderId,
+        CustomerId = order.CustomerId,
+        TotalAmount = order.TotalAmount,
+        CreatedAt = DateTime.UtcNow
+    })
+});
+
+// Consumers:
+// - Inventory Service (reduce stock)
+// - Notification Service (send confirmation email)
+// - Analytics Service (update reports)
+// - Billing Service (process payment)
+```
+
+**2. Microservices Communication**
+- Decouples services
+- Async communication
+- High scalability
+
+**3. Real-Time Data Streaming**
+- Log aggregation
+- Metrics collection
+- User activity tracking
+- IoT sensor data
+
+**4. Data Integration & ETL**
+```csharp
+// Source System -> Kafka -> Target System
+// Example: Sync data from SQL Server to ElasticSearch
+```
+
+**5. CQRS & Event Sourcing**
+```csharp
+public class AccountEventStore
+{
+    // Write side: Publish events to Kafka
+    public async Task DepositAsync(string accountId, decimal amount)
+    {
+        var evt = new AccountDepositedEvent(accountId, amount, DateTime.UtcNow);
+        await _producer.ProduceAsync("account-events", evt);
+    }
+    
+    // Read side: Consume events and build read models
+}
+```
+
+**Common Real-World Use Cases:**
+
+| Use Case | Description | Example |
+|----------|-------------|---------|
+| **Order Processing** | Track order lifecycle events | E-commerce platforms |
+| **Activity Tracking** | User behavior analytics | Netflix, LinkedIn |
+| **Log Aggregation** | Centralized logging | Distributed systems |
+| **Notification System** | Send emails, SMS, push | Banking alerts |
+| **Fraud Detection** | Real-time transaction analysis | Payment systems |
+| **Stock Trading** | Market data streaming | Financial applications |
+| **IoT Data** | Sensor data collection | Smart devices |
+| **CDC (Change Data Capture)** | Database replication | Data synchronization |
+
+---
+
+### 15.4 Kafka Producer and Consumer
+
+**Question:** Explain producer and consumer with example.
+
+**Answer:**
+
+**Producer:** Sends messages to Kafka topics
+**Consumer:** Reads messages from Kafka topics
+
+**Complete Example:**
+
+**1. Producer Implementation:**
+
+```csharp
+// KafkaProducer.cs
+public interface IKafkaProducer
+{
+    Task ProduceAsync<T>(string topic, string key, T message);
+}
+
+public class KafkaProducer : IKafkaProducer, IDisposable
+{
+    private readonly IProducer<string, string> _producer;
+    private readonly ILogger<KafkaProducer> _logger;
+
+    public KafkaProducer(IConfiguration configuration, ILogger<KafkaProducer> logger)
+    {
+        _logger = logger;
+        
+        var config = new ProducerConfig
+        {
+            BootstrapServers = configuration["Kafka:BootstrapServers"],
+            Acks = Acks.All, // Wait for all replicas
+            EnableIdempotence = true, // Exactly-once semantics
+            MaxInFlight = 5,
+            MessageSendMaxRetries = 3
+        };
+        
+        _producer = new ProducerBuilder<string, string>(config).Build();
+    }
+
+    public async Task ProduceAsync<T>(string topic, string key, T message)
+    {
+        try
+        {
+            var value = JsonSerializer.Serialize(message);
+            
+            var result = await _producer.ProduceAsync(topic, new Message<string, string>
+            {
+                Key = key,
+                Value = value,
+                Timestamp = new Timestamp(DateTime.UtcNow)
+            });
+            
+            _logger.LogInformation(
+                $"Message delivered to {result.TopicPartitionOffset}");
+        }
+        catch (ProduceException<string, string> ex)
+        {
+            _logger.LogError(ex, $"Failed to deliver message: {ex.Error.Reason}");
+            throw;
+        }
+    }
+
+    public void Dispose()
+    {
+        _producer?.Flush(TimeSpan.FromSeconds(10));
+        _producer?.Dispose();
+    }
+}
+```
+
+**2. Consumer Implementation:**
+
+```csharp
+// KafkaConsumerWorker.cs
+public class KafkaConsumerWorker : BackgroundService
+{
+    private readonly ILogger<KafkaConsumerWorker> _logger;
+    private readonly IConsumer<string, string> _consumer;
+    private readonly IServiceProvider _serviceProvider;
+
+    public KafkaConsumerWorker(
+        IConfiguration configuration,
+        ILogger<KafkaConsumerWorker> logger,
+        IServiceProvider serviceProvider)
+    {
+        _logger = logger;
+        _serviceProvider = serviceProvider;
+        
+        var config = new ConsumerConfig
+        {
+            BootstrapServers = configuration["Kafka:BootstrapServers"],
+            GroupId = configuration["Kafka:ConsumerGroup"],
+            AutoOffsetReset = AutoOffsetReset.Earliest,
+            EnableAutoCommit = false, // Manual commit for reliability
+            EnableAutoOffsetStore = false
+        };
+        
+        _consumer = new ConsumerBuilder<string, string>(config)
+            .SetErrorHandler((_, error) => 
+                _logger.LogError($"Error: {error.Reason}"))
+            .Build();
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        _consumer.Subscribe(new[] { "order-events", "payment-events" });
+        
+        _logger.LogInformation("Kafka consumer started");
+        
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            try
+            {
+                var consumeResult = _consumer.Consume(stoppingToken);
+                
+                _logger.LogInformation(
+                    $"Received message from {consumeResult.Topic}: " +
+                    $"Key={consumeResult.Message.Key}, " +
+                    $"Value={consumeResult.Message.Value}");
+                
+                // Process message
+                await ProcessMessageAsync(consumeResult.Message, stoppingToken);
+                
+                // Commit offset after successful processing
+                _consumer.Commit(consumeResult);
+                _consumer.StoreOffset(consumeResult);
+            }
+            catch (ConsumeException ex)
+            {
+                _logger.LogError(ex, "Consume error");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Processing error");
+                // Optionally: Dead letter queue handling
+            }
+        }
+        
+        _consumer.Close();
+    }
+    
+    private async Task ProcessMessageAsync(Message<string, string> message, CancellationToken cancellationToken)
+    {
+        using var scope = _serviceProvider.CreateScope();
+        
+        // Deserialize and process
+        var orderEvent = JsonSerializer.Deserialize<OrderCreatedEvent>(message.Value);
+        
+        // Business logic
+        var orderService = scope.ServiceProvider.GetRequiredService<IOrderService>();
+        await orderService.ProcessOrderAsync(orderEvent, cancellationToken);
+    }
+
+    public override void Dispose()
+    {
+        _consumer?.Close();
+        _consumer?.Dispose();
+        base.Dispose();
+    }
+}
+```
+
+**3. Real-World Example - E-Commerce Order Flow:**
+
+```csharp
+// Domain Events
+public record OrderCreatedEvent(int OrderId, string CustomerId, decimal Amount);
+public record PaymentProcessedEvent(int OrderId, string TransactionId, bool Success);
+public record InventoryReservedEvent(int OrderId, List<int> ProductIds);
+
+// Producer Service (Order API)
+public class OrderService
+{
+    private readonly IKafkaProducer _producer;
+    
+    public async Task<Order> CreateOrderAsync(CreateOrderRequest request)
+    {
+        // 1. Save order to database
+        var order = await _repository.CreateOrderAsync(request);
+        
+        // 2. Publish event to Kafka
+        await _producer.ProduceAsync(
+            topic: "order-events",
+            key: order.OrderId.ToString(),
+            message: new OrderCreatedEvent(
+                order.OrderId,
+                order.CustomerId,
+                order.TotalAmount));
+        
+        return order;
+    }
+}
+
+// Consumer Service 1: Inventory Service
+public class InventoryConsumerWorker : BackgroundService
+{
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        _consumer.Subscribe("order-events");
+        
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            var result = _consumer.Consume(stoppingToken);
+            var orderEvent = JsonSerializer.Deserialize<OrderCreatedEvent>(result.Message.Value);
+            
+            // Reserve inventory
+            var reserved = await _inventoryService.ReserveItemsAsync(orderEvent.OrderId);
+            
+            // Publish inventory event
+            await _producer.ProduceAsync("inventory-events", 
+                orderEvent.OrderId.ToString(),
+                new InventoryReservedEvent(orderEvent.OrderId, reserved.ProductIds));
+            
+            _consumer.Commit(result);
+        }
+    }
+}
+
+// Consumer Service 2: Notification Service
+public class NotificationConsumerWorker : BackgroundService
+{
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        _consumer.Subscribe("order-events");
+        
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            var result = _consumer.Consume(stoppingToken);
+            var orderEvent = JsonSerializer.Deserialize<OrderCreatedEvent>(result.Message.Value);
+            
+            // Send confirmation email
+            await _emailService.SendOrderConfirmationAsync(
+                orderEvent.CustomerId,
+                orderEvent.OrderId);
+            
+            _consumer.Commit(result);
+        }
+    }
+}
+
+// Consumer Service 3: Analytics Service
+public class AnalyticsConsumerWorker : BackgroundService
+{
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        _consumer.Subscribe(new[] { "order-events", "payment-events", "inventory-events" });
+        
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            var result = _consumer.Consume(stoppingToken);
+            
+            // Update analytics dashboard
+            await _analyticsService.UpdateDashboardAsync(
+                result.Topic,
+                result.Message.Value);
+            
+            _consumer.Commit(result);
+        }
+    }
+}
+```
+
+**4. Configuration:**
+
+```json
+// appsettings.json
+{
+  "Kafka": {
+    "BootstrapServers": "localhost:9092",
+    "ConsumerGroup": "order-processing-group",
+    "Topics": {
+      "OrderEvents": "order-events",
+      "PaymentEvents": "payment-events",
+      "InventoryEvents": "inventory-events"
+    }
+  }
+}
+```
+
+**5. Dependency Injection Setup:**
+
+```csharp
+// Program.cs
+var builder = WebApplication.CreateBuilder(args);
+
+// Register Kafka Producer
+builder.Services.AddSingleton<IKafkaProducer, KafkaProducer>();
+
+// Register Kafka Consumers as Hosted Services
+builder.Services.AddHostedService<InventoryConsumerWorker>();
+builder.Services.AddHostedService<NotificationConsumerWorker>();
+builder.Services.AddHostedService<AnalyticsConsumerWorker>();
+
+var app = builder.Build();
+app.Run();
+```
+
+**Key Concepts:**
+
+| Concept | Producer | Consumer |
+|---------|----------|----------|
+| **Purpose** | Send messages | Receive messages |
+| **Idempotence** | Prevents duplicates | Handle duplicates |
+| **Acknowledgment** | Acks.All for reliability | Manual commit recommended |
+| **Partitioning** | Key-based routing | Consumer group balancing |
+| **Error Handling** | Retry logic | Dead letter queue |
+| **Scalability** | Multiple producers | Consumer groups |
+
+---
+
+## 16. MediatR and CQRS Patterns
+
+### 16.1 MediatR Pattern
+
+**Question:** What is MediatR pattern and how is it different from handler pattern? Explain with example.
+
+**Answer:**
+
+**MediatR** is an in-process mediator implementation that supports:
+- Request/response messages
+- Commands and queries
+- Notifications (pub/sub)
+- Decoupling of business logic
+
+**Key Differences from Traditional Handler Pattern:**
+
+| Aspect | Traditional Handler | MediatR Pattern |
+|--------|-------------------|-----------------|
+| **Coupling** | Direct dependency | Loose coupling via mediator |
+| **Registration** | Manual wiring | Convention-based |
+| **Pipeline** | No built-in pipeline | Supports behaviors/middleware |
+| **Pub/Sub** | Not supported | Built-in notifications |
+| **Testing** | Harder to mock | Easy to test |
+
+**Installation:**
+
+```powershell
+dotnet add package MediatR
+dotnet add package MediatR.Extensions.Microsoft.DependencyInjection
+```
+
+**Traditional Handler Pattern Example:**
+
+```csharp
+// ❌ Traditional approach - tight coupling
+public class OrderController : ControllerBase
+{
+    private readonly IOrderRepository _repository;
+    private readonly IEmailService _emailService;
+    private readonly IInventoryService _inventoryService;
+    private readonly ILogger<OrderController> _logger;
+    
+    // Constructor becomes bloated
+    public OrderController(
+        IOrderRepository repository,
+        IEmailService emailService,
+        IInventoryService inventoryService,
+        ILogger<OrderController> logger)
+    {
+        _repository = repository;
+        _emailService = emailService;
+        _inventoryService = inventoryService;
+        _logger = logger;
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> CreateOrder(CreateOrderRequest request)
+    {
+        // Business logic mixed with controller
+        var order = new Order
+        {
+            CustomerId = request.CustomerId,
+            TotalAmount = request.TotalAmount
+        };
+        
+        await _repository.AddAsync(order);
+        await _inventoryService.ReserveItemsAsync(order.Id);
+        await _emailService.SendConfirmationAsync(order.CustomerId);
+        _logger.LogInformation($"Order {order.Id} created");
+        
+        return Ok(order);
+    }
+}
+```
+
+**MediatR Pattern Example:**
+
+```csharp
+// ✅ MediatR approach - loose coupling
+
+// 1. Define Request
+public record CreateOrderCommand(string CustomerId, decimal TotalAmount) 
+    : IRequest<OrderResponse>;
+
+public record OrderResponse(int OrderId, string Status);
+
+// 2. Define Handler
+public class CreateOrderCommandHandler 
+    : IRequestHandler<CreateOrderCommand, OrderResponse>
+{
+    private readonly IOrderRepository _repository;
+    private readonly IEmailService _emailService;
+    private readonly IInventoryService _inventoryService;
+    private readonly ILogger<CreateOrderCommandHandler> _logger;
+    
+    public CreateOrderCommandHandler(
+        IOrderRepository repository,
+        IEmailService emailService,
+        IInventoryService inventoryService,
+        ILogger<CreateOrderCommandHandler> logger)
+    {
+        _repository = repository;
+        _emailService = emailService;
+        _inventoryService = inventoryService;
+        _logger = logger;
+    }
+    
+    public async Task<OrderResponse> Handle(
+        CreateOrderCommand request, 
+        CancellationToken cancellationToken)
+    {
+        var order = new Order
+        {
+            CustomerId = request.CustomerId,
+            TotalAmount = request.TotalAmount
+        };
+        
+        await _repository.AddAsync(order);
+        await _inventoryService.ReserveItemsAsync(order.Id);
+        await _emailService.SendConfirmationAsync(order.CustomerId);
+        
+        _logger.LogInformation($"Order {order.Id} created");
+        
+        return new OrderResponse(order.Id, "Created");
+    }
+}
+
+// 3. Clean Controller
+public class OrderController : ControllerBase
+{
+    private readonly IMediator _mediator; // Only one dependency!
+    
+    public OrderController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> CreateOrder(CreateOrderRequest request)
+    {
+        var command = new CreateOrderCommand(request.CustomerId, request.TotalAmount);
+        var response = await _mediator.Send(command);
+        return Ok(response);
+    }
+}
+```
+
+**MediatR Pipeline Behaviors (Middleware):**
+
+```csharp
+// Logging Behavior
+public class LoggingBehavior<TRequest, TResponse> 
+    : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
+{
+    private readonly ILogger<LoggingBehavior<TRequest, TResponse>> _logger;
+    
+    public LoggingBehavior(ILogger<LoggingBehavior<TRequest, TResponse>> logger)
+    {
+        _logger = logger;
+    }
+    
+    public async Task<TResponse> Handle(
+        TRequest request,
+        RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
+    {
+        _logger.LogInformation($"Handling {typeof(TRequest).Name}");
+        var response = await next();
+        _logger.LogInformation($"Handled {typeof(TRequest).Name}");
+        return response;
+    }
+}
+
+// Validation Behavior
+public class ValidationBehavior<TRequest, TResponse> 
+    : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
+{
+    private readonly IEnumerable<IValidator<TRequest>> _validators;
+    
+    public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
+    {
+        _validators = validators;
+    }
+    
+    public async Task<TResponse> Handle(
+        TRequest request,
+        RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
+    {
+        var context = new ValidationContext<TRequest>(request);
+        var failures = _validators
+            .Select(v => v.Validate(context))
+            .SelectMany(result => result.Errors)
+            .Where(f => f != null)
+            .ToList();
+        
+        if (failures.Any())
+            throw new ValidationException(failures);
+        
+        return await next();
+    }
+}
+
+// Transaction Behavior
+public class TransactionBehavior<TRequest, TResponse> 
+    : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
+{
+    private readonly AppDbContext _context;
+    
+    public TransactionBehavior(AppDbContext context)
+    {
+        _context = context;
+    }
+    
+    public async Task<TResponse> Handle(
+        TRequest request,
+        RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
+    {
+        using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+        
+        try
+        {
+            var response = await next();
+            await transaction.CommitAsync(cancellationToken);
+            return response;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
+    }
+}
+```
+
+**MediatR Notifications (Pub/Sub):**
+
+```csharp
+// 1. Define Notification
+public record OrderCreatedNotification(int OrderId, string CustomerId) 
+    : INotification;
+
+// 2. Multiple Handlers
+public class SendEmailNotificationHandler 
+    : INotificationHandler<OrderCreatedNotification>
+{
+    private readonly IEmailService _emailService;
+    
+    public async Task Handle(
+        OrderCreatedNotification notification, 
+        CancellationToken cancellationToken)
+    {
+        await _emailService.SendOrderConfirmationAsync(
+            notification.CustomerId,
+            notification.OrderId);
+    }
+}
+
+public class UpdateAnalyticsNotificationHandler 
+    : INotificationHandler<OrderCreatedNotification>
+{
+    private readonly IAnalyticsService _analyticsService;
+    
+    public async Task Handle(
+        OrderCreatedNotification notification, 
+        CancellationToken cancellationToken)
+    {
+        await _analyticsService.TrackOrderCreatedAsync(notification.OrderId);
+    }
+}
+
+public class LogNotificationHandler 
+    : INotificationHandler<OrderCreatedNotification>
+{
+    private readonly ILogger<LogNotificationHandler> _logger;
+    
+    public async Task Handle(
+        OrderCreatedNotification notification, 
+        CancellationToken cancellationToken)
+    {
+        _logger.LogInformation($"Order {notification.OrderId} created");
+        await Task.CompletedTask;
+    }
+}
+
+// 3. Publish Notification
+public class CreateOrderCommandHandler 
+    : IRequestHandler<CreateOrderCommand, OrderResponse>
+{
+    private readonly IMediator _mediator;
+    
+    public async Task<OrderResponse> Handle(
+        CreateOrderCommand request, 
+        CancellationToken cancellationToken)
+    {
+        // ... create order logic ...
+        
+        // Publish notification - all handlers will execute
+        await _mediator.Publish(
+            new OrderCreatedNotification(order.Id, order.CustomerId),
+            cancellationToken);
+        
+        return new OrderResponse(order.Id, "Created");
+    }
+}
+```
+
+**Dependency Injection Setup:**
+
+```csharp
+// Program.cs
+var builder = WebApplication.CreateBuilder(args);
+
+// Register MediatR
+builder.Services.AddMediatR(cfg => 
+{
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+});
+
+// Register Pipeline Behaviors (order matters!)
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
+
+var app = builder.Build();
+app.Run();
+```
+
+**Complete Real-World Example:**
+
+```csharp
+// Commands
+public record CreateOrderCommand(string CustomerId, List<OrderItemDto> Items) 
+    : IRequest<Result<OrderDto>>;
+
+public record UpdateOrderCommand(int OrderId, string Status) 
+    : IRequest<Result<OrderDto>>;
+
+public record CancelOrderCommand(int OrderId, string Reason) 
+    : IRequest<Result>;
+
+// Queries
+public record GetOrderByIdQuery(int OrderId) 
+    : IRequest<Result<OrderDto>>;
+
+public record GetOrdersByCustomerQuery(string CustomerId, int Page, int PageSize) 
+    : IRequest<Result<PagedList<OrderDto>>>;
+
+// Handler Example
+public class GetOrderByIdQueryHandler 
+    : IRequestHandler<GetOrderByIdQuery, Result<OrderDto>>
+{
+    private readonly IOrderRepository _repository;
+    private readonly IMapper _mapper;
+    
+    public async Task<Result<OrderDto>> Handle(
+        GetOrderByIdQuery request, 
+        CancellationToken cancellationToken)
+    {
+        var order = await _repository.GetByIdAsync(request.OrderId);
+        
+        if (order == null)
+            return Result<OrderDto>.Failure("Order not found");
+        
+        var dto = _mapper.Map<OrderDto>(order);
+        return Result<OrderDto>.Success(dto);
+    }
+}
+
+// Controller
+[ApiController]
+[Route("api/[controller]")]
+public class OrdersController : ControllerBase
+{
+    private readonly IMediator _mediator;
+    
+    public OrdersController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateOrderCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+    }
+    
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var result = await _mediator.Send(new GetOrderByIdQuery(id));
+        return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
+    }
+    
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, UpdateOrderCommand command)
+    {
+        if (id != command.OrderId)
+            return BadRequest();
+        
+        var result = await _mediator.Send(command);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+    }
+    
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Cancel(int id, [FromBody] string reason)
+    {
+        var result = await _mediator.Send(new CancelOrderCommand(id, reason));
+        return result.IsSuccess ? NoContent() : BadRequest(result.Error);
+    }
+}
+```
+
+**Benefits of MediatR:**
+
+1. ✅ **Single Responsibility** - Each handler has one job
+2. ✅ **Testability** - Easy to unit test handlers
+3. ✅ **Pipeline Behaviors** - Cross-cutting concerns
+4. ✅ **Loose Coupling** - Controllers don't know about handlers
+5. ✅ **Clean Code** - Organized and maintainable
+6. ✅ **Pub/Sub** - Built-in notification support
+
+---
+
+### 16.2 CQRS Pattern
+
+**Question:** What is CQRS pattern? Explain with example.
+
+**Answer:**
+
+**CQRS (Command Query Responsibility Segregation)** is a pattern that separates read and write operations into different models.
+
+**Key Concepts:**
+- **Commands**: Modify state (Create, Update, Delete)
+- **Queries**: Read state (Get, List, Search)
+- Separate data models for reads and writes
+- Can use different databases for reads/writes
+
+**Why CQRS?**
+
+| Problem | CQRS Solution |
+|---------|---------------|
+| Complex queries slow down writes | Separate read/write databases |
+| Read and write models conflict | Different models optimized for each |
+| Scaling reads vs writes | Scale independently |
+| Performance bottlenecks | Optimize each side separately |
+
+**CQRS Levels:**
+
+**Level 1: Simple CQRS (Same Database)**
+
+```csharp
+// Commands (Write Model)
+public record CreateProductCommand(string Name, decimal Price, int Stock) 
+    : IRequest<Result<int>>;
+
+public class CreateProductCommandHandler 
+    : IRequestHandler<CreateProductCommand, Result<int>>
+{
+    private readonly AppDbContext _context;
+    
+    public async Task<Result<int>> Handle(
+        CreateProductCommand request, 
+        CancellationToken cancellationToken)
+    {
+        var product = new Product
+        {
+            Name = request.Name,
+            Price = request.Price,
+            Stock = request.Stock,
+            CreatedAt = DateTime.UtcNow
+        };
+        
+        _context.Products.Add(product);
+        await _context.SaveChangesAsync(cancellationToken);
+        
+        return Result<int>.Success(product.Id);
+    }
+}
+
+// Queries (Read Model)
+public record GetProductByIdQuery(int Id) 
+    : IRequest<Result<ProductDto>>;
+
+public class GetProductByIdQueryHandler 
+    : IRequestHandler<GetProductByIdQuery, Result<ProductDto>>
+{
+    private readonly IProductReadRepository _repository;
+    
+    public async Task<Result<ProductDto>> Handle(
+        GetProductByIdQuery request, 
+        CancellationToken cancellationToken)
+    {
+        // Optimized read-only query
+        var product = await _repository.GetByIdAsync(request.Id);
+        
+        if (product == null)
+            return Result<ProductDto>.Failure("Product not found");
+        
+        return Result<ProductDto>.Success(product);
+    }
+}
+
+// Different repositories
+public interface IProductWriteRepository
+{
+    Task<int> AddAsync(Product product);
+    Task UpdateAsync(Product product);
+    Task DeleteAsync(int id);
+}
+
+public interface IProductReadRepository
+{
+    Task<ProductDto> GetByIdAsync(int id);
+    Task<List<ProductDto>> GetAllAsync();
+    Task<List<ProductDto>> SearchAsync(string searchTerm);
+}
+```
+
+**Level 2: CQRS with Separate Databases**
+
+```csharp
+// Write Model (SQL Server - normalized)
+public class Product
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public decimal Price { get; set; }
+    public int Stock { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+}
+
+// Read Model (MongoDB - denormalized for fast reads)
+public class ProductReadModel
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public decimal Price { get; set; }
+    public int Stock { get; set; }
+    public string Category { get; set; }
+    public string Brand { get; set; }
+    public List<string> Tags { get; set; }
+    public int TotalOrders { get; set; }
+    public double AverageRating { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
+
+// Command Handler (Write to SQL Server)
+public class CreateProductCommandHandler 
+    : IRequestHandler<CreateProductCommand, Result<int>>
+{
+    private readonly AppDbContext _writeDb; // SQL Server
+    private readonly IMediator _mediator;
+    
+    public async Task<Result<int>> Handle(
+        CreateProductCommand request, 
+        CancellationToken cancellationToken)
+    {
+        var product = new Product
+        {
+            Name = request.Name,
+            Price = request.Price,
+            Stock = request.Stock,
+            CreatedAt = DateTime.UtcNow
+        };
+        
+        _writeDb.Products.Add(product);
+        await _writeDb.SaveChangesAsync(cancellationToken);
+        
+        // Publish event to sync read model
+        await _mediator.Publish(
+            new ProductCreatedEvent(product.Id, product.Name, product.Price),
+            cancellationToken);
+        
+        return Result<int>.Success(product.Id);
+    }
+}
+
+// Event Handler (Update MongoDB)
+public class ProductCreatedEventHandler 
+    : INotificationHandler<ProductCreatedEvent>
+{
+    private readonly IMongoCollection<ProductReadModel> _readDb; // MongoDB
+    
+    public async Task Handle(
+        ProductCreatedEvent notification, 
+        CancellationToken cancellationToken)
+    {
+        var readModel = new ProductReadModel
+        {
+            Id = notification.ProductId,
+            Name = notification.Name,
+            Price = notification.Price,
+            CreatedAt = DateTime.UtcNow,
+            Tags = new List<string>(),
+            TotalOrders = 0,
+            AverageRating = 0
+        };
+        
+        await _readDb.InsertOneAsync(readModel, cancellationToken: cancellationToken);
+    }
+}
+
+// Query Handler (Read from MongoDB)
+public class SearchProductsQueryHandler 
+    : IRequestHandler<SearchProductsQuery, Result<List<ProductDto>>>
+{
+    private readonly IMongoCollection<ProductReadModel> _readDb;
+    
+    public async Task<Result<List<ProductDto>>> Handle(
+        SearchProductsQuery request, 
+        CancellationToken cancellationToken)
+    {
+        var filter = Builders<ProductReadModel>.Filter.Or(
+            Builders<ProductReadModel>.Filter.Regex(p => p.Name, request.SearchTerm),
+            Builders<ProductReadModel>.Filter.AnyIn(p => p.Tags, new[] { request.SearchTerm })
+        );
+        
+        var products = await _readDb
+            .Find(filter)
+            .Skip((request.Page - 1) * request.PageSize)
+            .Limit(request.PageSize)
+            .ToListAsync(cancellationToken);
+        
+        var dtos = products.Select(p => new ProductDto
+        {
+            Id = p.Id,
+            Name = p.Name,
+            Price = p.Price,
+            Stock = p.Stock,
+            AverageRating = p.AverageRating
+        }).ToList();
+        
+        return Result<List<ProductDto>>.Success(dtos);
+    }
+}
+```
+
+**Level 3: Event Sourcing + CQRS**
+
+```csharp
+// Events (Event Store)
+public abstract record ProductEvent(int ProductId, DateTime OccurredAt);
+
+public record ProductCreatedEvent(
+    int ProductId, 
+    string Name, 
+    decimal Price, 
+    DateTime OccurredAt) 
+    : ProductEvent(ProductId, OccurredAt);
+
+public record ProductPriceChangedEvent(
+    int ProductId, 
+    decimal OldPrice, 
+    decimal NewPrice, 
+    DateTime OccurredAt) 
+    : ProductEvent(ProductId, OccurredAt);
+
+public record ProductStockUpdatedEvent(
+    int ProductId, 
+    int OldStock, 
+    int NewStock, 
+    DateTime OccurredAt) 
+    : ProductEvent(ProductId, OccurredAt);
+
+// Command Handler (Append events)
+public class ChangeProductPriceCommandHandler 
+    : IRequestHandler<ChangeProductPriceCommand, Result>
+{
+    private readonly IEventStore _eventStore;
+    private readonly IMediator _mediator;
+    
+    public async Task<Result> Handle(
+        ChangeProductPriceCommand request, 
+        CancellationToken cancellationToken)
+    {
+        // Load aggregate from events
+        var events = await _eventStore.GetEventsAsync(request.ProductId);
+        var product = Product.LoadFromHistory(events);
+        
+        // Validate
+        if (request.NewPrice <= 0)
+            return Result.Failure("Price must be positive");
+        
+        // Create and append event
+        var @event = new ProductPriceChangedEvent(
+            request.ProductId,
+            product.Price,
+            request.NewPrice,
+            DateTime.UtcNow);
+        
+        await _eventStore.AppendEventAsync(@event);
+        
+        // Publish for read model update
+        await _mediator.Publish(@event, cancellationToken);
+        
+        return Result.Success();
+    }
+}
+
+// Projection (Build read model from events)
+public class ProductProjection : INotificationHandler<ProductEvent>
+{
+    private readonly IMongoCollection<ProductReadModel> _readDb;
+    
+    public async Task Handle(ProductEvent notification, CancellationToken cancellationToken)
+    {
+        switch (notification)
+        {
+            case ProductCreatedEvent created:
+                await HandleCreatedAsync(created, cancellationToken);
+                break;
+            
+            case ProductPriceChangedEvent priceChanged:
+                await HandlePriceChangedAsync(priceChanged, cancellationToken);
+                break;
+            
+            case ProductStockUpdatedEvent stockUpdated:
+                await HandleStockUpdatedAsync(stockUpdated, cancellationToken);
+                break;
+        }
+    }
+    
+    private async Task HandleCreatedAsync(
+        ProductCreatedEvent @event, 
+        CancellationToken cancellationToken)
+    {
+        var readModel = new ProductReadModel
+        {
+            Id = @event.ProductId,
+            Name = @event.Name,
+            Price = @event.Price,
+            CreatedAt = @event.OccurredAt
+        };
+        
+        await _readDb.InsertOneAsync(readModel, cancellationToken: cancellationToken);
+    }
+    
+    private async Task HandlePriceChangedAsync(
+        ProductPriceChangedEvent @event, 
+        CancellationToken cancellationToken)
+    {
+        var filter = Builders<ProductReadModel>.Filter.Eq(p => p.Id, @event.ProductId);
+        var update = Builders<ProductReadModel>.Update.Set(p => p.Price, @event.NewPrice);
+        
+        await _readDb.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
+    }
+    
+    private async Task HandleStockUpdatedAsync(
+        ProductStockUpdatedEvent @event, 
+        CancellationToken cancellationToken)
+    {
+        var filter = Builders<ProductReadModel>.Filter.Eq(p => p.Id, @event.ProductId);
+        var update = Builders<ProductReadModel>.Update.Set(p => p.Stock, @event.NewStock);
+        
+        await _readDb.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
+    }
+}
+```
+
+**Complete E-Commerce Example:**
+
+```csharp
+// Project Structure:
+// - Application
+//   - Commands
+//     - CreateOrderCommand.cs
+//     - UpdateOrderStatusCommand.cs
+//   - Queries
+//     - GetOrderByIdQuery.cs
+//     - GetOrdersByCustomerQuery.cs
+//   - Handlers
+//     - CreateOrderCommandHandler.cs
+//     - GetOrderByIdQueryHandler.cs
+// - Domain
+//   - Entities
+//     - Order.cs
+//   - Events
+//     - OrderCreatedEvent.cs
+// - Infrastructure
+//   - Persistence
+//     - WriteDbContext.cs (SQL Server)
+//     - ReadDbContext.cs (MongoDB)
+
+// Commands
+public record CreateOrderCommand(
+    string CustomerId, 
+    List<OrderItemDto> Items) 
+    : IRequest<Result<int>>;
+
+public record UpdateOrderStatusCommand(
+    int OrderId, 
+    OrderStatus NewStatus) 
+    : IRequest<Result>;
+
+// Queries
+public record GetOrderByIdQuery(int OrderId) 
+    : IRequest<Result<OrderDetailDto>>;
+
+public record GetOrdersByCustomerQuery(
+    string CustomerId, 
+    int Page, 
+    int PageSize) 
+    : IRequest<Result<PagedList<OrderSummaryDto>>>;
+
+// Write Model (Domain Entity)
+public class Order
+{
+    public int Id { get; private set; }
+    public string CustomerId { get; private set; }
+    public OrderStatus Status { get; private set; }
+    public decimal TotalAmount { get; private set; }
+    public DateTime CreatedAt { get; private set; }
+    public List<OrderItem> Items { get; private set; }
+    
+    public static Order Create(string customerId, List<OrderItem> items)
+    {
+        var order = new Order
+        {
+            CustomerId = customerId,
+            Status = OrderStatus.Pending,
+            Items = items,
+            TotalAmount = items.Sum(i => i.Price * i.Quantity),
+            CreatedAt = DateTime.UtcNow
+        };
+        
+        return order;
+    }
+    
+    public void UpdateStatus(OrderStatus newStatus)
+    {
+        if (Status == OrderStatus.Cancelled)
+            throw new InvalidOperationException("Cannot update cancelled order");
+        
+        Status = newStatus;
+    }
+}
+
+// Read Model (Optimized for queries)
+public class OrderReadModel
+{
+    public int OrderId { get; set; }
+    public string CustomerId { get; set; }
+    public string CustomerName { get; set; }
+    public string CustomerEmail { get; set; }
+    public string Status { get; set; }
+    public decimal TotalAmount { get; set; }
+    public int ItemCount { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public List<OrderItemReadModel> Items { get; set; }
+}
+
+// Command Handler
+public class CreateOrderCommandHandler 
+    : IRequestHandler<CreateOrderCommand, Result<int>>
+{
+    private readonly WriteDbContext _writeDb;
+    private readonly IMediator _mediator;
+    
+    public async Task<Result<int>> Handle(
+        CreateOrderCommand request, 
+        CancellationToken cancellationToken)
+    {
+        var items = request.Items.Select(i => new OrderItem
+        {
+            ProductId = i.ProductId,
+            Quantity = i.Quantity,
+            Price = i.Price
+        }).ToList();
+        
+        var order = Order.Create(request.CustomerId, items);
+        
+        _writeDb.Orders.Add(order);
+        await _writeDb.SaveChangesAsync(cancellationToken);
+        
+        // Publish event to update read model
+        await _mediator.Publish(
+            new OrderCreatedEvent(
+                order.Id,
+                order.CustomerId,
+                order.TotalAmount,
+                order.Items),
+            cancellationToken);
+        
+        return Result<int>.Success(order.Id);
+    }
+}
+
+// Query Handler
+public class GetOrderByIdQueryHandler 
+    : IRequestHandler<GetOrderByIdQuery, Result<OrderDetailDto>>
+{
+    private readonly IMongoCollection<OrderReadModel> _readDb;
+    
+    public async Task<Result<OrderDetailDto>> Handle(
+        GetOrderByIdQuery request, 
+        CancellationToken cancellationToken)
+    {
+        var order = await _readDb
+            .Find(o => o.OrderId == request.OrderId)
+            .FirstOrDefaultAsync(cancellationToken);
+        
+        if (order == null)
+            return Result<OrderDetailDto>.Failure("Order not found");
+        
+        var dto = new OrderDetailDto
+        {
+            OrderId = order.OrderId,
+            CustomerName = order.CustomerName,
+            Status = order.Status,
+            TotalAmount = order.TotalAmount,
+            Items = order.Items
+        };
+        
+        return Result<OrderDetailDto>.Success(dto);
+    }
+}
+
+// Dependency Injection
+builder.Services.AddDbContext<WriteDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("WriteDb")));
+
+builder.Services.AddSingleton<IMongoClient>(sp =>
+    new MongoClient(builder.Configuration.GetConnectionString("ReadDb")));
+
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+```
+
+**CQRS Benefits:**
+
+1. ✅ **Separation of Concerns** - Read/write logic isolated
+2. ✅ **Scalability** - Scale reads and writes independently
+3. ✅ **Performance** - Optimize each side separately
+4. ✅ **Flexibility** - Use different databases for different needs
+5. ✅ **Complex Queries** - Denormalized read models
+6. ✅ **Security** - Different permissions for reads/writes
+
+**When to Use CQRS:**
+
+| Use Case | Why CQRS? |
+|----------|-----------|
+| High read/write ratio | Scale reads independently |
+| Complex domain logic | Separate write complexity from reads |
+| Different read/write requirements | Optimize separately |
+| Event-driven systems | Natural fit with event sourcing |
+| Microservices | Service-level separation |
+
+---
+
+## 17. Dependency Injection in .NET Core
+
+### 17.1 Types of Dependency Injection with Real-Time Examples
+
+**Question:** What are the types of dependency injection classes in .NET Core with real-time examples?
+
+**Answer:**
+
+.NET Core provides three built-in service lifetimes:
+
+**1. Transient**
+**2. Scoped**
+**3. Singleton**
+
+**1. Transient Lifetime (`AddTransient`)**
+
+**Characteristics:**
+- Created every time they are requested
+- New instance for each injection
+- Short-lived
+- No state sharing
+
+**When to Use:**
+- Lightweight, stateless services
+- Services that don't hold state
+- Services used briefly
+
+**Real-Time Examples:**
+
+```csharp
+// Registration
+builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
+builder.Services.AddTransient<IValidator<CreateOrderRequest>, OrderValidator>();
+
+// Example 1: Email Service
+public interface IEmailService
+{
+    Task SendAsync(string to, string subject, string body);
+}
+
+public class EmailService : IEmailService
+{
+    private readonly ILogger<EmailService> _logger;
+    
+    public EmailService(ILogger<EmailService> logger)
+    {
+        _logger = logger;
+        _logger.LogInformation($"EmailService instance created: {GetHashCode()}");
+    }
+    
+    public async Task SendAsync(string to, string subject, string body)
+    {
+        // Send email logic
+        await Task.Delay(100);
+        _logger.LogInformation($"Email sent to {to}");
+    }
+}
+
+// Example 2: Password Hasher
+public interface IPasswordHasher
+{
+    string Hash(string password);
+    bool Verify(string password, string hash);
+}
+
+public class PasswordHasher : IPasswordHasher
+{
+    public string Hash(string password)
+    {
+        // In real app, use BCrypt or similar
+        return Convert.ToBase64String(
+            System.Security.Cryptography.SHA256.HashData(
+                System.Text.Encoding.UTF8.GetBytes(password)));
+    }
+    
+    public bool Verify(string password, string hash)
+    {
+        return Hash(password) == hash;
+    }
+}
+
+// Usage in Controller
+[ApiController]
+[Route("api/[controller]")]
+public class AccountController : ControllerBase
+{
+    private readonly IEmailService _emailService;
+    private readonly IPasswordHasher _passwordHasher;
+    
+    // New instances injected every time
+    public AccountController(
+        IEmailService emailService,
+        IPasswordHasher passwordHasher)
+    {
+        _emailService = emailService;
+        _passwordHasher = passwordHasher;
+    }
+    
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(RegisterRequest request)
+    {
+        // Hash password
+        var hashedPassword = _passwordHasher.Hash(request.Password);
+        
+        // Save user...
+        
+        // Send welcome email
+        await _emailService.SendAsync(
+            request.Email,
+            "Welcome!",
+            "Thank you for registering");
+        
+        return Ok();
+    }
+}
+```
+
+**2. Scoped Lifetime (`AddScoped`)**
+
+**Characteristics:**
+- Created once per HTTP request (or scope)
+- Same instance within the request
+- Disposed at end of request
+- Most common for database contexts
+
+**When to Use:**
+- Database contexts (DbContext)
+- Unit of Work pattern
+- Request-specific caching
+- Services that maintain state during a request
+
+**Real-Time Examples:**
+
+```csharp
+// Registration
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(connectionString)); // Scoped by default
+
+// Example 1: Order Service with DbContext
+public class OrderService : IOrderService
+{
+    private readonly AppDbContext _context;
+    private readonly ILogger<OrderService> _logger;
+    
+    public OrderService(AppDbContext context, ILogger<OrderService> logger)
+    {
+        _context = context;
+        _logger = logger;
+        _logger.LogInformation($"OrderService instance created: {GetHashCode()}");
+    }
+    
+    public async Task<Order> CreateOrderAsync(CreateOrderRequest request)
+    {
+        var order = new Order
+        {
+            CustomerId = request.CustomerId,
+            TotalAmount = request.TotalAmount,
+            CreatedAt = DateTime.UtcNow
+        };
+        
+        _context.Orders.Add(order);
+        await _context.SaveChangesAsync();
+        
+        return order;
+    }
+    
+    public async Task<Order> GetOrderAsync(int orderId)
+    {
+        return await _context.Orders
+            .Include(o => o.Items)
+            .FirstOrDefaultAsync(o => o.Id == orderId);
+    }
+}
+
+// Example 2: Unit of Work Pattern
+public interface IUnitOfWork : IDisposable
+{
+    IOrderRepository Orders { get; }
+    IProductRepository Products { get; }
+    Task<int> SaveChangesAsync();
+}
+
+public class UnitOfWork : IUnitOfWork
+{
+    private readonly AppDbContext _context;
+    
+    public UnitOfWork(AppDbContext context)
+    {
+        _context = context;
+        Orders = new OrderRepository(context);
+        Products = new ProductRepository(context);
+    }
+    
+    public IOrderRepository Orders { get; }
+    public IProductRepository Products { get; }
+    
+    public async Task<int> SaveChangesAsync()
+    {
+        return await _context.SaveChangesAsync();
+    }
+    
+    public void Dispose()
+    {
+        _context?.Dispose();
+    }
+}
+
+// Usage
+[ApiController]
+[Route("api/[controller]")]
+public class OrdersController : ControllerBase
+{
+    private readonly IOrderService _orderService;
+    private readonly IUnitOfWork _unitOfWork;
+    
+    // Same instances throughout the request
+    public OrdersController(
+        IOrderService orderService,
+        IUnitOfWork unitOfWork)
+    {
+        _orderService = orderService;
+        _unitOfWork = unitOfWork;
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateOrderRequest request)
+    {
+        // Create order
+        var order = await _orderService.CreateOrderAsync(request);
+        
+        // Update inventory (uses same DbContext)
+        var product = await _unitOfWork.Products.GetByIdAsync(request.ProductId);
+        product.Stock -= request.Quantity;
+        
+        // Save all changes in one transaction
+        await _unitOfWork.SaveChangesAsync();
+        
+        return Ok(order);
+    }
+}
+
+// Example 3: Request-Specific Cache
+public interface IRequestCache
+{
+    void Set<T>(string key, T value);
+    T Get<T>(string key);
+    bool TryGet<T>(string key, out T value);
+}
+
+public class RequestCache : IRequestCache
+{
+    private readonly Dictionary<string, object> _cache = new();
+    
+    public void Set<T>(string key, T value)
+    {
+        _cache[key] = value;
+    }
+    
+    public T Get<T>(string key)
+    {
+        return _cache.TryGetValue(key, out var value) ? (T)value : default;
+    }
+    
+    public bool TryGet<T>(string key, out T value)
+    {
+        if (_cache.TryGetValue(key, out var obj))
+        {
+            value = (T)obj;
+            return true;
+        }
+        
+        value = default;
+        return false;
+    }
+}
+
+// Registration
+builder.Services.AddScoped<IRequestCache, RequestCache>();
+
+// Usage
+public class ProductService
+{
+    private readonly IRequestCache _cache;
+    private readonly IProductRepository _repository;
+    
+    public async Task<Product> GetProductAsync(int id)
+    {
+        // Check request cache first
+        if (_cache.TryGet($"product-{id}", out Product cachedProduct))
+            return cachedProduct;
+        
+        // Fetch from database
+        var product = await _repository.GetByIdAsync(id);
+        
+        // Cache for this request
+        _cache.Set($"product-{id}", product);
+        
+        return product;
+    }
+}
+```
+
+**3. Singleton Lifetime (`AddSingleton`)**
+
+**Characteristics:**
+- Created once for the application lifetime
+- Same instance for all requests
+- Lives until application shutdown
+- Must be thread-safe
+
+**When to Use:**
+- Configuration services
+- Caching services
+- Logging services
+- Stateless services
+- Connection pools
+
+**Real-Time Examples:**
+
+```csharp
+// Registration
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+builder.Services.AddSingleton<ICacheService, RedisCacheService>();
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+    ConnectionMultiplexer.Connect("localhost:6379"));
+
+// Example 1: Cache Service
+public interface ICacheService
+{
+    Task<T> GetAsync<T>(string key);
+    Task SetAsync<T>(string key, T value, TimeSpan expiration);
+    Task RemoveAsync(string key);
+}
+
+public class RedisCacheService : ICacheService
+{
+    private readonly IConnectionMultiplexer _redis;
+    private readonly IDatabase _database;
+    private readonly ILogger<RedisCacheService> _logger;
+    
+    // Only created once
+    public RedisCacheService(
+        IConnectionMultiplexer redis,
+        ILogger<RedisCacheService> logger)
+    {
+        _redis = redis;
+        _database = redis.GetDatabase();
+        _logger = logger;
+        _logger.LogInformation($"RedisCacheService instance created: {GetHashCode()}");
+    }
+    
+    public async Task<T> GetAsync<T>(string key)
+    {
+        var value = await _database.StringGetAsync(key);
+        
+        if (value.IsNullOrEmpty)
+            return default;
+        
+        return JsonSerializer.Deserialize<T>(value);
+    }
+    
+    public async Task SetAsync<T>(string key, T value, TimeSpan expiration)
+    {
+        var serialized = JsonSerializer.Serialize(value);
+        await _database.StringSetAsync(key, serialized, expiration);
+    }
+    
+    public async Task RemoveAsync(string key)
+    {
+        await _database.KeyDeleteAsync(key);
+    }
+}
+
+// Example 2: Configuration Service
+public interface IAppSettings
+{
+    string ApiKey { get; }
+    int MaxRetries { get; }
+    TimeSpan Timeout { get; }
+}
+
+public class AppSettings : IAppSettings
+{
+    public AppSettings(IConfiguration configuration)
+    {
+        ApiKey = configuration["ApiSettings:ApiKey"];
+        MaxRetries = int.Parse(configuration["ApiSettings:MaxRetries"]);
+        Timeout = TimeSpan.FromSeconds(
+            int.Parse(configuration["ApiSettings:TimeoutSeconds"]));
+    }
+    
+    public string ApiKey { get; }
+    public int MaxRetries { get; }
+    public TimeSpan Timeout { get; }
+}
+
+// Registration
+builder.Services.AddSingleton<IAppSettings, AppSettings>();
+
+// Example 3: Connection Pool Manager
+public interface IConnectionPool
+{
+    Task<DbConnection> GetConnectionAsync();
+    void ReturnConnection(DbConnection connection);
+}
+
+public class ConnectionPool : IConnectionPool, IDisposable
+{
+    private readonly ConcurrentBag<DbConnection> _connections;
+    private readonly string _connectionString;
+    private readonly SemaphoreSlim _semaphore;
+    
+    public ConnectionPool(IConfiguration configuration)
+    {
+        _connectionString = configuration.GetConnectionString("DefaultConnection");
+        _connections = new ConcurrentBag<DbConnection>();
+        _semaphore = new SemaphoreSlim(10, 10); // Max 10 connections
+    }
+    
+    public async Task<DbConnection> GetConnectionAsync()
+    {
+        await _semaphore.WaitAsync();
+        
+        if (_connections.TryTake(out var connection))
+        {
+            if (connection.State == ConnectionState.Open)
+                return connection;
+            
+            connection.Dispose();
+        }
+        
+        connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+        return connection;
+    }
+    
+    public void ReturnConnection(DbConnection connection)
+    {
+        _connections.Add(connection);
+        _semaphore.Release();
+    }
+    
+    public void Dispose()
+    {
+        while (_connections.TryTake(out var connection))
+        {
+            connection.Dispose();
+        }
+        
+        _semaphore?.Dispose();
+    }
+}
+```
+
+**Comparison Table:**
+
+| Lifetime | Created | Shared | Disposed | Use Case |
+|----------|---------|--------|----------|----------|
+| **Transient** | Every time | ❌ No | After use | Lightweight, stateless |
+| **Scoped** | Per request | Within request | End of request | DbContext, Unit of Work |
+| **Singleton** | Once | ✅ Application-wide | App shutdown | Cache, Configuration |
+
+**Real-World Complete Example:**
+
+```csharp
+// Program.cs
+var builder = WebApplication.CreateBuilder(args);
+
+// Singleton - Application-wide services
+builder.Services.AddSingleton<ICacheService, RedisCacheService>();
+builder.Services.AddSingleton<IAppSettings, AppSettings>();
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+    ConnectionMultiplexer.Connect("localhost:6379"));
+
+// Scoped - Per-request services
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Transient - Lightweight, stateless services
+builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
+builder.Services.AddTransient<IValidator<CreateOrderRequest>, OrderValidator>();
+
+// MediatR (Transient by default)
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+
+var app = builder.Build();
+app.Run();
+
+// Controller demonstrating all three
+[ApiController]
+[Route("api/[controller]")]
+public class OrdersController : ControllerBase
+{
+    private readonly IOrderService _orderService; // Scoped
+    private readonly ICacheService _cacheService; // Singleton
+    private readonly IEmailService _emailService; // Transient
+    private readonly ILogger<OrdersController> _logger;
+    
+    public OrdersController(
+        IOrderService orderService,
+        ICacheService cacheService,
+        IEmailService emailService,
+        ILogger<OrdersController> logger)
+    {
+        _orderService = orderService;
+        _cacheService = cacheService;
+        _emailService = emailService;
+        _logger = logger;
+        
+        _logger.LogInformation(
+            $"OrderService: {orderService.GetHashCode()}, " +
+            $"CacheService: {cacheService.GetHashCode()}, " +
+            $"EmailService: {emailService.GetHashCode()}");
+    }
+    
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get(int id)
+    {
+        // Check singleton cache
+        var cached = await _cacheService.GetAsync<Order>($"order-{id}");
+        if (cached != null)
+            return Ok(cached);
+        
+        // Fetch using scoped service
+        var order = await _orderService.GetOrderAsync(id);
+        
+        // Cache for future requests
+        await _cacheService.SetAsync($"order-{id}", order, TimeSpan.FromMinutes(5));
+        
+        return Ok(order);
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateOrderRequest request)
+    {
+        // Create using scoped service
+        var order = await _orderService.CreateOrderAsync(request);
+        
+        // Send email using transient service
+        await _emailService.SendAsync(
+            request.CustomerEmail,
+            "Order Confirmation",
+            $"Your order #{order.Id} has been created");
+        
+        // Invalidate cache
+        await _cacheService.RemoveAsync($"orders-customer-{request.CustomerId}");
+        
+        return Ok(order);
+    }
+}
+```
+
+**Key Takeaways:**
+
+1. **Transient** = New instance every time (Email, Validators, Hashers)
+2. **Scoped** = One instance per request (DbContext, Unit of Work, Request Cache)
+3. **Singleton** = One instance for entire app (Cache, Configuration, Connection Pools)
+4. **Thread Safety** = Singleton must be thread-safe; Scoped/Transient don't need to be
+5. **Memory** = Singleton lives longest; Transient shortest
+
+---
+
+This completes the additions to your interview questions document! The questions cover:
+1. ✅ Nested stored procedures with temp tables/variables
+2. ✅ Kafka NuGet package
+3. ✅ Kafka consumer project types
+4. ✅ MediatR pattern vs handler pattern
+5. ✅ CQRS pattern with examples
+6. ✅ Kafka producer and consumer implementation
+7. ✅ Types of dependency injection with real-time examples
+8. ✅ Kafka use cases
+
+All questions include detailed explanations, code examples, and real-world scenarios.
 
