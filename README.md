@@ -23,6 +23,12 @@ The project contains:
 - [C# Extension Methods Guide](docs/CSharp-Extension-Methods-Guide.md) - Complete guide to extension methods including syntax, best practices, real-world examples, advanced scenarios, and 25+ interview questions
 - [Detailed .NET Coding Interview Questions and Answers](docs/dotnet-coding-interview-questions-detailed.md) - Comprehensive set of .NET interview questions with detailed explanations and code examples covering API design, performance, security, architecture, and best practices
 
+### Coding Interview Questions (Must-Know for 7+ Years Experience)
+
+- [C# / .NET Core - Must-Know Coding Questions (Complete Guide)](docs/CSharp-DotNetCore-Coding-Interview-Questions-Complete.md) - Comprehensive guide covering Collections & LINQ, String Manipulation, Date & Time, Multithreading & Async, Thread Safety, OOP Design, Data Structures, ASP.NET Core, Dependency Injection, Database & SQL, Microservices, Real-World Scenarios, and System Design with detailed examples and best practices
+- [C# / .NET Core - Interview Coding Questions](docs/CSharp-DotNetCore-Interview-Coding-Questions.md) - Collection of common coding questions asked in C# and .NET Core interviews with solutions and explanations
+- [GitHub Copilot Interview Questions](docs/Copilot-Interview-Questions.md) - Interview questions and insights about GitHub Copilot, AI-assisted development, and best practices for using AI coding assistants
+
 ### SOLID Design Principles (Object-Oriented Design Foundation)
 
 #### **SOLID Overview**
