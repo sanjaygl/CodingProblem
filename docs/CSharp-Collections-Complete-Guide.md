@@ -1,1573 +1,678 @@
-# C# Collections - Complete Technical & Academic Guide
+# C# Collections - Complete Technical Guide
 
-## Table of Contents
-1. [Introduction to Collections](#introduction-to-collections)
-2. [Academic Foundation](#academic-foundation)
-3. [Classification of Collections](#classification-of-collections)
-4. [Arrays](#arrays)
-5. [Non-Generic Collections](#non-generic-collections)
-6. [Generic Collections](#generic-collections)
-7. [Concurrent Collections](#concurrent-collections)
-8. [Collection Interfaces](#collection-interfaces)
-9. [Performance Comparison](#performance-comparison)
-10. [Real-World Use Cases](#real-world-use-cases)
-11. [Interview Questions](#interview-questions)
-12. [Quick Reference Summary](#quick-reference-summary)
+> **Comprehensive Interview Guide** | .NET 6, 7, 8+ | Beginner to Expert Level
 
 ---
 
-## Introduction to Collections
+## 📑 Table of Contents
 
-### Academic Foundation of Collections
+### [Core Concepts](#core-concepts)
+1. [What are Collections in C#?](#1-what-are-collections-in-c)
+2. [Difference between Array and Collection?](#2-difference-between-array-and-collection)
+3. [What are Generic and Non-Generic Collections?](#3-what-are-generic-and-non-generic-collections)
+4. [Why prefer Generic Collections over Non-Generic?](#4-why-prefer-generic-collections-over-non-generic)
 
-Collections in computer science represent abstract data types (ADTs) that store and organize multiple elements. They are fundamental building blocks in software engineering, providing standardized ways to manage data with well-defined operations and complexity guarantees.
+### [List and ArrayList](#list-and-arraylist)
+5. [What is List<T>?](#5-what-is-listt)
+6. [What is ArrayList?](#6-what-is-arraylist)
+7. [Difference between List<T> and ArrayList?](#7-difference-between-listt-and-arraylist)
+8. [When to use List<T>?](#8-when-to-use-listt)
+9. [How does List<T> resize internally?](#9-how-does-listt-resize-internally)
+10. [What is the capacity of List<T>?](#10-what-is-the-capacity-of-listt)
 
-#### **Theoretical Background**
-Collections evolved from mathematical concepts of sets, sequences, and mappings. They embody several key computer science principles:
+### [Dictionary and Hashtable](#dictionary-and-hashtable)
+11. [What is Dictionary<TKey, TValue>?](#11-what-is-dictionarytkey-tvalue)
+12. [What is Hashtable?](#12-what-is-hashtable)
+13. [Difference between Dictionary and Hashtable?](#13-difference-between-dictionary-and-hashtable)
+14. [How does Dictionary handle collisions?](#14-how-does-dictionary-handle-collisions)
+15. [What happens if key doesn't exist in Dictionary?](#15-what-happens-if-key-doesnt-exist-in-dictionary)
+16. [What is TryGetValue in Dictionary?](#16-what-is-trygetvalue-in-dictionary)
+17. [Can Dictionary have duplicate keys?](#17-can-dictionary-have-duplicate-keys)
 
-1. **Abstract Data Types (ADTs)**: Collections define operations independent of implementation
-2. **Data Structure Theory**: Each collection type optimizes for specific access patterns
-3. **Algorithmic Complexity**: Collections provide predictable performance characteristics
-4. **Memory Management**: Efficient allocation and deallocation strategies
-5. **Type Theory**: Generic collections ensure type safety at compile time
+### [HashSet and SortedSet](#hashset-and-sortedset)
+18. [What is HashSet<T>?](#18-what-is-hashsett)
+19. [What is SortedSet<T>?](#19-what-is-sortedsett)
+20. [Difference between HashSet and List?](#20-difference-between-hashset-and-list)
+21. [When to use HashSet?](#21-when-to-use-hashset)
+22. [What are set operations in HashSet?](#22-what-are-set-operations-in-hashset)
 
-#### **Academic Classification Framework**
-Collections can be academically classified along multiple dimensions:
+### [Queue and Stack](#queue-and-stack)
+23. [What is Queue<T>?](#23-what-is-queuet)
+24. [What is Stack<T>?](#24-what-is-stackt)
+25. [Difference between Queue and Stack?](#25-difference-between-queue-and-stack)
+26. [Real-time use case of Queue?](#26-real-time-use-case-of-queue)
+27. [Real-time use case of Stack?](#27-real-time-use-case-of-stack)
 
-**By Access Pattern:**
-- **Sequential Access**: Elements accessed in order (Lists, Queues, Stacks)
-- **Random Access**: Elements accessed by index/key (Arrays, Dictionaries)
-- **Associative Access**: Elements accessed by key-value relationships
+### [LinkedList](#linkedlist)
+28. [What is LinkedList<T>?](#28-what-is-linkedlistt)
+29. [Difference between List and LinkedList?](#29-difference-between-list-and-linkedlist)
+30. [When to use LinkedList?](#30-when-to-use-linkedlist)
 
-**By Mutability:**
-- **Immutable**: Cannot be modified after creation
-- **Mutable**: Can be modified after creation
-- **Append-Only**: Can only add elements, not remove or modify
+### [Concurrent Collections](#concurrent-collections)
+31. [What are Concurrent Collections?](#31-what-are-concurrent-collections)
+32. [What is ConcurrentDictionary?](#32-what-is-concurrentdictionary)
+33. [What is ConcurrentQueue?](#33-what-is-concurrentqueue)
+34. [What is ConcurrentBag?](#34-what-is-concurrentbag)
+35. [When to use Concurrent Collections?](#35-when-to-use-concurrent-collections)
 
-**By Ordering:**
-- **Ordered**: Maintains insertion or sort order
-- **Unordered**: No guaranteed order
-- **Sorted**: Maintains elements in sorted order
+### [Immutable Collections](#immutable-collections)
+36. [What are Immutable Collections?](#36-what-are-immutable-collections)
+37. [Benefits of Immutable Collections?](#37-benefits-of-immutable-collections)
+38. [What is ImmutableList?](#38-what-is-immutablelist)
+39. [What is ImmutableDictionary?](#39-what-is-immutabledictionary)
 
-### Why Collections Are Needed
+### [Specialized Collections](#specialized-collections)
+40. [What is SortedList?](#40-what-is-sortedlist)
+41. [What is SortedDictionary?](#41-what-is-sorteddictionary)
+42. [Difference between SortedList and SortedDictionary?](#42-difference-between-sortedlist-and-sorteddictionary)
+43. [What is ObservableCollection?](#43-what-is-observablecollection)
+44. [What is BitArray?](#44-what-is-bitarray)
 
-Collections in C# provide dynamic data structures that can grow and shrink at runtime, unlike arrays which have fixed size. They offer:
+### [Interfaces](#interfaces)
+45. [What is IEnumerable<T>?](#45-what-is-ienumerablet)
+46. [What is ICollection<T>?](#46-what-is-icollectiont)
+47. [What is IList<T>?](#47-what-is-ilistt)
+48. [Difference between IEnumerable and ICollection?](#48-difference-between-ienumerable-and-icollection)
+49. [What is IReadOnlyCollection<T>?](#49-what-is-ireadonlycollectiont)
+50. [What is IReadOnlyList<T>?](#50-what-is-ireadonlylistt)
 
-#### **Dynamic Sizing**
-- **Academic Principle**: Amortized analysis ensures efficient growth
-- **Implementation**: Exponential growth strategy (typically doubling capacity)
-- **Benefit**: O(1) amortized insertion time despite occasional O(n) resize operations
+### [Performance and Best Practices](#performance-and-best-practices)
+51. [Time complexity of List operations?](#51-time-complexity-of-list-operations)
+52. [Time complexity of Dictionary operations?](#52-time-complexity-of-dictionary-operations)
+53. [Time complexity of HashSet operations?](#53-time-complexity-of-hashset-operations)
+54. [When to use List vs LinkedList?](#54-when-to-use-list-vs-linkedlist)
+55. [When to use Dictionary vs List?](#55-when-to-use-dictionary-vs-list)
+56. [How to avoid boxing/unboxing in collections?](#56-how-to-avoid-boxingunboxing-in-collections)
+57. [What is Collection initialization syntax?](#57-what-is-collection-initialization-syntax)
+58. [What is the benefit of AsReadOnly()?](#58-what-is-the-benefit-of-asreadonly)
 
-#### **Type Safety**
-- **Academic Principle**: Type theory and generic programming
-- **Implementation**: Compile-time type checking through generics
-- **Benefit**: Eliminates runtime type errors and boxing/unboxing overhead
+### [Advanced Topics](#advanced-topics)
+59. [What is yield return in collections?](#59-what-is-yield-return-in-collections)
+60. [What is lazy evaluation with IEnumerable?](#60-what-is-lazy-evaluation-with-ienumerable)
+61. [Difference between ToList() and AsEnumerable()?](#61-difference-between-tolist-and-asenumerable)
+62. [What is the difference between Add and AddRange?](#62-what-is-the-difference-between-add-and-addrange)
+63. [How to sort collections in C#?](#63-how-to-sort-collections-in-c)
+64. [What is IComparer and IComparable?](#64-what-is-icomparer-and-icomparable)
+65. [What is the purpose of EqualityComparer?](#65-what-is-the-purpose-of-equalitycomparer)
 
-#### **Rich Functionality**
-- **Academic Principle**: Algorithm design and complexity analysis
-- **Implementation**: Optimized algorithms for common operations
-- **Benefit**: Built-in methods for searching, sorting, filtering with known complexity
-
-#### **Memory Management**
-- **Academic Principle**: Memory allocation strategies and garbage collection
-- **Implementation**: Efficient memory allocation and deallocation
-- **Benefit**: Automatic memory management with minimal overhead
-
-#### **Thread Safety**
-- **Academic Principle**: Concurrent programming and synchronization
-- **Implementation**: Lock-free algorithms and atomic operations
-- **Benefit**: Safe concurrent access without explicit synchronization
-
-```csharp
-/// <summary>
-/// Academic Example: Demonstrating Collection Benefits
-/// 
-/// This example illustrates the theoretical advantages of collections
-/// over fixed-size arrays in terms of flexibility and functionality.
-/// </summary>
-public class CollectionBenefitsDemo
-{
-    public void DemonstrateArrayLimitations()
-    {
-        // Problem with arrays - fixed size constraint
-        // Academic Explanation: Arrays in C# are statically sized, meaning their length is set at creation and cannot be changed. This is efficient for memory and performance, but inflexible for dynamic data scenarios.
-        int[] numbers = new int[5]; // Compile-time size constraint
-
-        // Cannot grow beyond initial capacity
-        // numbers[5] = 6; // Runtime exception: IndexOutOfRangeException
-        // Academic Explanation: Attempting to access or assign beyond the array's bounds results in a runtime exception, demonstrating the limitations of static sizing.
-
-        // No built-in search functionality
-        // Academic Explanation: Arrays do not provide built-in search or query methods. Searching requires manual iteration, which is O(n) time complexity.
-        bool contains = false;
-        for (int i = 0; i < numbers.Length; i++)
-        {
-            if (numbers[i] == 3)
-            {
-                contains = true;
-                break;
-            }
-        }
-        // Academic Note: This manual search loop is less readable and maintainable than using collection methods.
-    }
-
-    public void DemonstrateCollectionAdvantages()
-    {
-        // Solution with collections - dynamic sizing
-        // Academic Explanation: Collections like List<T> are dynamically sized, growing as needed. This is achieved through internal resizing strategies (amortized analysis), making them suitable for scenarios with unpredictable data volume.
-        List<int> numbersList = new List<int>(); // Dynamic capacity
-
-        // Can grow indefinitely (within memory constraints)
-        for (int i = 0; i < 1000000; i++)
-        {
-            numbersList.Add(i); // O(1) amortized time complexity
-        }
-        // Academic Note: List<T> uses an internal array that doubles in size when capacity is exceeded, ensuring efficient insertions on average.
-
-        // Rich built-in functionality with optimal algorithms
-        bool contains = numbersList.Contains(500000); // O(n) linear search
-        int index = numbersList.BinarySearch(500000); // O(log n) if sorted
-        var evenNumbers = numbersList.Where(x => x % 2 == 0).ToList(); // LINQ support
-        // Academic Explanation: Collections provide built-in methods for searching, sorting, and filtering, improving code clarity and leveraging optimized algorithms.
-
-        // Type safety with generics
-        // numbersList.Add("string"); // Compile-time error
-        // Academic Note: Generics enforce type safety at compile time, preventing runtime errors and eliminating boxing/unboxing overhead.
-    }
-}
-```
-
-### Academic Analysis: When to Use Collections vs Arrays
-
-#### **Use Arrays When:**
-
-**Mathematical Operations and Performance-Critical Code:**
-```csharp
-/// <summary>
-/// Academic Example: Array Usage for Mathematical Operations
-/// 
-/// Arrays provide optimal performance for mathematical computations
-/// due to contiguous memory layout and minimal overhead.
-/// </summary>
-public class MathematicalOperations
-{
-    // Matrix multiplication - arrays provide optimal cache performance
-    public double[,] MultiplyMatrices(double[,] a, double[,] b)
-    {
-        int rows = a.GetLength(0);
-        int cols = b.GetLength(1);
-        int common = a.GetLength(1);
-        
-        double[,] result = new double[rows, cols];
-        
-        // Contiguous memory access pattern optimizes cache usage
-        for (int i = 0; i < rows; i++)
-        {
-            for (int j = 0; j < cols; j++)
-            {
-                for (int k = 0; k < common; k++)
-                {
-                    result[i, j] += a[i, k] * b[k, j];
-                }
-            }
-        }
-        
-        return result;
-    }
-    
-    // Signal processing - fixed-size buffers
-    public void ProcessSignal(double[] samples)
-    {
-        // FFT algorithms require power-of-2 sized arrays
-        int n = samples.Length;
-        if ((n & (n - 1)) != 0) // Check if power of 2
-        {
-            throw new ArgumentException("Array size must be power of 2");
-        }
-        
-        // In-place FFT processing
-        FastFourierTransform(samples);
-    }
-    
-    private void FastFourierTransform(double[] samples)
-    {
-        // Implementation would go here
-        // Arrays provide predictable memory layout for optimization
-    }
-}
-```
-
-**Interop with Unmanaged Code:**
-```csharp
-/// <summary>
-/// Academic Example: Array Usage for Interoperability
-/// 
-/// Arrays provide direct memory mapping for P/Invoke scenarios
-/// </summary>
-public class InteropExample
-{
-    [DllImport("kernel32.dll")]
-    private static extern bool ReadFile(IntPtr handle, byte[] buffer, 
-        uint bytesToRead, out uint bytesRead, IntPtr overlapped);
-    
-    public byte[] ReadFileData(IntPtr fileHandle, int bufferSize)
-    {
-        // Arrays provide direct memory mapping for P/Invoke
-        byte[] buffer = new byte[bufferSize];
-        uint bytesRead;
-        
-        if (ReadFile(fileHandle, buffer, (uint)bufferSize, out bytesRead, IntPtr.Zero))
-        {
-            // Resize array to actual data size
-            Array.Resize(ref buffer, (int)bytesRead);
-        }
-        
-        return buffer;
-    }
-}
-```
-
-#### **Use Collections When:**
-
-**Dynamic Requirements and Rich Functionality:**
-```csharp
-/// <summary>
-/// Academic Example: Collection Usage for Dynamic Scenarios
-/// 
-/// Collections provide flexibility and rich functionality
-/// for scenarios with changing requirements.
-/// </summary>
-public class DynamicDataProcessing
-{
-    // Event processing with unknown number of events
-    public void ProcessEvents(IEnumerable<Event> eventStream)
-    {
-        var eventsByType = new Dictionary<EventType, List<Event>>();
-        var recentEvents = new Queue<Event>();
-        var uniqueUsers = new HashSet<string>();
-        
-        foreach (var evt in eventStream)
-        {
-            // Dynamic grouping by type
-            if (!eventsByType.ContainsKey(evt.Type))
-            {
-                eventsByType[evt.Type] = new List<Event>();
-            }
-            eventsByType[evt.Type].Add(evt);
-            
-            // Sliding window of recent events
-            recentEvents.Enqueue(evt);
-            if (recentEvents.Count > 1000)
-            {
-                recentEvents.Dequeue();
-            }
-            
-            // Unique user tracking
-            uniqueUsers.Add(evt.UserId);
-        }
-        
-        // Rich querying capabilities with LINQ
-        var topEventTypes = eventsByType
-            .OrderByDescending(kvp => kvp.Value.Count)
-            .Take(10)
-            .Select(kvp => new { Type = kvp.Key, Count = kvp.Value.Count })
-            .ToList();
-    }
-    
-    // Configuration management with type safety
-    public class ConfigurationManager
-    {
-        private readonly Dictionary<string, object> _settings = new();
-        
-        public T GetSetting<T>(string key, T defaultValue = default(T))
-        {
-            if (_settings.TryGetValue(key, out var value) && value is T typedValue)
-            {
-                return typedValue;
-            }
-            return defaultValue;
-        }
-        
-        public void SetSetting<T>(string key, T value)
-        {
-            _settings[key] = value;
-        }
-    }
-}
-```
-
-### Academic Performance Characteristics
-
-#### **Theoretical Complexity Analysis**
-
-| Operation | Array | List<T> | Dictionary<T> | HashSet<T> |
-|-----------|-------|---------|---------------|------------|
-| **Access by Index** | O(1) | O(1) | N/A | N/A |
-| **Access by Key** | N/A | N/A | O(1) avg | N/A |
-| **Search** | O(n) | O(n) | O(1) avg | O(1) avg |
-| **Insert at End** | N/A | O(1) amortized | O(1) avg | O(1) avg |
-| **Insert at Beginning** | N/A | O(n) | N/A | N/A |
-| **Delete** | N/A | O(n) | O(1) avg | O(1) avg |
-| **Memory Overhead** | Minimal | Low | Medium | Medium |
-
-#### **Amortized Analysis Example**
-```csharp
-/// <summary>
-/// Academic Example: Amortized Analysis of Dynamic Array Growth
-/// 
-/// This demonstrates why List<T> provides O(1) amortized insertion
-/// despite occasional O(n) resize operations.
-/// </summary>
-public class AmortizedAnalysisDemo
-{
-    public void DemonstrateAmortizedComplexity()
-    {
-        var list = new List<int>();
-        var operationCosts = new List<int>();
-        
-        // Track the cost of each insertion
-        for (int i = 0; i < 1000; i++)
-        {
-            int capacityBefore = list.Capacity;
-            list.Add(i);
-            int capacityAfter = list.Capacity;
-            
-            // Cost is 1 for normal insertion, n for resize operation
-            int cost = (capacityAfter > capacityBefore) ? capacityAfter : 1;
-            operationCosts.Add(cost);
-        }
-        
-        // Calculate amortized cost
-        double totalCost = operationCosts.Sum();
-        double amortizedCost = totalCost / operationCosts.Count;
-        
-        Console.WriteLine($"Total operations: {operationCosts.Count}");
-        Console.WriteLine($"Total cost: {totalCost}");
-        Console.WriteLine($"Amortized cost per operation: {amortizedCost:F2}");
-        // Result: Amortized cost approaches 2 (constant time)
-    }
-}
+### [Practical Scenarios](#practical-scenarios)
+66. [How to remove duplicates from List?](#66-how-to-remove-duplicates-from-list)
+67. [How to find common elements between two lists?](#67-how-to-find-common-elements-between-two-lists)
+68. [How to merge two dictionaries?](#68-how-to-merge-two-dictionaries)
+69. [How to convert List to Dictionary?](#69-how-to-convert-list-to-dictionary)
+70. [How to check if collection is null or empty?](#70-how-to-check-if-collection-is-null-or-empty)
 
 ---
 
-## Academic Foundation
+## Core Concepts
 
-### Theoretical Computer Science Principles
+### 1. What are Collections in C#?
 
-#### **Abstract Data Types (ADTs)**
-Collections implement Abstract Data Types, which define:
-- **Interface**: Set of operations that can be performed
-- **Semantics**: What each operation does (not how)
-- **Complexity**: Performance guarantees for each operation
+**Answer:**  
+Collections are data structures that store and manage groups of related objects. They provide methods for adding, removing, searching, and sorting elements. Collections are part of `System.Collections` and `System.Collections.Generic` namespaces.
 
-#### **Data Structure Theory**
-Each collection type is optimized for specific access patterns:
-- **Arrays**: Contiguous memory, O(1) random access
-- **Linked Lists**: Node-based, O(1) insertion/deletion at known positions
-- **Hash Tables**: Hash-based, O(1) average case key-value operations
-- **Trees**: Hierarchical, O(log n) operations for balanced trees
-
-#### **Algorithmic Complexity Theory**
-Collections provide predictable performance through:
-- **Worst-case Analysis**: Maximum time for any input
-- **Average-case Analysis**: Expected time for random input
-- **Amortized Analysis**: Average time over sequence of operations
-
-#### **Memory Management Theory**
-Collections implement various memory strategies:
-- **Contiguous Allocation**: Arrays, List<T> (better cache locality)
-- **Linked Allocation**: LinkedList<T> (flexible but poor cache performance)
-- **Hash-based Allocation**: Dictionary<T>, HashSet<T> (trade memory for speed)
-
-#### **Concurrency Theory**
-Concurrent collections implement:
-- **Lock-free Algorithms**: Using atomic operations and memory barriers
-- **Compare-and-Swap (CAS)**: Atomic read-modify-write operations
-- **Memory Models**: Ensuring visibility and ordering of operations across threads
-
----
-
-## Classification of Collections
-
-### Academic Classification Framework
-
-Collections can be classified along multiple theoretical dimensions:
-
-#### **By Mathematical Structure**
-```
-Mathematical Foundations
-├── Sequences (Ordered Collections)
-│   ├── Arrays - Fixed-size sequences
-│   ├── Lists - Dynamic sequences
-│   └── Queues/Stacks - Restricted sequences
-├── Sets (Unordered, Unique Elements)
-│   ├── HashSet - Hash-based sets
-│   └── SortedSet - Ordered sets
-├── Mappings (Key-Value Associations)
-│   ├── Dictionary - Hash-based mappings
-│   └── SortedDictionary - Ordered mappings
-└── Multisets (Allow Duplicates)
-    └── List - Sequence allowing duplicates
-```
-
-#### **By Access Pattern Complexity**
-```
-Access Pattern Analysis
-├── O(1) Random Access
-│   ├── Arrays
-│   └── List<T> (by index)
-├── O(1) Key-based Access (Average Case)
-│   ├── Dictionary<TKey, TValue>
-│   └── HashSet<T>
-├── O(log n) Ordered Access
-│   ├── SortedDictionary<TKey, TValue>
-│   └── SortedSet<T>
-└── O(n) Sequential Access
-    ├── LinkedList<T>
-    └── Linear search operations
-```
-
-#### **By Memory Layout**
-```
-Memory Organization
-├── Contiguous Memory (Cache-Friendly)
-│   ├── Arrays
-│   ├── List<T>
-│   └── Stack<T>
-├── Linked Memory (Flexible)
-│   └── LinkedList<T>
-└── Hash-based Memory (Distributed)
-    ├── Dictionary<TKey, TValue>
-    └── HashSet<T>
-```
-
-### Implementation Hierarchy in C#
-
-```
-C# Collections Hierarchy
-├── Arrays (System.Array)
-│   ├── Single-dimensional: T[]
-│   ├── Multi-dimensional: T[,]
-│   └── Jagged Arrays: T[][]
-├── Non-Generic Collections (System.Collections)
-│   ├── ArrayList (Dynamic array of objects)
-│   ├── Hashtable (Hash table of objects)
-│   ├── Queue (FIFO queue of objects)
-│   ├── Stack (LIFO stack of objects)
-│   └── SortedList (Sorted key-value pairs)
-├── Generic Collections (System.Collections.Generic)
-│   ├── List<T> (Dynamic array with type safety)
-│   ├── Dictionary<TKey, TValue> (Hash table with type safety)
-│   ├── HashSet<T> (Hash-based set)
-│   ├── Queue<T> (FIFO queue with type safety)
-│   ├── Stack<T> (LIFO stack with type safety)
-│   ├── LinkedList<T> (Doubly-linked list)
-│   ├── SortedDictionary<TKey, TValue> (Red-black tree)
-│   └── SortedSet<T> (Red-black tree set)
-└── Concurrent Collections (System.Collections.Concurrent)
-    ├── ConcurrentDictionary<TKey, TValue> (Lock-free hash table)
-    ├── ConcurrentQueue<T> (Lock-free FIFO queue)
-    ├── ConcurrentStack<T> (Lock-free LIFO stack)
-    ├── ConcurrentBag<T> (Lock-free unordered collection)
-    └── BlockingCollection<T> (Producer-consumer collection)
-```
-
-### Academic Analysis of Design Decisions
-
-#### **Generic vs Non-Generic Collections**
+**Example:**
 ```csharp
-/// <summary>
-/// Academic Analysis: Type Safety and Performance Impact
-/// 
-/// This comparison demonstrates the theoretical and practical
-/// benefits of generic collections over non-generic ones.
-/// </summary>
-public class GenericVsNonGenericAnalysis
-{
-    public void DemonstrateBoxingOverhead()
-    {
-        // Non-generic collection - boxing overhead
-        ArrayList arrayList = new ArrayList();
-        
-        // Boxing: value type -> reference type (heap allocation)
-        arrayList.Add(42);        // int -> object (boxing)
-        arrayList.Add(3.14);      // double -> object (boxing)
-        
-        // Unboxing: reference type -> value type (type checking + cast)
-        int value1 = (int)arrayList[0];     // object -> int (unboxing)
-        double value2 = (double)arrayList[1]; // object -> double (unboxing)
-        
-        // Generic collection - no boxing
-        List<int> intList = new List<int>();
-        List<double> doubleList = new List<double>();
-        
-        intList.Add(42);        // Direct storage, no boxing
-        doubleList.Add(3.14);   // Direct storage, no boxing
-        
-        int directValue1 = intList[0];     // Direct access, no unboxing
-        double directValue2 = doubleList[0]; // Direct access, no unboxing
-    }
-    
-    public void DemonstrateTypesSafety()
-    {
-        // Non-generic - runtime type errors possible
-        ArrayList mixedList = new ArrayList();
-        mixedList.Add(42);
-        mixedList.Add("Hello");
-        
-        // Runtime error - no compile-time checking
-        try
-        {
-            int sum = 0;
-            foreach (object item in mixedList)
-            {
-                sum += (int)item; // InvalidCastException for "Hello"
-            }
-        }
-        catch (InvalidCastException ex)
-        {
-            Console.WriteLine($"Runtime error: {ex.Message}");
-        }
-        
-        // Generic - compile-time type safety
-        List<int> typedList = new List<int>();
-        typedList.Add(42);
-        // typedList.Add("Hello"); // Compile-time error
-        
-        int safeSum = 0;
-        foreach (int item in typedList)
-        {
-            safeSum += item; // Type-safe, no casting needed
-        }
-    }
-}
-```
-
-#### **Concurrent vs Non-Concurrent Collections**
-```csharp
-/// <summary>
-/// Academic Analysis: Concurrency and Thread Safety
-/// 
-/// This demonstrates the theoretical foundations of concurrent
-/// collections and their performance trade-offs.
-/// </summary>
-public class ConcurrencyAnalysis
-{
-    public void DemonstrateThreadSafetyIssues()
-    {
-        // Non-thread-safe collection
-        var unsafeDict = new Dictionary<int, string>();
-        
-        // Race condition - can cause corruption or exceptions
-        Parallel.For(0, 1000, i =>
-        {
-            // Multiple threads modifying simultaneously
-            // Can cause: KeyNotFoundException, ArgumentException, or corruption
-            try
-            {
-                unsafeDict[i] = $"Value {i}";
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Race condition error: {ex.GetType().Name}");
-            }
-        });
-        
-        // Thread-safe concurrent collection
-        var safeDict = new ConcurrentDictionary<int, string>();
-        
-        // Lock-free operations - safe for concurrent access
-        Parallel.For(0, 1000, i =>
-        {
-            safeDict[i] = $"Value {i}"; // Thread-safe operation
-        });
-        
-        Console.WriteLine($"Unsafe dictionary count: {unsafeDict.Count}");
-        Console.WriteLine($"Safe dictionary count: {safeDict.Count}");
-    }
-    
-    public void DemonstratePerformanceTradeoffs()
-    {
-        const int iterations = 1000000;
-        
-        // Single-threaded performance
-        var regularDict = new Dictionary<int, int>();
-        var stopwatch = Stopwatch.StartNew();
-        
-        for (int i = 0; i < iterations; i++)
-        {
-            regularDict[i] = i * 2;
-        }
-        
-        stopwatch.Stop();
-        Console.WriteLine($"Regular Dictionary: {stopwatch.ElapsedMilliseconds}ms");
-        
-        // Concurrent collection performance
-        var concurrentDict = new ConcurrentDictionary<int, int>();
-        stopwatch.Restart();
-        
-        for (int i = 0; i < iterations; i++)
-        {
-            concurrentDict[i] = i * 2;
-        }
-        
-        stopwatch.Stop();
-        Console.WriteLine($"Concurrent Dictionary: {stopwatch.ElapsedMilliseconds}ms");
-        
-        // Concurrent collections have overhead but provide thread safety
-    }
-}
+List<string> names = new List<string> { "Alice", "Bob", "Charlie" };
+Dictionary<int, string> employees = new Dictionary<int, string>();
 ```
 
 ---
 
-## Arrays
+### 2. Difference between Array and Collection?
 
-### Academic Foundation of Arrays
+**Answer:**  
+Arrays have fixed size and are type-safe but cannot grow dynamically. Collections can grow/shrink dynamically and provide rich functionality like sorting, searching, and filtering. Arrays are faster for indexed access, collections offer more flexibility.
 
-Arrays are the most fundamental data structure in computer science, representing a contiguous block of memory containing elements of the same type. They provide the foundation for understanding more complex data structures and are essential for performance-critical applications.
-
-#### **Theoretical Properties**
-- **Homogeneous**: All elements must be of the same type
-- **Fixed Size**: Size determined at creation time
-- **Contiguous Memory**: Elements stored in adjacent memory locations
-- **Random Access**: O(1) access time to any element by index
-- **Cache Friendly**: Sequential access patterns optimize CPU cache usage
-
-#### **Mathematical Model**
-An array A of size n can be modeled as a function:
-```
-A: {0, 1, 2, ..., n-1} → T
-```
-Where T is the element type, and the function maps indices to values.
-
-### Single-Dimensional Arrays
-
-#### **Academic Analysis**
-Single-dimensional arrays represent the simplest form of indexed collections, providing direct mapping from integer indices to memory addresses.
-
-**Memory Layout:**
-```
-Address Calculation: address(A[i]) = base_address + (i × element_size)
-```
-
-**Time Complexity:**
-- Access: O(1)
-- Search: O(n) for unsorted, O(log n) for sorted
-- Insertion: Not supported (fixed size)
-- Deletion: Not supported (fixed size)
-
+**Example:**
 ```csharp
-/// <summary>
-/// Academic Example: Single-Dimensional Array Operations
-/// 
-/// This demonstrates the theoretical properties and practical
-/// usage of single-dimensional arrays in C#.
-/// </summary>
-public class SingleDimensionalArrayAnalysis
-{
-    public void DemonstrateArrayProperties()
-    {
-        // Declaration and initialization methods
-        int[] numbers = new int[5];                    // Zero-initialized
-        string[] names = {"Alice", "Bob", "Charlie"};  // Literal initialization
-        int[] values = new int[] {1, 2, 3, 4, 5};     // Explicit initialization
-        
-        // Array properties - all O(1) operations
-        Console.WriteLine($"Length: {numbers.Length}");        // Number of elements
-        Console.WriteLine($"Rank: {numbers.Rank}");           // Number of dimensions (1)
-        Console.WriteLine($"Lower bound: {numbers.GetLowerBound(0)}"); // Always 0 in C#
-        Console.WriteLine($"Upper bound: {numbers.GetUpperBound(0)}"); // Length - 1
-        
-        // Random access - O(1) time complexity
-        numbers[0] = 10;  // Direct memory access
-        int first = numbers[0]; // Direct memory read
-        
-        // Bounds checking in C# (unlike C/C++)
-        try
-        {
-            numbers[10] = 100; // Throws IndexOutOfRangeException
-        }
-        catch (IndexOutOfRangeException ex)
-        {
-            Console.WriteLine($"Bounds checking prevented: {ex.Message}");
-        }
-    }
-    
-    public void DemonstrateIterationPatterns()
-    {
-        int[] array = {1, 2, 3, 4, 5};
-        
-        // Index-based iteration - optimal for random access
-        for (int i = 0; i < array.Length; i++)
-        {
-            Console.WriteLine($"Index {i}: {array[i]}");
-        }
-        
-        // Enhanced for loop - optimal for sequential access
-        foreach (int value in array)
-        {
-            Console.WriteLine($"Value: {value}");
-        }
-        
-        // LINQ operations - functional programming approach
-        var evenNumbers = array.Where(x => x % 2 == 0).ToArray();
-        var doubled = array.Select(x => x * 2).ToArray();
-        int sum = array.Sum(); // O(n) reduction operation
-    }
-    
-    public void DemonstrateArrayAlgorithms()
-    {
-        int[] unsorted = {64, 34, 25, 12, 22, 11, 90};
-        int[] sorted = (int[])unsorted.Clone();
-        
-        // Built-in sorting - Introsort (hybrid algorithm)
-        // Average case: O(n log n), Worst case: O(n log n)
-        Array.Sort(sorted);
-        
-        // Binary search - requires sorted array
-        // Time complexity: O(log n)
-        int index = Array.BinarySearch(sorted, 25);
-        Console.WriteLine($"Element 25 found at index: {index}");
-        
-        // Linear search - works on unsorted arrays
-        // Time complexity: O(n)
-        int linearIndex = Array.IndexOf(unsorted, 25);
-        Console.WriteLine($"Linear search found 25 at index: {linearIndex}");
-        
-        // Array reversal - O(n) time, O(1) space
-        Array.Reverse(unsorted);
-        
-        // Array copying - O(n) time
-        int[] copy = new int[unsorted.Length];
-        Array.Copy(unsorted, copy, unsorted.Length);
-    }
-}
-```
+// Array - Fixed size
+string[] arr = new string[3];
 
-### Multi-Dimensional Arrays
-
-#### **Academic Analysis**
-Multi-dimensional arrays extend the array concept to multiple dimensions, representing matrices, tensors, and other mathematical structures.
-
-**Memory Layout (Row-Major Order):**
-```
-For 2D array A[m,n]:
-address(A[i,j]) = base_address + (i × n + j) × element_size
-```
-
-**Mathematical Applications:**
-- Matrix operations (linear algebra)
-- Image processing (2D pixel arrays)
-- Scientific computing (multi-dimensional data)
-- Game development (2D/3D grids)
-
-```csharp
-/// <summary>
-/// Academic Example: Multi-Dimensional Array Applications
-/// 
-/// This demonstrates the mathematical and practical applications
-/// of multi-dimensional arrays in computational scenarios.
-/// </summary>
-public class MultiDimensionalArrayAnalysis
-{
-    public void DemonstrateRectangularArrays()
-    {
-        // Rectangular (multi-dimensional) array - contiguous memory
-        int[,] matrix = new int[3, 4]; // 3 rows, 4 columns
-        int[,] initialized = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-        
-        // Access elements - O(1) time complexity
-        matrix[0, 0] = 10;
-        int value = matrix[1, 2];
-        
-        // Dimension information
-        int rows = matrix.GetLength(0);    // First dimension size
-        int cols = matrix.GetLength(1);    // Second dimension size
-        int totalElements = matrix.Length; // Total number of elements
-        
-        Console.WriteLine($"Matrix dimensions: {rows} × {cols} = {totalElements} elements");
-    }
-    
-    public void DemonstrateMatrixOperations()
-    {
-        // Matrix multiplication example - O(n³) algorithm
-        double[,] matrixA = {{1, 2}, {3, 4}};
-        double[,] matrixB = {{5, 6}, {7, 8}};
-        
-        double[,] result = MultiplyMatrices(matrixA, matrixB);
-        
-        // Display result matrix
-        for (int i = 0; i < result.GetLength(0); i++)
-        {
-            for (int j = 0; j < result.GetLength(1); j++)
-            {
-                Console.Write($"{result[i, j]:F2} ");
-            }
-            Console.WriteLine();
-        }
-    }
-    
-    private double[,] MultiplyMatrices(double[,] a, double[,] b)
-    {
-        int aRows = a.GetLength(0);
-        int aCols = a.GetLength(1);
-        int bRows = b.GetLength(0);
-        int bCols = b.GetLength(1);
-        
-        if (aCols != bRows)
-        {
-            throw new ArgumentException("Matrix dimensions incompatible for multiplication");
-        }
-        
-        double[,] result = new double[aRows, bCols];
-        
-        // Triple nested loop - O(n³) time complexity
-        for (int i = 0; i < aRows; i++)
-        {
-            for (int j = 0; j < bCols; j++)
-            {
-                for (int k = 0; k < aCols; k++)
-                {
-                    result[i, j] += a[i, k] * b[k, j];
-                }
-            }
-        }
-        
-        return result;
-    }
-    
-    public void DemonstrateImageProcessing()
-    {
-        // 2D array representing grayscale image
-        byte[,] image = new byte[100, 100]; // 100x100 pixel image
-        
-        // Initialize with gradient pattern
-        for (int i = 0; i < image.GetLength(0); i++)
-        {
-            for (int j = 0; j < image.GetLength(1); j++)
-            {
-                image[i, j] = (byte)((i + j) % 256);
-            }
-        }
-        
-        // Apply blur filter - convolution operation
-        byte[,] blurred = ApplyBlurFilter(image);
-    }
-    
-    private byte[,] ApplyBlurFilter(byte[,] image)
-    {
-        int rows = image.GetLength(0);
-        int cols = image.GetLength(1);
-        byte[,] result = new byte[rows, cols];
-        
-        // 3x3 blur kernel
-        double[,] kernel = {
-            {1.0/9, 1.0/9, 1.0/9},
-            {1.0/9, 1.0/9, 1.0/9},
-            {1.0/9, 1.0/9, 1.0/9}
-        };
-        
-        // Convolution operation - O(n²) for each pixel
-        for (int i = 1; i < rows - 1; i++)
-        {
-            for (int j = 1; j < cols - 1; j++)
-            {
-                double sum = 0;
-                for (int ki = -1; ki <= 1; ki++)
-                {
-                    for (int kj = -1; kj <= 1; kj++)
-                    {
-                        sum += image[i + ki, j + kj] * kernel[ki + 1, kj + 1];
-                    }
-                }
-                result[i, j] = (byte)Math.Min(255, Math.Max(0, sum));
-            }
-        }
-        
-        return result;
-    }
-}
-```
-
-### Jagged Arrays
-
-#### **Academic Analysis**
-Jagged arrays (arrays of arrays) provide flexibility by allowing each row to have different lengths. They represent a compromise between the efficiency of rectangular arrays and the flexibility of dynamic structures.
-
-**Memory Layout:**
-- Array of references to sub-arrays
-- Each sub-array is independently allocated
-- Less cache-friendly than rectangular arrays
-- More memory overhead due to reference indirection
-
-**Use Cases:**
-- Triangular matrices (upper/lower triangular)
-- Sparse data structures
-- Variable-length records
-- Hierarchical data representation
-
-```csharp
-/// <summary>
-/// Academic Example: Jagged Array Applications
-/// 
-/// This demonstrates scenarios where jagged arrays provide
-/// optimal memory usage and flexibility.
-/// </summary>
-public class JaggedArrayAnalysis
-{
-    public void DemonstrateJaggedArrays()
-    {
-        // Array of arrays - each sub-array can have different length
-        int[][] jaggedArray = new int[3][];
-        jaggedArray[0] = new int[4];     // First row: 4 elements
-        jaggedArray[1] = new int[2];     // Second row: 2 elements
-        jaggedArray[2] = new int[3];     // Third row: 3 elements
-        
-        // Initialize with values
-        int[][] scores = 
-        {
-            new int[] {92, 93, 78, 87},    // Student 1: 4 subjects
-            new int[] {68, 84},            // Student 2: 2 subjects
-            new int[] {90, 91, 88}         // Student 3: 3 subjects
-        };
-        
-        // Access elements - requires two index operations
-        int firstScore = scores[0][0]; // Student 1, Subject 1
-        
-        // Iterate through jagged array
-        for (int i = 0; i < scores.Length; i++)
-        {
-            Console.Write($"Student {i + 1} scores: ");
-            for (int j = 0; j < scores[i].Length; j++)
-            {
-                Console.Write($"{scores[i][j]} ");
-            }
-            Console.WriteLine();
-        }
-    }
-    
-    public void DemonstrateTriangularMatrix()
-    {
-        // Upper triangular matrix using jagged array
-        // Saves memory by not storing zero elements
-        int n = 5;
-        double[][] upperTriangular = new double[n][];
-        
-        for (int i = 0; i < n; i++)
-        {
-            upperTriangular[i] = new double[n - i]; // Decreasing row length
-        }
-        
-        // Fill upper triangular matrix
-        for (int i = 0; i < n; i++)
-        {
-            for (int j = 0; j < upperTriangular[i].Length; j++)
-            {
-                upperTriangular[i][j] = (i + 1) * 10 + (j + i + 1);
-            }
-        }
-        
-        // Display matrix (with zeros for lower triangle)
-        Console.WriteLine("Upper Triangular Matrix:");
-        for (int i = 0; i < n; i++)
-        {
-            // Print leading zeros
-            for (int k = 0; k < i; k++)
-            {
-                Console.Write("0.00 ");
-            }
-            
-            // Print actual values
-            for (int j = 0; j < upperTriangular[i].Length; j++)
-            {
-                Console.Write($"{upperTriangular[i][j]:F2} ");
-            }
-            Console.WriteLine();
-        }
-    }
-    
-    public void DemonstrateSparseDataStructure()
-    {
-        // Sparse matrix representation using jagged arrays
-        // Only store non-zero elements to save memory
-        
-        // Example: 1000x1000 matrix with only 100 non-zero elements
-        // Rectangular array: 1,000,000 elements
-        // Sparse representation: ~200 elements (row indices + values)
-        
-        var sparseMatrix = new SparseMatrix(1000, 1000);
-        
-        // Add some non-zero elements
-        sparseMatrix.SetValue(0, 5, 3.14);
-        sparseMatrix.SetValue(100, 200, 2.71);
-        sparseMatrix.SetValue(500, 750, 1.41);
-        
-        Console.WriteLine($"Matrix size: {sparseMatrix.Rows} × {sparseMatrix.Cols}");
-        Console.WriteLine($"Non-zero elements: {sparseMatrix.NonZeroCount}");
-        Console.WriteLine($"Memory efficiency: {sparseMatrix.MemoryEfficiency:P2}");
-    }
-}
-
-/// <summary>
-/// Academic Example: Sparse Matrix Implementation
-/// 
-/// This demonstrates how jagged arrays can be used to implement
-/// memory-efficient sparse data structures.
-/// </summary>
-public class SparseMatrix
-{
-    private readonly Dictionary<int, Dictionary<int, double>> _data;
-    
-    public int Rows { get; }
-    public int Cols { get; }
-    public int NonZeroCount => _data.Values.Sum(row => row.Count);
-    public double MemoryEfficiency => (double)NonZeroCount / (Rows * Cols);
-    
-    public SparseMatrix(int rows, int cols)
-    {
-        Rows = rows;
-        Cols = cols;
-        _data = new Dictionary<int, Dictionary<int, double>>();
-    }
-    
-    public void SetValue(int row, int col, double value)
-    {
-        if (row < 0 || row >= Rows || col < 0 || col >= Cols)
-        {
-            throw new ArgumentOutOfRangeException("Index out of bounds");
-        }
-        
-        if (Math.Abs(value) < double.Epsilon)
-        {
-            // Remove zero values to maintain sparsity
-            if (_data.ContainsKey(row))
-            {
-                _data[row].Remove(col);
-                if (_data[row].Count == 0)
-                {
-                    _data.Remove(row);
-                }
-            }
-        }
-        else
-        {
-            if (!_data.ContainsKey(row))
-            {
-                _data[row] = new Dictionary<int, double>();
-            }
-            _data[row][col] = value;
-        }
-    }
-    
-    public double GetValue(int row, int col)
-    {
-        if (row < 0 || row >= Rows || col < 0 || col >= Cols)
-        {
-            throw new ArgumentOutOfRangeException("Index out of bounds");
-        }
-        
-        return _data.ContainsKey(row) && _data[row].ContainsKey(col) 
-            ? _data[row][col] 
-            : 0.0;
-    }
-}
-```
-
-### Academic Performance Analysis of Arrays
-
-#### **Cache Performance**
-```csharp
-/// <summary>
-/// Academic Example: Cache Performance Analysis
-/// 
-/// This demonstrates how array access patterns affect
-/// CPU cache performance and overall execution speed.
-/// </summary>
-public class ArrayCachePerformanceAnalysis
-{
-    public void DemonstrateCacheEfficiency()
-    {
-        const int size = 1000;
-        int[,] matrix = new int[size, size];
-        
-        // Initialize matrix
-        for (int i = 0; i < size; i++)
-        {
-            for (int j = 0; j < size; j++)
-            {
-                matrix[i, j] = i * size + j;
-            }
-        }
-        
-        // Row-major access (cache-friendly)
-        var stopwatch = Stopwatch.StartNew();
-        long sum1 = 0;
-        for (int i = 0; i < size; i++)
-        {
-            for (int j = 0; j < size; j++)
-            {
-                sum1 += matrix[i, j]; // Sequential memory access
-            }
-        }
-        stopwatch.Stop();
-        Console.WriteLine($"Row-major access: {stopwatch.ElapsedMilliseconds}ms");
-        
-        // Column-major access (cache-unfriendly)
-        stopwatch.Restart();
-        long sum2 = 0;
-        for (int j = 0; j < size; j++)
-        {
-            for (int i = 0; i < size; i++)
-            {
-                sum2 += matrix[i, j]; // Strided memory access
-            }
-        }
-        stopwatch.Stop();
-        Console.WriteLine($"Column-major access: {stopwatch.ElapsedMilliseconds}ms");
-        
-        Console.WriteLine($"Performance ratio: {(double)stopwatch.ElapsedMilliseconds / stopwatch.ElapsedMilliseconds:F2}x");
-    }
-}
-Console.WriteLine($"Rank: {numbers.Rank}"); // Always 1 for single-dimensional
-
-// Iteration
-foreach (int number in numbers)
-{
-    Console.WriteLine(number);
-}
-
-// Array methods
-Array.Sort(numbers);
-int index = Array.IndexOf(numbers, 3);
-Array.Reverse(numbers);
-```
-
-### Multi-Dimensional Arrays
-
-```csharp
-// Rectangular array
-int[,] matrix = new int[3, 4]; // 3 rows, 4 columns
-int[,] initialized = {{1, 2}, {3, 4}, {5, 6}};
-
-// Access elements
-matrix[0, 0] = 10;
-int value = matrix[1, 2];
-
-// Get dimensions
-int rows = matrix.GetLength(0);    // 3
-int cols = matrix.GetLength(1);    // 4
-```
-
-### Jagged Arrays
-
-```csharp
-// Array of arrays
-int[][] jaggedArray = new int[3][];
-jaggedArray[0] = new int[4];
-jaggedArray[1] = new int[2];
-jaggedArray[2] = new int[3];
-
-// Initialize with values
-int[][] scores = 
-{
-    new int[] {92, 93, 78, 87},
-    new int[] {68, 84},
-    new int[] {90, 91, 88}
-};
-
-// Access elements
-int firstScore = scores[0][0]; // 92
+// Collection - Dynamic size
+List<string> list = new List<string>();
+list.Add("Item1"); // Can grow
 ```
 
 ---
 
-## Non-Generic Collections
+### 3. What are Generic and Non-Generic Collections?
 
-### ArrayList
+**Answer:**  
+Generic collections (`List<T>`, `Dictionary<K,V>`) are type-safe and avoid boxing/unboxing. Non-generic collections (`ArrayList`, `Hashtable`) store objects and require type casting. Generics provide better performance and compile-time type checking.
 
-**Characteristics:**
-- Stores objects (boxing/unboxing overhead)
-- Dynamic sizing
-- Not type-safe
-- Legacy collection (use List<T> instead)
-
+**Example:**
 ```csharp
-using System.Collections;
+// Generic - Type-safe
+List<int> numbers = new List<int> { 1, 2, 3 };
 
+// Non-Generic - Not type-safe
+ArrayList list = new ArrayList();
+list.Add(1); // Boxing occurs
+```
+
+---
+
+### 4. Why prefer Generic Collections over Non-Generic?
+
+**Answer:**  
+Generic collections provide type safety, eliminate boxing/unboxing overhead, catch type errors at compile-time, and offer better performance. They reduce runtime errors and improve code readability. Non-generic collections are legacy and should be avoided in modern C#.
+
+**Real-time Example:**
+```csharp
+// Bad - Non-Generic (Boxing)
+ArrayList items = new ArrayList();
+items.Add(100); // Boxing int to object
+int val = (int)items[0]; // Unboxing
+
+// Good - Generic (No Boxing)
+List<int> items = new List<int>();
+items.Add(100); // No boxing
+int val = items[0]; // No casting
+```
+
+---
+
+## List and ArrayList
+
+### 5. What is List<T>?
+
+**Answer:**  
+`List<T>` is a generic collection that stores elements in a dynamic array. It provides indexed access, automatic resizing, and rich methods like Add, Remove, Sort, and Find. It's the most commonly used collection for ordered data.
+
+**Example:**
+```csharp
+List<int> numbers = new List<int> { 1, 2, 3 };
+numbers.Add(4);
+numbers.Remove(2);
+int first = numbers[0]; // Indexed access
+```
+
+**Real-time:** Storing shopping cart items in an e-commerce application.
+
+---
+
+### 6. What is ArrayList?
+
+**Answer:**  
+`ArrayList` is a non-generic collection that stores objects dynamically. It requires type casting when retrieving elements and suffers from boxing/unboxing overhead. It's obsolete and replaced by `List<T>` in modern C#.
+
+**Example:**
+```csharp
+ArrayList list = new ArrayList();
+list.Add(10); // Boxing
+list.Add("text"); // Different types allowed
+int num = (int)list[0]; // Unboxing and casting required
+```
+
+---
+
+### 7. Difference between List<T> and ArrayList?
+
+**Answer:**  
+`List<T>` is generic, type-safe, and avoids boxing. `ArrayList` is non-generic, stores objects, requires casting, and has performance overhead. `List<T>` catches type errors at compile-time, while `ArrayList` throws runtime errors.
+
+**Example:**
+```csharp
+// List<T> - Compile-time error
+List<int> list = new List<int>();
+// list.Add("text"); // Compile error
+
+// ArrayList - Runtime error
 ArrayList arrayList = new ArrayList();
-
-// Adding elements (boxing occurs)
-arrayList.Add(1);        // int boxed to object
-arrayList.Add("Hello");  // string reference
-arrayList.Add(3.14);     // double boxed to object
-
-// Accessing elements (unboxing required)
-int number = (int)arrayList[0];  // Unboxing
-string text = (string)arrayList[1];
-
-// Common operations
-arrayList.Insert(1, "Inserted");
-arrayList.Remove("Hello");
-arrayList.RemoveAt(0);
-bool contains = arrayList.Contains(3.14);
-
-// Iteration
-foreach (object item in arrayList)
-{
-    Console.WriteLine(item);
-}
-```
-
-### Hashtable
-
-**Characteristics:**
-- Key-value pairs
-- Keys and values are objects
-- Not type-safe
-- Not thread-safe
-- Legacy collection (use Dictionary<TKey, TValue> instead)
-
-```csharp
-Hashtable hashtable = new Hashtable();
-
-// Adding key-value pairs
-hashtable.Add("name", "John");
-hashtable.Add("age", 30);
-hashtable["city"] = "New York"; // Alternative syntax
-
-// Accessing values
-string name = (string)hashtable["name"];
-int age = (int)hashtable["age"];
-
-// Check if key exists
-if (hashtable.ContainsKey("name"))
-{
-    Console.WriteLine($"Name: {hashtable["name"]}");
-}
-
-// Iteration
-foreach (DictionaryEntry entry in hashtable)
-{
-    Console.WriteLine($"{entry.Key}: {entry.Value}");
-}
-
-// Keys and Values collections
-foreach (object key in hashtable.Keys)
-{
-    Console.WriteLine($"Key: {key}");
-}
-```
-
-### Queue (Non-Generic)
-
-```csharp
-Queue queue = new Queue();
-
-// Enqueue (add to rear)
-queue.Enqueue("First");
-queue.Enqueue("Second");
-queue.Enqueue("Third");
-
-// Dequeue (remove from front)
-object first = queue.Dequeue(); // "First"
-
-// Peek (look at front without removing)
-object next = queue.Peek(); // "Second"
-
-// Properties
-int count = queue.Count;
-```
-
-### Stack (Non-Generic)
-
-```csharp
-Stack stack = new Stack();
-
-// Push (add to top)
-stack.Push("Bottom");
-stack.Push("Middle");
-stack.Push("Top");
-
-// Pop (remove from top)
-object top = stack.Pop(); // "Top"
-
-// Peek (look at top without removing)
-object current = stack.Peek(); // "Middle"
-
-// Properties
-int count = stack.Count;
+arrayList.Add(10);
+arrayList.Add("text"); // Allowed
+// int x = (int)arrayList[1]; // Runtime exception
 ```
 
 ---
 
-## Generic Collections
+### 8. When to use List<T>?
 
-### List<T>
+**Answer:**  
+Use `List<T>` when you need indexed access, dynamic sizing, and frequent additions at the end. It's ideal for ordered collections where you know the approximate size or need to iterate frequently.
 
-**Characteristics:**
-- Type-safe
-- Dynamic sizing
-- Indexed access
-- Implements IList<T>, ICollection<T>, IEnumerable<T>
-
+**Real-time Example:**
 ```csharp
-// Declaration and initialization
-List<int> numbers = new List<int>();
-List<string> names = new List<string> {"Alice", "Bob", "Charlie"};
-List<int> range = new List<int>(Enumerable.Range(1, 10));
-
-// Adding elements
-numbers.Add(1);
-numbers.AddRange(new[] {2, 3, 4, 5});
-numbers.Insert(0, 0); // Insert at index 0
-
-// Accessing elements
-int first = numbers[0];
-int last = numbers[numbers.Count - 1];
-
-// Searching
-int index = numbers.IndexOf(3);
-bool contains = numbers.Contains(4);
-List<int> found = numbers.FindAll(x => x > 3);
-int firstGreaterThan2 = numbers.Find(x => x > 2);
-
-// Removing elements
-numbers.Remove(3);        // Remove first occurrence
-numbers.RemoveAt(0);      // Remove at index
-numbers.RemoveAll(x => x > 4); // Remove all matching
-
-// Sorting and manipulation
-numbers.Sort();
-numbers.Reverse();
-numbers.Clear();
-
-// LINQ operations
-var evenNumbers = numbers.Where(x => x % 2 == 0).ToList();
-var doubled = numbers.Select(x => x * 2).ToList();
+// Storing user search history
+List<string> searchHistory = new List<string>();
+searchHistory.Add("C# collections");
+searchHistory.Add("ASP.NET Core");
+// Display recent 10 searches
+var recent = searchHistory.TakeLast(10);
 ```
 
-### Dictionary<TKey, TValue>
+---
 
-**Characteristics:**
-- Key-value pairs
-- Type-safe
-- Fast lookups O(1) average case
-- Keys must be unique
-- Implements IDictionary<TKey, TValue>
+### 9. How does List<T> resize internally?
 
+**Answer:**  
+`List<T>` starts with default capacity (0 or 4) and doubles its capacity when full. It allocates a new array, copies existing elements, and discards the old array. This amortized O(1) operation minimizes resizing overhead.
+
+**Example:**
 ```csharp
-// Declaration and initialization
-Dictionary<string, int> ages = new Dictionary<string, int>();
-Dictionary<int, string> names = new Dictionary<int, string>
+List<int> list = new List<int>(2); // Capacity: 2
+list.Add(1); // Capacity: 2
+list.Add(2); // Capacity: 2
+list.Add(3); // Resizes to Capacity: 4
+list.Add(4); // Capacity: 4
+list.Add(5); // Resizes to Capacity: 8
+```
+
+---
+
+### 10. What is the capacity of List<T>?
+
+**Answer:**  
+Capacity is the size of the internal array that List<T> allocates. Count is the actual number of elements. When Count exceeds Capacity, List<T> automatically resizes. You can set initial capacity to avoid frequent resizing.
+
+**Example:**
+```csharp
+List<int> list = new List<int>(100); // Initial capacity: 100
+Console.WriteLine($"Capacity: {list.Capacity}, Count: {list.Count}");
+// Output: Capacity: 100, Count: 0
+
+list.Add(1);
+Console.WriteLine($"Capacity: {list.Capacity}, Count: {list.Count}");
+// Output: Capacity: 100, Count: 1
+```
+
+---
+
+## Dictionary and Hashtable
+
+### 11. What is Dictionary<TKey, TValue>?
+
+**Answer:**  
+`Dictionary<TKey, TValue>` is a generic collection of key-value pairs with fast lookups (O(1) average). Keys must be unique and immutable. It uses hash table internally for efficient retrieval, insertion, and deletion.
+
+**Example:**
+```csharp
+Dictionary<int, string> employees = new Dictionary<int, string>
 {
-    {1, "Alice"},
-    {2, "Bob"},
-    {3, "Charlie"}
+    { 1, "John" },
+    { 2, "Jane" }
+};
+string name = employees[1]; // O(1) lookup
+```
+
+**Real-time:** Caching user sessions by session ID.
+
+---
+
+### 12. What is Hashtable?
+
+**Answer:**  
+`Hashtable` is a non-generic collection of key-value pairs that stores objects. It requires boxing/unboxing and type casting. Keys and values can be of different types, making it error-prone and slower than `Dictionary<TKey, TValue>`.
+
+**Example:**
+```csharp
+Hashtable table = new Hashtable();
+table.Add(1, "One");
+table.Add("Key", 100); // Different types allowed
+string value = (string)table[1]; // Casting required
+```
+
+---
+
+### 13. Difference between Dictionary and Hashtable?
+
+**Answer:**  
+`Dictionary` is generic, type-safe, and faster with no boxing. `Hashtable` is non-generic, requires casting, and has boxing overhead. `Dictionary` is thread-unsafe but has better performance, while `Hashtable` offers thread-safe operations with synchronization.
+
+**Example:**
+```csharp
+// Dictionary - Type-safe
+Dictionary<int, string> dict = new Dictionary<int, string>();
+dict.Add(1, "Value");
+// dict.Add("Key", "Value"); // Compile error
+
+// Hashtable - Not type-safe
+Hashtable hash = new Hashtable();
+hash.Add(1, "Value");
+hash.Add("Key", 100); // Allowed, runtime issues possible
+```
+
+---
+
+### 14. How does Dictionary handle collisions?
+
+**Answer:**  
+Dictionary uses chaining to handle hash collisions. When multiple keys hash to the same bucket, it stores them in a linked list or array within that bucket. It uses `GetHashCode()` and `Equals()` to resolve conflicts.
+
+**Example:**
+```csharp
+// Custom key with hash collision handling
+public class CustomKey
+{
+    public int Id { get; set; }
+    
+    public override int GetHashCode() => Id % 10; // May cause collisions
+    
+    public override bool Equals(object obj) => 
+        obj is CustomKey key && key.Id == Id;
+}
+```
+
+---
+
+### 15. What happens if key doesn't exist in Dictionary?
+
+**Answer:**  
+Accessing a non-existent key with indexer throws `KeyNotFoundException`. Use `ContainsKey()` to check existence or `TryGetValue()` for safe retrieval. This prevents runtime exceptions and improves code robustness.
+
+**Example:**
+```csharp
+Dictionary<int, string> dict = new Dictionary<int, string>();
+dict.Add(1, "One");
+
+// Throws KeyNotFoundException
+// string value = dict[2]; 
+
+// Safe approach
+if (dict.ContainsKey(2))
+    string value = dict[2];
+```
+
+---
+
+### 16. What is TryGetValue in Dictionary?
+
+**Answer:**  
+`TryGetValue()` attempts to retrieve a value without throwing exceptions. It returns true if key exists and outputs the value, otherwise returns false. It's more efficient than checking with `ContainsKey()` then accessing.
+
+**Example:**
+```csharp
+Dictionary<int, string> dict = new Dictionary<int, string>
+{
+    { 1, "One" },
+    { 2, "Two" }
 };
 
-// Adding elements
-ages.Add("Alice", 25);
-ages["Bob"] = 30;  // Alternative syntax, overwrites if exists
-
-// Accessing elements
-int aliceAge = ages["Alice"];
-
-// Safe access
-if (ages.TryGetValue("Charlie", out int charlieAge))
-{
-    Console.WriteLine($"Charlie is {charlieAge} years old");
-}
-
-// Check existence
-bool hasAlice = ages.ContainsKey("Alice");
-bool hasAge30 = ages.ContainsValue(30);
-
-// Removing elements
-ages.Remove("Alice");
-ages.Clear();
-
-// Iteration
-foreach (KeyValuePair<string, int> kvp in ages)
-{
-    Console.WriteLine($"{kvp.Key}: {kvp.Value}");
-}
-
-// Keys and Values
-foreach (string name in ages.Keys)
-{
-    Console.WriteLine($"Name: {name}");
-}
-
-foreach (int age in ages.Values)
-{
-    Console.WriteLine($"Age: {age}");
-}
-
-// LINQ operations
-var adults = ages.Where(kvp => kvp.Value >= 18).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+if (dict.TryGetValue(1, out string value))
+    Console.WriteLine(value); // Output: One
+else
+    Console.WriteLine("Key not found");
 ```
 
-### HashSet<T>
+**Real-time:** Safely retrieving configuration settings without crashes.
 
-**Characteristics:**
-- Unique elements only
-- Fast lookups, additions, removals O(1) average case
-- No indexed access
-- Implements ISet<T>
+---
 
+### 17. Can Dictionary have duplicate keys?
+
+**Answer:**  
+No, Dictionary doesn't allow duplicate keys. Adding a duplicate key throws `ArgumentException`. Keys must be unique and are checked using `Equals()` and `GetHashCode()`. Use indexer to update existing key's value.
+
+**Example:**
 ```csharp
-// Declaration and initialization
-HashSet<int> numbers = new HashSet<int>();
-HashSet<string> uniqueNames = new HashSet<string> {"Alice", "Bob", "Alice"}; // Only one "Alice"
+Dictionary<int, string> dict = new Dictionary<int, string>();
+dict.Add(1, "One");
+// dict.Add(1, "Another"); // Throws ArgumentException
 
-// Adding elements
-numbers.Add(1);
-numbers.Add(2);
-numbers.Add(1); // Duplicate, won't be added
-
-// Set operations
-HashSet<int> set1 = new HashSet<int> {1, 2, 3, 4};
-HashSet<int> set2 = new HashSet<int> {3, 4, 5, 6};
-
-// Union
-set1.UnionWith(set2); // {1, 2, 3, 4, 5, 6}
-
-// Intersection
-HashSet<int> intersection = new HashSet<int>(set1);
-intersection.IntersectWith(set2); // {3, 4}
-
-// Difference
-HashSet<int> difference = new HashSet<int>(set1);
-difference.ExceptWith(set2); // {1, 2}
-
-// Symmetric difference
-HashSet<int> symmetricDiff = new HashSet<int>(set1);
-symmetricDiff.SymmetricExceptWith(set2); // {1, 2, 5, 6}
-
-// Subset/Superset checks
-bool isSubset = set1.IsSubsetOf(set2);
-bool isSuperset = set1.IsSupersetOf(set2);
-
-// Removing duplicates from List
-List<int> listWithDuplicates = new List<int> {1, 2, 2, 3, 3, 4};
-HashSet<int> uniqueNumbers = new HashSet<int>(listWithDuplicates);
+// Update existing key
+dict[1] = "Updated One"; // Allowed
 ```
 
-### Queue<T>
+---
 
-**Characteristics:**
-- FIFO (First In, First Out)
-- Type-safe
-- No indexed access
+## HashSet and SortedSet
 
+### 18. What is HashSet<T>?
+
+**Answer:**  
+`HashSet<T>` is an unordered collection of unique elements with O(1) add, remove, and contains operations. It doesn't allow duplicates and uses hash table internally. Ideal for membership testing and removing duplicates.
+
+**Example:**
+```csharp
+HashSet<int> numbers = new HashSet<int> { 1, 2, 3 };
+numbers.Add(2); // Duplicate ignored
+bool exists = numbers.Contains(2); // O(1)
+```
+
+**Real-time:** Storing unique user IDs in an active session manager.
+
+---
+
+### 19. What is SortedSet<T>?
+
+**Answer:**  
+`SortedSet<T>` maintains elements in sorted order with O(log n) operations. It uses red-black tree internally and doesn't allow duplicates. Useful when you need both uniqueness and sorted order.
+
+**Example:**
+```csharp
+SortedSet<int> numbers = new SortedSet<int> { 5, 1, 3, 2 };
+// Stored as: 1, 2, 3, 5
+numbers.Add(4); // Inserted in sorted position
+```
+
+**Real-time:** Maintaining sorted list of high scores in a game.
+
+---
+
+### 20. Difference between HashSet and List?
+
+**Answer:**  
+`HashSet` stores unique elements with O(1) lookups but no ordering or indexing. `List` allows duplicates, maintains insertion order, and supports indexed access but has O(n) contains operation. Choose based on uniqueness and access pattern needs.
+
+**Example:**
+```csharp
+// HashSet - No duplicates, fast lookup
+HashSet<int> set = new HashSet<int> { 1, 2, 2, 3 };
+// Contains: 1, 2, 3
+
+// List - Allows duplicates, indexed
+List<int> list = new List<int> { 1, 2, 2, 3 };
+// Contains: 1, 2, 2, 3
+int first = list[0]; // Indexed access
+```
+
+---
+
+### 21. When to use HashSet?
+
+**Answer:**  
+Use `HashSet` when you need unique elements, fast membership testing, or performing set operations (union, intersection, difference). It's perfect for removing duplicates, checking existence, or implementing mathematical set operations.
+
+**Real-time Example:**
+```csharp
+// Remove duplicates from list
+List<int> numbers = new List<int> { 1, 2, 2, 3, 3, 4 };
+HashSet<int> unique = new HashSet<int>(numbers);
+// unique contains: 1, 2, 3, 4
+
+// Check if email already registered
+HashSet<string> registeredEmails = new HashSet<string>();
+if (!registeredEmails.Add(email))
+    Console.WriteLine("Email already registered");
+```
+
+---
+
+### 22. What are set operations in HashSet?
+
+**Answer:**  
+HashSet provides mathematical set operations: `UnionWith` (combines sets), `IntersectWith` (common elements), `ExceptWith` (difference), and `SymmetricExceptWith` (elements in either but not both). These operations modify the original set.
+
+**Example:**
+```csharp
+HashSet<int> set1 = new HashSet<int> { 1, 2, 3 };
+HashSet<int> set2 = new HashSet<int> { 3, 4, 5 };
+
+set1.UnionWith(set2);        // set1: 1,2,3,4,5
+set1.IntersectWith(set2);    // Common: 3,4,5
+set1.ExceptWith(set2);       // Difference: empty
+set1.SymmetricExceptWith(set2); // 1,2,4,5
+```
+
+**Real-time:** Finding common tags between two blog posts.
+
+---
+
+## Queue and Stack
+
+### 23. What is Queue<T>?
+
+**Answer:**  
+`Queue<T>` is a FIFO (First-In-First-Out) collection. Elements are added at the rear using `Enqueue()` and removed from the front using `Dequeue()`. `Peek()` views the front element without removing it.
+
+**Example:**
 ```csharp
 Queue<string> queue = new Queue<string>();
-
-// Enqueue (add to rear)
 queue.Enqueue("First");
 queue.Enqueue("Second");
-queue.Enqueue("Third");
-
-// Dequeue (remove from front)
 string first = queue.Dequeue(); // "First"
-
-// Peek (look at front without removing)
-string next = queue.Peek(); // "Second"
-
-// Properties and methods
-int count = queue.Count;
-bool contains = queue.Contains("Second");
-string[] array = queue.ToArray();
-
-// Iteration (doesn't modify queue)
-foreach (string item in queue)
-{
-    Console.WriteLine(item);
-}
-
-// Process all items
-while (queue.Count > 0)
-{
-    string item = queue.Dequeue();
-    Console.WriteLine($"Processing: {item}");
-}
+string peek = queue.Peek();     // "Second"
 ```
 
-### Stack<T>
+**Real-time:** Processing print jobs in order received.
 
-**Characteristics:**
-- LIFO (Last In, First Out)
-- Type-safe
-- No indexed access
+---
 
+### 24. What is Stack<T>?
+
+**Answer:**  
+`Stack<T>` is a LIFO (Last-In-First-Out) collection. Elements are added using `Push()` and removed using `Pop()`. `Peek()` views the top element without removing it. Useful for undo operations and backtracking.
+
+**Example:**
 ```csharp
+Stack<string> stack = new Stack<string>();
+stack.Push("First");
+stack.Push("Second");
+string last = stack.Pop();  // "Second"
+string top = stack.Peek();  // "First"
+```
+
+**Real-time:** Browser back button navigation history.
+
+---
+
+### 25. Difference between Queue and Stack?
+
+**Answer:**  
+Queue follows FIFO (First-In-First-Out) for sequential processing. Stack follows LIFO (Last-In-First-Out) for reverse-order processing. Queue uses Enqueue/Dequeue, Stack uses Push/Pop. Choose based on processing order requirements.
+
+**Example:**
+```csharp
+// Queue - FIFO
+Queue<int> queue = new Queue<int>();
+queue.Enqueue(1); queue.Enqueue(2);
+queue.Dequeue(); // Returns 1
+
+// Stack - LIFO
 Stack<int> stack = new Stack<int>();
+stack.Push(1); stack.Push(2);
+stack.Pop(); // Returns 2
+```
 
-// Push (add to top)
-stack.Push(1);
-stack.Push(2);
-stack.Push(3);
+---
 
-// Pop (remove from top)
-int top = stack.Pop(); // 3
+### 26. Real-time use case of Queue?
 
-// Peek (look at top without removing)
-int current = stack.Peek(); // 2
+**Answer:**  
+Queues are used in message processing, task scheduling, BFS algorithms, and handling asynchronous operations. Perfect for order-sensitive processing where first request should be handled first.
 
-// Properties and methods
-int count = stack.Count;
-bool contains = stack.Contains(2);
-int[] array = stack.ToArray();
+**Real-time Example:**
+```csharp
+// Customer support ticket system
+Queue<SupportTicket> ticketQueue = new Queue<SupportTicket>();
 
-// Iteration (doesn't modify stack)
-foreach (int item in stack)
+// Add new tickets
+ticketQueue.Enqueue(new SupportTicket { Id = 1, Issue = "Login problem" });
+ticketQueue.Enqueue(new SupportTicket { Id = 2, Issue = "Payment failed" });
+
+// Process in order received
+while (ticketQueue.Count > 0)
 {
-    Console.WriteLine(item); // Prints in LIFO order
-}
-
-// Process all items
-while (stack.Count > 0)
-{
-    int item = stack.Pop();
-    Console.WriteLine($"Processing: {item}");
+    var ticket = ticketQueue.Dequeue();
+    ProcessTicket(ticket);
 }
 ```
 
-### LinkedList<T>
+---
 
-**Characteristics:**
-- Doubly-linked list
-- Efficient insertion/deletion at any position
-- No indexed access
-- Each element is a LinkedListNode<T>
+### 27. Real-time use case of Stack?
 
+**Answer:**  
+Stacks are used for undo/redo operations, expression evaluation, DFS algorithms, and recursion simulation. Perfect for scenarios requiring reverse-order access or backtracking.
+
+**Real-time Example:**
 ```csharp
-LinkedList<string> linkedList = new LinkedList<string>();
+// Browser navigation history
+Stack<string> history = new Stack<string>();
 
-// Adding elements
-LinkedListNode<string> first = linkedList.AddFirst("First");
-LinkedListNode<string> last = linkedList.AddLast("Last");
-LinkedListNode<string> middle = linkedList.AddAfter(first, "Middle");
-
-// Navigation
-LinkedListNode<string> current = linkedList.First;
-while (current != null)
+void Navigate(string url)
 {
-    Console.WriteLine(current.Value);
-    current = current.Next;
+    history.Push(currentUrl);
+    currentUrl = url;
 }
 
-// Removing elements
-linkedList.Remove("Middle");
-linkedList.RemoveFirst();
-linkedList.RemoveLast();
-
-// Finding elements
-LinkedListNode<string> found = linkedList.Find("Last");
-if (found != null)
+void GoBack()
 {
-    Console.WriteLine($"Found: {found.Value}");
+    if (history.Count > 0)
+        currentUrl = history.Pop(); // Go to previous page
+}
+```
+
+---
+
+## LinkedList
+
+### 28. What is LinkedList<T>?
+
+**Answer:**  
+`LinkedList<T>` is a doubly-linked list where each node contains data and references to next and previous nodes. It provides O(1) insertion/deletion at both ends and middle but O(n) indexed access.
+
+**Example:**
+```csharp
+LinkedList<int> list = new LinkedList<int>();
+list.AddFirst(1);
+list.AddLast(3);
+var node = list.Find(1);
+list.AddAfter(node, 2); // Insert after node
+// Result: 1, 2, 3
+```
+
+---
+
+### 29. Difference between List and LinkedList?
+
+**Answer:**  
+`List<T>` uses dynamic array with O(1) indexed access but O(n) insertions. `LinkedList<T>` uses nodes with O(1) insertions/deletions but O(n) indexed access. List is better for random access, LinkedList for frequent insertions/deletions.
+
+**Example:**
+```csharp
+// List - Fast indexed access
+List<int> list = new List<int> { 1, 2, 3 };
+int value = list[1]; // O(1)
+list.Insert(1, 5);   // O(n) - shifts elements
+
+// LinkedList - Fast insertion
+LinkedList<int> linked = new LinkedList<int>();
+linked.AddFirst(1); // O(1)
+linked.AddLast(2);  // O(1)
+// No indexer: linked[0] not supported
+```
+
+---
+
+### 30. When to use LinkedList?
+
+**Answer:**  
+Use `LinkedList<T>` when you frequently insert/remove from middle or both ends, implement custom data structures like LRU cache, or need efficient node manipulation. Avoid for indexed access or searching.
+
+**Real-time Example:**
+```csharp
+// LRU Cache implementation
+LinkedList<CacheItem> cache = new LinkedList<CacheItem>();
+
+void AccessItem(CacheItem item)
+{
+    cache.Remove(item);       // Remove from current position
+    cache.AddFirst(item);     // Move to front (most recent)
+    
+    if (cache.Count > maxSize)
+        cache.RemoveLast();   // Evict least recently used
 }
 ```
 
@@ -1575,1494 +680,836 @@ if (found != null)
 
 ## Concurrent Collections
 
-### ConcurrentDictionary<TKey, TValue>
+### 31. What are Concurrent Collections?
 
-**Characteristics:**
-- Thread-safe dictionary
-- Lock-free for reads
-- Atomic operations for updates
+**Answer:**  
+Concurrent collections are thread-safe collections in `System.Collections.Concurrent` namespace designed for multi-threaded scenarios. They use lock-free mechanisms for better performance than manually synchronized collections. Include `ConcurrentDictionary`, `ConcurrentQueue`, `ConcurrentBag`, etc.
 
+**Example:**
 ```csharp
-using System.Collections.Concurrent;
+ConcurrentDictionary<int, string> dict = new ConcurrentDictionary<int, string>();
+Parallel.For(0, 1000, i => dict.TryAdd(i, $"Value{i}"));
+```
 
-ConcurrentDictionary<string, int> concurrentDict = new ConcurrentDictionary<string, int>();
+---
+
+### 32. What is ConcurrentDictionary?
+
+**Answer:**  
+`ConcurrentDictionary` is a thread-safe dictionary with atomic operations like `TryAdd`, `TryUpdate`, `GetOrAdd`, and `AddOrUpdate`. It uses fine-grained locking for better concurrency than lock-based Dictionary access.
+
+**Example:**
+```csharp
+ConcurrentDictionary<int, int> dict = new ConcurrentDictionary<int, int>();
 
 // Thread-safe operations
-concurrentDict.TryAdd("key1", 1);
-concurrentDict.TryUpdate("key1", 2, 1); // Update if current value is 1
-
-// Atomic operations
-int newValue = concurrentDict.AddOrUpdate("key2", 1, (key, oldValue) => oldValue + 1);
-
-// Get or add
-int value = concurrentDict.GetOrAdd("key3", 3);
-
-// Safe removal
-if (concurrentDict.TryRemove("key1", out int removedValue))
-{
-    Console.WriteLine($"Removed: {removedValue}");
-}
-
-// Parallel operations example
-Parallel.For(0, 1000, i =>
-{
-    concurrentDict.TryAdd($"key{i}", i);
-});
+dict.TryAdd(1, 100);
+dict.AddOrUpdate(1, 100, (key, oldValue) => oldValue + 1);
+int value = dict.GetOrAdd(2, 200);
 ```
 
-### ConcurrentQueue<T>
+**Real-time:** Caching data in multi-threaded web applications.
 
-**Characteristics:**
-- Thread-safe FIFO queue
-- Lock-free implementation
-
-```csharp
-ConcurrentQueue<int> concurrentQueue = new ConcurrentQueue<int>();
-
-// Thread-safe enqueue
-concurrentQueue.Enqueue(1);
-concurrentQueue.Enqueue(2);
-
-// Thread-safe dequeue
-if (concurrentQueue.TryDequeue(out int result))
-{
-    Console.WriteLine($"Dequeued: {result}");
-}
-
-// Peek
-if (concurrentQueue.TryPeek(out int peeked))
-{
-    Console.WriteLine($"Peeked: {peeked}");
-}
-
-// Producer-Consumer example
-Task producer = Task.Run(() =>
-{
-    for (int i = 0; i < 100; i++)
-    {
-        concurrentQueue.Enqueue(i);
-        Thread.Sleep(10);
-    }
-});
-
-Task consumer = Task.Run(() =>
-{
-    while (!producer.IsCompleted || !concurrentQueue.IsEmpty)
-    {
-        if (concurrentQueue.TryDequeue(out int item))
-        {
-            Console.WriteLine($"Consumed: {item}");
-        }
-        Thread.Sleep(15);
-    }
-});
-
-await Task.WhenAll(producer, consumer);
-```
-
-### BlockingCollection<T>
-
-**Characteristics:**
-- Thread-safe collection with blocking semantics
-- Wrapper around IProducerConsumerCollection<T>
-- Supports bounded capacity
-
-```csharp
-using (BlockingCollection<int> blockingCollection = new BlockingCollection<int>(boundedCapacity: 10))
-{
-    // Producer task
-    Task producer = Task.Run(() =>
-    {
-        for (int i = 0; i < 20; i++)
-        {
-            blockingCollection.Add(i);
-            Console.WriteLine($"Produced: {i}");
-            Thread.Sleep(100);
-        }
-        blockingCollection.CompleteAdding();
-    });
-
-    // Consumer task
-    Task consumer = Task.Run(() =>
-    {
-        foreach (int item in blockingCollection.GetConsumingEnumerable())
-        {
-            Console.WriteLine($"Consumed: {item}");
-            Thread.Sleep(150);
-        }
-    });
-
-    await Task.WhenAll(producer, consumer);
-}
-
-// Multiple producers, single consumer
-BlockingCollection<string> messages = new BlockingCollection<string>();
-
-// Multiple producer tasks
-Task[] producers = Enumerable.Range(0, 3).Select(i =>
-    Task.Run(() =>
-    {
-        for (int j = 0; j < 5; j++)
-        {
-            messages.Add($"Producer {i}, Message {j}");
-            Thread.Sleep(50);
-        }
-    })
-).ToArray();
-
-// Consumer task
-Task consumer2 = Task.Run(() =>
-{
-    while (!messages.IsCompleted)
-    {
-        if (messages.TryTake(out string message, 100))
-        {
-            Console.WriteLine($"Received: {message}");
-        }
-    }
-});
-
-await Task.WhenAll(producers);
-messages.CompleteAdding();
-await consumer2;
-```
 ---
 
+### 33. What is ConcurrentQueue?
 
-## Collection Interfaces
+**Answer:**  
+`ConcurrentQueue` is a thread-safe FIFO queue with lock-free enqueue/dequeue operations. Multiple threads can safely add and remove items concurrently. Uses `TryDequeue` instead of `Dequeue` to avoid exceptions.
 
-### IEnumerable<T> vs ICollection<T> vs IList<T>
-
-| Interface | Purpose | Key Members | Use Case |
-|-----------|---------|-------------|----------|
-| `IEnumerable<T>` | Forward-only iteration | `GetEnumerator()` | Read-only iteration, LINQ |
-| `ICollection<T>` | Basic collection operations | `Add()`, `Remove()`, `Count`, `Contains()` | Basic collection manipulation |
-| `IList<T>` | Indexed access | `this[int]`, `IndexOf()`, `Insert()`, `RemoveAt()` | Random access collections |
-
+**Example:**
 ```csharp
-// IEnumerable<T> - Read-only iteration
-public void ProcessItems(IEnumerable<string> items)
+ConcurrentQueue<string> queue = new ConcurrentQueue<string>();
+
+// Multiple threads can safely enqueue
+Parallel.For(0, 100, i => queue.Enqueue($"Item{i}"));
+
+// Safe dequeue
+if (queue.TryDequeue(out string item))
+    Console.WriteLine(item);
+```
+
+---
+
+### 34. What is ConcurrentBag?
+
+**Answer:**  
+`ConcurrentBag` is an unordered, thread-safe collection optimized for scenarios where same thread adds and removes items. It provides better performance than `ConcurrentQueue` for producer-consumer patterns on same thread.
+
+**Example:**
+```csharp
+ConcurrentBag<int> bag = new ConcurrentBag<int>();
+
+Parallel.For(0, 1000, i => 
 {
-    foreach (string item in items)
-    {
+    bag.Add(i);
+    if (bag.TryTake(out int item))
         Console.WriteLine(item);
-    }
-    
-    // LINQ operations
-    var filtered = items.Where(x => x.Length > 5);
-}
-
-// ICollection<T> - Basic collection operations
-public void ManageCollection(ICollection<string> collection)
-{
-    collection.Add("New Item");
-    collection.Remove("Old Item");
-    
-    if (collection.Contains("Specific Item"))
-    {
-        Console.WriteLine($"Collection has {collection.Count} items");
-    }
-}
-
-// IList<T> - Indexed access
-public void ManageList(IList<string> list)
-{
-    list[0] = "Updated First Item";
-    list.Insert(1, "Inserted Item");
-    
-    int index = list.IndexOf("Search Item");
-    if (index >= 0)
-    {
-        list.RemoveAt(index);
-    }
-}
+});
 ```
 
-### IDictionary<TKey, TValue>
+**Real-time:** Thread-local work item storage in parallel processing.
 
+---
+
+### 35. When to use Concurrent Collections?
+
+**Answer:**  
+Use concurrent collections when multiple threads access shared data concurrently. They eliminate need for manual locking, reduce contention, and prevent race conditions. Essential for multi-threaded applications, parallel processing, and async operations.
+
+**Real-time Example:**
 ```csharp
-public void ProcessDictionary(IDictionary<string, int> dictionary)
+// Processing orders from multiple threads
+ConcurrentQueue<Order> orderQueue = new ConcurrentQueue<Order>();
+
+// Multiple threads adding orders
+Task.Run(() => orderQueue.Enqueue(new Order()));
+
+// Multiple threads processing orders
+Parallel.For(0, 5, i => 
 {
-    // Add or update
-    dictionary["key1"] = 100;
-    
-    // Safe access
-    if (dictionary.TryGetValue("key2", out int value))
-    {
-        Console.WriteLine($"Value: {value}");
-    }
-    
-    // Iterate over keys and values
-    foreach (var kvp in dictionary)
-    {
-        Console.WriteLine($"{kvp.Key}: {kvp.Value}");
-    }
-}
+    while (orderQueue.TryDequeue(out Order order))
+        ProcessOrder(order);
+});
 ```
 
 ---
 
-## Performance Comparison
+## Immutable Collections
 
-### Time Complexity Comparison
+### 36. What are Immutable Collections?
 
-| Collection | Access | Search | Insertion | Deletion | Memory |
-|------------|--------|--------|-----------|----------|---------|
-| `Array` | O(1) | O(n) | N/A | N/A | Minimal |
-| `List<T>` | O(1) | O(n) | O(1) amortized | O(n) | Low |
-| `LinkedList<T>` | O(n) | O(n) | O(1) | O(1) | Medium |
-| `Dictionary<T>` | O(1) avg | O(1) avg | O(1) avg | O(1) avg | Medium |
-| `HashSet<T>` | N/A | O(1) avg | O(1) avg | O(1) avg | Medium |
-| `Queue<T>` | N/A | O(n) | O(1) | O(1) | Low |
-| `Stack<T>` | N/A | O(n) | O(1) | O(1) | Low |
+**Answer:**  
+Immutable collections cannot be modified after creation. Any modification creates a new collection, preserving the original. They're thread-safe, prevent unintended changes, and are useful in functional programming. Available in `System.Collections.Immutable` package.
 
-### Benchmark Example
-
+**Example:**
 ```csharp
-using System.Diagnostics;
-
-public class CollectionBenchmark
-{
-    private const int ItemCount = 1_000_000;
-    
-    public void BenchmarkCollections()
-    {
-        // List vs LinkedList insertion
-        BenchmarkListInsertion();
-        BenchmarkLinkedListInsertion();
-        
-        // Dictionary vs Hashtable lookup
-        BenchmarkDictionaryLookup();
-        BenchmarkHashtableLookup();
-    }
-    
-    private void BenchmarkListInsertion()
-    {
-        var stopwatch = Stopwatch.StartNew();
-        var list = new List<int>();
-        
-        for (int i = 0; i < ItemCount; i++)
-        {
-            list.Add(i);
-        }
-        
-        stopwatch.Stop();
-        Console.WriteLine($"List<int> insertion: {stopwatch.ElapsedMilliseconds}ms");
-    }
-    
-    private void BenchmarkLinkedListInsertion()
-    {
-        var stopwatch = Stopwatch.StartNew();
-        var linkedList = new LinkedList<int>();
-        
-        for (int i = 0; i < ItemCount; i++)
-        {
-            linkedList.AddLast(i);
-        }
-        
-        stopwatch.Stop();
-        Console.WriteLine($"LinkedList<int> insertion: {stopwatch.ElapsedMilliseconds}ms");
-    }
-    
-    private void BenchmarkDictionaryLookup()
-    {
-        var dictionary = new Dictionary<int, string>();
-        for (int i = 0; i < ItemCount; i++)
-        {
-            dictionary[i] = $"Value{i}";
-        }
-        
-        var stopwatch = Stopwatch.StartNew();
-        for (int i = 0; i < ItemCount; i++)
-        {
-            var value = dictionary[i];
-        }
-        stopwatch.Stop();
-        
-        Console.WriteLine($"Dictionary<int, string> lookup: {stopwatch.ElapsedMilliseconds}ms");
-    }
-    
-    private void BenchmarkHashtableLookup()
-    {
-        var hashtable = new Hashtable();
-        for (int i = 0; i < ItemCount; i++)
-        {
-            hashtable[i] = $"Value{i}";
-        }
-        
-        var stopwatch = Stopwatch.StartNew();
-        for (int i = 0; i < ItemCount; i++)
-        {
-            var value = hashtable[i];
-        }
-        stopwatch.Stop();
-        
-        Console.WriteLine($"Hashtable lookup: {stopwatch.ElapsedMilliseconds}ms");
-    }
-}
-```
-
-### Memory Usage Considerations
-
-```csharp
-public class MemoryUsageExample
-{
-    public void DemonstrateMemoryUsage()
-    {
-        // List<T> - Contiguous memory, good cache locality
-        List<int> list = new List<int>(1000); // Pre-allocate capacity
-        
-        // LinkedList<T> - Non-contiguous memory, poor cache locality
-        LinkedList<int> linkedList = new LinkedList<int>();
-        
-        // Dictionary<T> - Hash table with buckets
-        Dictionary<string, int> dictionary = new Dictionary<string, int>(1000); // Pre-allocate
-        
-        // HashSet<T> - Similar to Dictionary but only keys
-        HashSet<int> hashSet = new HashSet<int>();
-        
-        // Boxing/Unboxing overhead in non-generic collections
-        ArrayList arrayList = new ArrayList(); // Avoid - uses object references
-        arrayList.Add(1); // Boxing: int -> object
-        int value = (int)arrayList[0]; // Unboxing: object -> int
-    }
-}
+ImmutableList<int> list = ImmutableList.Create(1, 2, 3);
+ImmutableList<int> newList = list.Add(4); // Creates new list
+// Original list unchanged
 ```
 
 ---
 
-## Real-World Use Cases
+### 37. Benefits of Immutable Collections?
 
-### 1. Caching System with Dictionary
+**Answer:**  
+Immutable collections provide thread safety without locking, prevent accidental modifications, enable safe sharing across threads, and support undo/redo operations. They simplify reasoning about state and are ideal for concurrent and functional programming.
 
+**Example:**
 ```csharp
-public class CacheService<TKey, TValue>
+// Safe sharing across threads
+ImmutableList<string> sharedList = ImmutableList.Create("A", "B");
+
+Task.Run(() => 
 {
-    private readonly Dictionary<TKey, CacheItem<TValue>> _cache;
-    private readonly TimeSpan _defaultExpiry;
-    
-    public CacheService(TimeSpan defaultExpiry)
-    {
-        _cache = new Dictionary<TKey, CacheItem<TValue>>();
-        _defaultExpiry = defaultExpiry;
-    }
-    
-    public void Set(TKey key, TValue value, TimeSpan? expiry = null)
-    {
-        var expiryTime = DateTime.UtcNow.Add(expiry ?? _defaultExpiry);
-        _cache[key] = new CacheItem<TValue>(value, expiryTime);
-    }
-    
-    public bool TryGet(TKey key, out TValue value)
-    {
-        if (_cache.TryGetValue(key, out var cacheItem))
-        {
-            if (cacheItem.ExpiryTime > DateTime.UtcNow)
-            {
-                value = cacheItem.Value;
-                return true;
-            }
-            else
-            {
-                _cache.Remove(key); // Remove expired item
-            }
-        }
-        
-        value = default(TValue);
-        return false;
-    }
-    
-    private class CacheItem<T>
-    {
-        public T Value { get; }
-        public DateTime ExpiryTime { get; }
-        
-        public CacheItem(T value, DateTime expiryTime)
-        {
-            Value = value;
-            ExpiryTime = expiryTime;
-        }
-    }
-}
-
-// Usage
-var cache = new CacheService<string, UserProfile>(TimeSpan.FromMinutes(30));
-cache.Set("user123", new UserProfile { Name = "John", Email = "john@example.com" });
-
-if (cache.TryGet("user123", out UserProfile profile))
-{
-    Console.WriteLine($"Cached user: {profile.Name}");
-}
-```
-
-### 2. Task Queue with ConcurrentQueue
-
-```csharp
-public class TaskProcessor
-{
-    private readonly ConcurrentQueue<WorkItem> _taskQueue;
-    private readonly CancellationTokenSource _cancellationTokenSource;
-    private readonly Task[] _workers;
-    
-    public TaskProcessor(int workerCount = Environment.ProcessorCount)
-    {
-        _taskQueue = new ConcurrentQueue<WorkItem>();
-        _cancellationTokenSource = new CancellationTokenSource();
-        _workers = new Task[workerCount];
-        
-        // Start worker tasks
-        for (int i = 0; i < workerCount; i++)
-        {
-            _workers[i] = Task.Run(() => ProcessTasks(_cancellationTokenSource.Token));
-        }
-    }
-    
-    public void EnqueueTask(Func<Task> taskFunc, string description = null)
-    {
-        _taskQueue.Enqueue(new WorkItem(taskFunc, description));
-    }
-    
-    private async Task ProcessTasks(CancellationToken cancellationToken)
-    {
-        while (!cancellationToken.IsCancellationRequested)
-        {
-            if (_taskQueue.TryDequeue(out WorkItem workItem))
-            {
-                try
-                {
-                    await workItem.TaskFunc();
-                    Console.WriteLine($"Completed: {workItem.Description}");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error processing {workItem.Description}: {ex.Message}");
-                }
-            }
-            else
-            {
-                await Task.Delay(100, cancellationToken); // Wait for new tasks
-            }
-        }
-    }
-    
-    public async Task StopAsync()
-    {
-        _cancellationTokenSource.Cancel();
-        await Task.WhenAll(_workers);
-    }
-    
-    private class WorkItem
-    {
-        public Func<Task> TaskFunc { get; }
-        public string Description { get; }
-        
-        public WorkItem(Func<Task> taskFunc, string description)
-        {
-            TaskFunc = taskFunc;
-            Description = description ?? "Unknown Task";
-        }
-    }
-}
-
-// Usage
-var processor = new TaskProcessor(4);
-
-for (int i = 0; i < 100; i++)
-{
-    int taskId = i;
-    processor.EnqueueTask(async () =>
-    {
-        await Task.Delay(1000); // Simulate work
-        Console.WriteLine($"Task {taskId} completed");
-    }, $"Task {taskId}");
-}
-
-await Task.Delay(10000); // Let tasks process
-await processor.StopAsync();
-```
-
-### 3. Unique Visitor Tracking with HashSet
-
-```csharp
-public class VisitorTracker
-{
-    private readonly HashSet<string> _uniqueVisitors;
-    private readonly Dictionary<string, List<DateTime>> _visitorHistory;
-    
-    public VisitorTracker()
-    {
-        _uniqueVisitors = new HashSet<string>();
-        _visitorHistory = new Dictionary<string, List<DateTime>>();
-    }
-    
-    public void RecordVisit(string visitorId)
-    {
-        _uniqueVisitors.Add(visitorId); // Automatically handles duplicates
-        
-        if (!_visitorHistory.ContainsKey(visitorId))
-        {
-            _visitorHistory[visitorId] = new List<DateTime>();
-        }
-        
-        _visitorHistory[visitorId].Add(DateTime.UtcNow);
-    }
-    
-    public int GetUniqueVisitorCount() => _uniqueVisitors.Count;
-    
-    public int GetTotalVisits() => _visitorHistory.Values.Sum(visits => visits.Count);
-    
-    public List<string> GetFrequentVisitors(int minVisits)
-    {
-        return _visitorHistory
-            .Where(kvp => kvp.Value.Count >= minVisits)
-            .Select(kvp => kvp.Key)
-            .ToList();
-    }
-    
-    public HashSet<string> GetVisitorsInTimeRange(DateTime start, DateTime end)
-    {
-        var visitorsInRange = new HashSet<string>();
-        
-        foreach (var kvp in _visitorHistory)
-        {
-            if (kvp.Value.Any(visit => visit >= start && visit <= end))
-            {
-                visitorsInRange.Add(kvp.Key);
-            }
-        }
-        
-        return visitorsInRange;
-    }
-}
-
-// Usage
-var tracker = new VisitorTracker();
-
-// Simulate visits
-string[] visitors = {"user1", "user2", "user3", "user1", "user2", "user1"};
-foreach (string visitor in visitors)
-{
-    tracker.RecordVisit(visitor);
-}
-
-Console.WriteLine($"Unique visitors: {tracker.GetUniqueVisitorCount()}"); // 3
-Console.WriteLine($"Total visits: {tracker.GetTotalVisits()}"); // 6
-
-var frequentVisitors = tracker.GetFrequentVisitors(2);
-Console.WriteLine($"Frequent visitors: {string.Join(", ", frequentVisitors)}");
-```
-
-### 4. LRU Cache with LinkedList and Dictionary
-
-```csharp
-public class LRUCache<TKey, TValue>
-{
-    private readonly int _capacity;
-    private readonly Dictionary<TKey, LinkedListNode<CacheItem>> _cache;
-    private readonly LinkedList<CacheItem> _lruList;
-    
-    public LRUCache(int capacity)
-    {
-        _capacity = capacity;
-        _cache = new Dictionary<TKey, LinkedListNode<CacheItem>>();
-        _lruList = new LinkedList<CacheItem>();
-    }
-    
-    public bool TryGet(TKey key, out TValue value)
-    {
-        if (_cache.TryGetValue(key, out var node))
-        {
-            // Move to front (most recently used)
-            _lruList.Remove(node);
-            _lruList.AddFirst(node);
-            
-            value = node.Value.Value;
-            return true;
-        }
-        
-        value = default(TValue);
-        return false;
-    }
-    
-    public void Put(TKey key, TValue value)
-    {
-        if (_cache.TryGetValue(key, out var existingNode))
-        {
-            // Update existing item
-            existingNode.Value.Value = value;
-            _lruList.Remove(existingNode);
-            _lruList.AddFirst(existingNode);
-        }
-        else
-        {
-            // Add new item
-            if (_cache.Count >= _capacity)
-            {
-                // Remove least recently used item
-                var lru = _lruList.Last;
-                _lruList.RemoveLast();
-                _cache.Remove(lru.Value.Key);
-            }
-            
-            var newItem = new CacheItem(key, value);
-            var newNode = _lruList.AddFirst(newItem);
-            _cache[key] = newNode;
-        }
-    }
-    
-    private class CacheItem
-    {
-        public TKey Key { get; }
-        public TValue Value { get; set; }
-        
-        public CacheItem(TKey key, TValue value)
-        {
-            Key = key;
-            Value = value;
-        }
-    }
-}
-
-// Usage
-var lruCache = new LRUCache<string, string>(3);
-
-lruCache.Put("1", "One");
-lruCache.Put("2", "Two");
-lruCache.Put("3", "Three");
-
-if (lruCache.TryGet("1", out string value))
-{
-    Console.WriteLine($"Found: {value}"); // "One"
-}
-
-lruCache.Put("4", "Four"); // This will evict "2" (least recently used)
-
-if (!lruCache.TryGet("2", out value))
-{
-    Console.WriteLine("Key '2' was evicted");
-}
+    var modified = sharedList.Add("C"); // Creates new list
+    // Original sharedList unchanged
+});
 ```
 
 ---
 
-## Interview Questions
+### 38. What is ImmutableList?
 
-### Fundamental Questions
+**Answer:**  
+`ImmutableList<T>` is an immutable list that creates new instances on modifications. It uses efficient structural sharing to minimize memory overhead. Operations return new lists while preserving originals.
 
-#### 1. **What is the difference between Array and List<T>?**
-
-**Answer:**
-
-| Aspect | Array | List<T> |
-|--------|-------|---------|
-| **Size** | Fixed at creation | Dynamic, grows automatically |
-| **Performance** | Fastest access O(1) | Slightly slower due to bounds checking |
-| **Memory** | Contiguous, minimal overhead | Contiguous with some overhead for capacity management |
-| **Functionality** | Basic operations only | Rich set of methods (Add, Remove, Find, etc.) |
-| **Type Safety** | Type-safe | Type-safe |
-| **LINQ Support** | Yes | Yes |
-
+**Example:**
 ```csharp
-// Array - fixed size
-int[] array = new int[5]; // Cannot grow beyond 5
-// array[5] = 10; // Runtime exception
+ImmutableList<int> list1 = ImmutableList.Create(1, 2, 3);
+ImmutableList<int> list2 = list1.Add(4);    // New list: 1,2,3,4
+ImmutableList<int> list3 = list1.Remove(2); // New list: 1,3
 
-// List<T> - dynamic size
-List<int> list = new List<int>(); // Starts empty, can grow
+// list1 remains: 1, 2, 3
+```
+
+**Real-time:** Maintaining version history in document editing.
+
+---
+
+### 39. What is ImmutableDictionary?
+
+**Answer:**  
+`ImmutableDictionary<TKey, TValue>` is an immutable key-value collection. Modifications return new dictionaries using structural sharing for efficiency. Ideal for configuration data and thread-safe state management.
+
+**Example:**
+```csharp
+ImmutableDictionary<int, string> dict1 = 
+    ImmutableDictionary.Create<int, string>();
+    
+ImmutableDictionary<int, string> dict2 = dict1.Add(1, "One");
+ImmutableDictionary<int, string> dict3 = dict2.SetItem(1, "Updated");
+
+// dict1 and dict2 unchanged
+```
+
+---
+
+## Specialized Collections
+
+### 40. What is SortedList?
+
+**Answer:**  
+`SortedList<TKey, TValue>` maintains key-value pairs sorted by key. It uses less memory than `SortedDictionary` and provides O(log n) lookups and O(n) insertions. Best for small collections with infrequent updates.
+
+**Example:**
+```csharp
+SortedList<int, string> list = new SortedList<int, string>
+{
+    { 3, "Three" },
+    { 1, "One" },
+    { 2, "Two" }
+};
+// Stored as: (1, "One"), (2, "Two"), (3, "Three")
+```
+
+---
+
+### 41. What is SortedDictionary?
+
+**Answer:**  
+`SortedDictionary<TKey, TValue>` maintains sorted key-value pairs using red-black tree. It provides O(log n) operations for both lookups and insertions. Better than `SortedList` for frequent insertions/deletions.
+
+**Example:**
+```csharp
+SortedDictionary<string, int> dict = new SortedDictionary<string, int>
+{
+    { "Charlie", 30 },
+    { "Alice", 25 },
+    { "Bob", 28 }
+};
+// Sorted by key: Alice, Bob, Charlie
+```
+
+**Real-time:** Maintaining sorted leaderboard in gaming applications.
+
+---
+
+### 42. Difference between SortedList and SortedDictionary?
+
+**Answer:**  
+`SortedList` uses less memory and faster indexed access but slower insertions (O(n)). `SortedDictionary` has faster insertions/deletions (O(log n)) but more memory overhead. Choose SortedList for small static data, SortedDictionary for dynamic data.
+
+**Example:**
+```csharp
+// SortedList - Memory efficient, slower insert
+SortedList<int, string> list = new SortedList<int, string>();
+list.Add(1, "One"); // O(n) insertion
+
+// SortedDictionary - Faster insert, more memory
+SortedDictionary<int, string> dict = new SortedDictionary<int, string>();
+dict.Add(1, "One"); // O(log n) insertion
+```
+
+---
+
+### 43. What is ObservableCollection?
+
+**Answer:**  
+`ObservableCollection<T>` notifies listeners when items are added, removed, or list is refreshed via `CollectionChanged` event. Primarily used in WPF/XAML for data binding to automatically update UI.
+
+**Example:**
+```csharp
+ObservableCollection<string> items = new ObservableCollection<string>();
+items.CollectionChanged += (s, e) => 
+{
+    Console.WriteLine($"Action: {e.Action}");
+};
+
+items.Add("Item1"); // Triggers CollectionChanged event
+```
+
+**Real-time:** Binding to ListBox/DataGrid in WPF applications.
+
+---
+
+### 44. What is BitArray?
+
+**Answer:**  
+`BitArray` manages a compact array of boolean values represented as bits. It's memory-efficient for large boolean arrays, using 1 bit per value instead of 1 byte. Provides bitwise operations like AND, OR, XOR.
+
+**Example:**
+```csharp
+BitArray bits = new BitArray(8);
+bits[0] = true;
+bits[1] = true;
+bits.And(new BitArray(new bool[] { true, false, true }));
+```
+
+**Real-time:** Implementing permission flags or bloom filters.
+
+---
+
+## Interfaces
+
+### 45. What is IEnumerable<T>?
+
+**Answer:**  
+`IEnumerable<T>` is the base interface for all collections, providing forward-only iteration using `foreach`. It has single method `GetEnumerator()` that returns an enumerator. It's read-only and supports LINQ queries.
+
+**Example:**
+```csharp
+IEnumerable<int> numbers = new List<int> { 1, 2, 3 };
+foreach (int num in numbers)
+    Console.WriteLine(num);
+
+var even = numbers.Where(n => n % 2 == 0); // LINQ
+```
+
+---
+
+### 46. What is ICollection<T>?
+
+**Answer:**  
+`ICollection<T>` extends `IEnumerable<T>` adding Count, Add, Remove, Clear, and Contains methods. It represents modifiable collections and provides basic collection operations beyond just iteration.
+
+**Example:**
+```csharp
+ICollection<string> collection = new List<string>();
+collection.Add("Item1");
+collection.Remove("Item1");
+int count = collection.Count;
+bool exists = collection.Contains("Item1");
+```
+
+---
+
+### 47. What is IList<T>?
+
+**Answer:**  
+`IList<T>` extends `ICollection<T>` adding indexed access, Insert, and RemoveAt methods. It represents ordered collections with positional access. Implemented by `List<T>`, arrays, and other indexed collections.
+
+**Example:**
+```csharp
+IList<int> list = new List<int> { 1, 2, 3 };
+int first = list[0];      // Indexed access
+list.Insert(1, 5);        // Insert at position
+list.RemoveAt(0);         // Remove at index
+```
+
+---
+
+### 48. Difference between IEnumerable and ICollection?
+
+**Answer:**  
+`IEnumerable<T>` provides only iteration capability (read-only). `ICollection<T>` extends it with Count, Add, Remove operations (read-write). Use IEnumerable for query results, ICollection when you need modification or count.
+
+**Example:**
+```csharp
+// IEnumerable - Read-only
+IEnumerable<int> query = list.Where(x => x > 5);
+// Cannot: query.Add(10), query.Count directly
+
+// ICollection - Modifiable
+ICollection<int> collection = new List<int>();
+collection.Add(10);
+int count = collection.Count;
+```
+
+---
+
+### 49. What is IReadOnlyCollection<T>?
+
+**Answer:**  
+`IReadOnlyCollection<T>` provides read-only access with Count property but no modification methods. It prevents external code from modifying collection while allowing iteration and count queries. Better than IEnumerable when count is needed.
+
+**Example:**
+```csharp
+IReadOnlyCollection<int> readOnly = new List<int> { 1, 2, 3 };
+int count = readOnly.Count;
+// Cannot: readOnly.Add(4), readOnly.Remove(1)
+```
+
+---
+
+### 50. What is IReadOnlyList<T>?
+
+**Answer:**  
+`IReadOnlyList<T>` extends `IReadOnlyCollection<T>` with indexed read-only access. It allows retrieving elements by index but prevents modifications. Useful for exposing internal lists safely.
+
+**Example:**
+```csharp
+IReadOnlyList<string> list = new List<string> { "A", "B", "C" };
+string first = list[0];  // Read by index
+int count = list.Count;
+// Cannot: list[0] = "X", list.Add("D")
+```
+
+**Real-time:** Returning collection from API without allowing modifications.
+
+---
+
+## Performance and Best Practices
+
+### 51. Time complexity of List operations?
+
+**Answer:**  
+List<T> operations: Add (amortized O(1)), Insert/RemoveAt (O(n)), Access by index (O(1)), Contains/Remove (O(n)), Sort (O(n log n)). Fast for end additions and indexed access, slower for middle insertions.
+
+**Example:**
+```csharp
+List<int> list = new List<int>();
+list.Add(1);           // O(1) amortized
+int val = list[0];     // O(1)
+list.Insert(0, 5);     // O(n) - shifts elements
+list.Contains(5);      // O(n) - linear search
+list.Sort();           // O(n log n)
+```
+
+---
+
+### 52. Time complexity of Dictionary operations?
+
+**Answer:**  
+Dictionary operations: Add/Remove/ContainsKey/Lookup (O(1) average, O(n) worst case with collisions). GetHashCode quality affects performance. Best for fast lookups by key.
+
+**Example:**
+```csharp
+Dictionary<int, string> dict = new Dictionary<int, string>();
+dict.Add(1, "One");        // O(1) average
+string val = dict[1];      // O(1) average
+bool exists = dict.ContainsKey(1); // O(1) average
+dict.Remove(1);            // O(1) average
+```
+
+---
+
+### 53. Time complexity of HashSet operations?
+
+**Answer:**  
+HashSet operations: Add/Remove/Contains (O(1) average, O(n) worst case). Set operations like UnionWith, IntersectWith (O(n+m)). Ideal for membership testing and duplicate removal.
+
+**Example:**
+```csharp
+HashSet<int> set = new HashSet<int>();
+set.Add(1);              // O(1) average
+bool exists = set.Contains(1); // O(1) average
+set.Remove(1);           // O(1) average
+set.UnionWith(otherSet); // O(n+m)
+```
+
+---
+
+### 54. When to use List vs LinkedList?
+
+**Answer:**  
+Use List<T> for random access, frequent searching, and end additions. Use LinkedList<T> for frequent insertions/deletions in middle, no need for indexing, or implementing queue/deque structures.
+
+**Example:**
+```csharp
+// Use List for random access
+List<int> list = new List<int>();
+int value = list[index]; // O(1)
+
+// Use LinkedList for frequent insertions
+LinkedList<int> linked = new LinkedList<int>();
+var node = linked.Find(value);
+linked.AddAfter(node, newValue); // O(1) if node is known
+```
+
+---
+
+### 55. When to use Dictionary vs List?
+
+**Answer:**  
+Use Dictionary for fast lookups by key (O(1)), when data has unique identifiers. Use List for ordered data, indexed access, or when keys aren't natural. Dictionary trades memory for speed.
+
+**Example:**
+```csharp
+// Use Dictionary for lookup by ID
+Dictionary<int, Employee> employees = new Dictionary<int, Employee>();
+Employee emp = employees[123]; // O(1) by ID
+
+// Use List for ordered data
+List<Employee> employees = new List<Employee>();
+Employee emp = employees.Find(e => e.Id == 123); // O(n)
+```
+
+---
+
+### 56. How to avoid boxing/unboxing in collections?
+
+**Answer:**  
+Use generic collections instead of non-generic ones. Generics provide type safety without boxing value types to objects. This improves performance and reduces garbage collection pressure.
+
+**Example:**
+```csharp
+// Bad - Boxing occurs
+ArrayList list = new ArrayList();
+list.Add(100); // int boxed to object
+
+// Good - No boxing
+List<int> list = new List<int>();
+list.Add(100); // No boxing
+```
+
+---
+
+### 57. What is Collection initialization syntax?
+
+**Answer:**  
+Collection initializer syntax allows initializing collections inline using curly braces. It's syntactic sugar that calls Add method multiple times. Makes code more readable and concise.
+
+**Example:**
+```csharp
+// Collection initializer
+List<int> numbers = new List<int> { 1, 2, 3, 4, 5 };
+
+// Dictionary initializer
+Dictionary<int, string> dict = new Dictionary<int, string>
+{
+    { 1, "One" },
+    { 2, "Two" },
+    [3] = "Three" // C# 6+ syntax
+};
+```
+
+---
+
+### 58. What is the benefit of AsReadOnly()?
+
+**Answer:**  
+`AsReadOnly()` returns read-only wrapper around existing collection, preventing modifications while sharing the same underlying data. It's memory-efficient and safer than copying entire collection.
+
+**Example:**
+```csharp
+List<int> list = new List<int> { 1, 2, 3 };
+IReadOnlyList<int> readOnly = list.AsReadOnly();
+
+// Can read
+int value = readOnly[0];
+
+// Cannot modify
+// readOnly.Add(4); // Compile error
+// But original list can still be modified
+list.Add(4); // Affects readOnly view
+```
+
+**Real-time:** Returning internal collection from class without allowing external modifications.
+
+---
+
+## Advanced Topics
+
+### 59. What is yield return in collections?
+
+**Answer:**  
+`yield return` creates iterator methods that return `IEnumerable<T>` lazily, generating values on-demand without creating entire collection in memory. Execution pauses at each yield and resumes on next iteration.
+
+**Example:**
+```csharp
+IEnumerable<int> GetNumbers()
+{
+    for (int i = 1; i <= 5; i++)
+    {
+        Console.WriteLine($"Generating {i}");
+        yield return i;
+    }
+}
+
+foreach (int num in GetNumbers())
+{
+    Console.WriteLine($"Consuming {num}");
+    if (num == 3) break; // Only generates 1, 2, 3
+}
+```
+
+**Real-time:** Reading large files line by line without loading entire file.
+
+---
+
+### 60. What is lazy evaluation with IEnumerable?
+
+**Answer:**  
+Lazy evaluation (deferred execution) means LINQ queries on IEnumerable execute only when iterated, not when declared. This saves memory and CPU by processing only needed elements.
+
+**Example:**
+```csharp
+List<int> numbers = new List<int> { 1, 2, 3, 4, 5 };
+
+// Query not executed yet
+IEnumerable<int> query = numbers.Where(n => n > 2);
+
+numbers.Add(6); // Modifies source
+
+// Query executes now, includes 6
+foreach (int num in query) // Output: 3, 4, 5, 6
+    Console.WriteLine(num);
+```
+
+---
+
+### 61. Difference between ToList() and AsEnumerable()?
+
+**Answer:**  
+`ToList()` executes query immediately and creates new list in memory (eager evaluation). `AsEnumerable()` returns IEnumerable without execution, enabling lazy evaluation. Use ToList() to cache results, AsEnumerable() for deferred execution.
+
+**Example:**
+```csharp
+List<int> source = new List<int> { 1, 2, 3 };
+
+// ToList - Executes immediately, creates copy
+List<int> list = source.Where(n => n > 1).ToList();
+source.Add(4); // Doesn't affect list
+
+// AsEnumerable - Deferred execution
+IEnumerable<int> query = source.Where(n => n > 1);
+source.Add(5); // Affects query results
+```
+
+---
+
+### 62. What is the difference between Add and AddRange?
+
+**Answer:**  
+`Add()` adds single element with one capacity check. `AddRange()` adds multiple elements with one capacity check for entire range, making it more efficient for bulk additions.
+
+**Example:**
+```csharp
+List<int> list = new List<int>();
+
+// Less efficient - multiple capacity checks
 list.Add(1);
-list.Add(2); // No size limit (within memory constraints)
+list.Add(2);
+list.Add(3);
 
-// Performance comparison
-int[] largeArray = new int[1000000];
-List<int> largeList = new List<int>(1000000); // Pre-allocate for better performance
-
-// Array access is slightly faster
-int value1 = largeArray[500000]; // Direct memory access
-
-// List access has bounds checking overhead
-int value2 = largeList[500000]; // Bounds checking + memory access
+// More efficient - single capacity check
+list.AddRange(new[] { 1, 2, 3 });
+list.AddRange(otherList);
 ```
-
-#### 2. **Explain the difference between List<T> and LinkedList<T>. When would you use each?**
-
-**Answer:**
-
-| Aspect | List<T> | LinkedList<T> |
-|--------|---------|---------------|
-| **Storage** | Contiguous array | Doubly-linked nodes |
-| **Random Access** | O(1) | O(n) |
-| **Insertion/Deletion at ends** | O(1) amortized | O(1) |
-| **Insertion/Deletion in middle** | O(n) | O(1) if you have the node |
-| **Memory Usage** | Lower | Higher (node overhead) |
-| **Cache Performance** | Better | Worse |
-
-```csharp
-// Use List<T> when:
-// - You need random access by index
-// - Memory usage is a concern
-// - You do more reading than inserting/deleting
-
-List<string> userList = new List<string>();
-userList.Add("User1");
-string firstUser = userList[0]; // O(1) access
-
-// Use LinkedList<T> when:
-// - Frequent insertions/deletions in the middle
-// - You don't need random access
-// - You work with nodes directly
-
-LinkedList<Task> taskQueue = new LinkedList<Task>();
-var taskNode = taskQueue.AddLast(new Task(() => Console.WriteLine("Task")));
-taskQueue.AddBefore(taskNode, new Task(() => Console.WriteLine("Priority Task"))); // O(1) insertion
-```
-
-#### 3. **What is the difference between Dictionary<T> and Hashtable?**
-
-**Answer:**
-
-| Aspect | Dictionary<TKey, TValue> | Hashtable |
-|--------|--------------------------|-----------|
-| **Type Safety** | Generic, type-safe | Non-generic, stores objects |
-| **Performance** | No boxing/unboxing | Boxing/unboxing overhead |
-| **Null Keys** | Depends on key type | Not allowed |
-| **Thread Safety** | Not thread-safe | Thread-safe for reads |
-| **Introduced** | .NET 2.0 | .NET 1.0 |
-
-```csharp
-// Dictionary<T> - Modern, type-safe approach
-Dictionary<string, int> ages = new Dictionary<string, int>();
-ages["John"] = 30; // No boxing
-int johnAge = ages["John"]; // No unboxing, compile-time type safety
-
-// Hashtable - Legacy, avoid in new code
-Hashtable hashtable = new Hashtable();
-hashtable["John"] = 30; // Boxing: int -> object
-int age = (int)hashtable["John"]; // Unboxing: object -> int, runtime cast required
-
-// Performance impact
-for (int i = 0; i < 1000000; i++)
-{
-    hashtable[i.ToString()] = i; // Boxing overhead
-    ages[i.ToString()] = i; // No boxing
-}
-```
-
-#### 4. **Explain IEnumerable<T>, ICollection<T>, and IList<T>. What's the hierarchy?**
-
-**Answer:**
-
-```
-IEnumerable<T>
-    ↑
-ICollection<T>
-    ↑
-IList<T>
-```
-
-```csharp
-// IEnumerable<T> - Basic iteration
-public void ProcessItems(IEnumerable<string> items)
-{
-    foreach (string item in items) // Only supports iteration
-    {
-        Console.WriteLine(item);
-    }
-    
-    // LINQ operations available
-    var filtered = items.Where(x => x.Length > 5);
-}
-
-// ICollection<T> - Basic collection operations
-public void ManageCollection(ICollection<string> collection)
-{
-    collection.Add("New Item");     // Can add
-    collection.Remove("Old Item");  // Can remove
-    int count = collection.Count;   // Has count
-    bool contains = collection.Contains("Item"); // Can check existence
-    
-    // Still supports iteration (inherits from IEnumerable<T>)
-    foreach (string item in collection) { }
-}
-
-// IList<T> - Indexed access
-public void ManageList(IList<string> list)
-{
-    string first = list[0];         // Indexed access
-    list[1] = "Updated";           // Indexed assignment
-    list.Insert(2, "Inserted");   // Insert at specific position
-    list.RemoveAt(3);              // Remove at specific position
-    int index = list.IndexOf("Find"); // Find index of item
-    
-    // Supports all ICollection<T> and IEnumerable<T> operations
-}
-
-// Real-world usage
-public class DataService
-{
-    // Accept most flexible interface for input
-    public void ProcessData(IEnumerable<DataItem> items) { }
-    
-    // Return specific type when you need specific functionality
-    public IList<DataItem> GetEditableData() => new List<DataItem>();
-}
-```
-
-### Advanced Questions
-
-#### 5. **How does Dictionary<T> handle hash collisions? What happens when two keys have the same hash code?**
-
-**Answer:**
-
-Dictionary<T> uses **separate chaining** with **buckets** to handle hash collisions:
-
-```csharp
-public class HashCollisionDemo
-{
-    public void DemonstrateCollisions()
-    {
-        // Custom class with intentional hash collision
-        var dict = new Dictionary<CollisionKey, string>();
-        
-        var key1 = new CollisionKey("A");
-        var key2 = new CollisionKey("B"); // Same hash code as key1
-        
-        dict[key1] = "Value A";
-        dict[key2] = "Value B"; // Both stored despite same hash code
-        
-        Console.WriteLine(dict[key1]); // "Value A"
-        Console.WriteLine(dict[key2]); // "Value B"
-    }
-}
-
-public class CollisionKey
-{
-    public string Value { get; }
-    
-    public CollisionKey(string value) => Value = value;
-    
-    // Intentionally return same hash code for demonstration
-    public override int GetHashCode() => 42;
-    
-    // Equals is crucial for collision resolution
-    public override bool Equals(object obj)
-    {
-        return obj is CollisionKey other && Value == other.Value;
-    }
-}
-
-// Dictionary internal structure (simplified):
-// Bucket 0: null
-// Bucket 1: null
-// Bucket 42: [CollisionKey("A"), "Value A"] -> [CollisionKey("B"), "Value B"]
-// Bucket 43: null
-```
-
-**Process:**
-1. Calculate hash code of key
-2. Map hash code to bucket index: `bucket = hashCode % bucketCount`
-3. If bucket is empty, store key-value pair
-4. If bucket has items, use `Equals()` to find exact match
-5. If no match found, add to the chain in that bucket
-
-#### 6. **What are the thread-safety characteristics of different collections?**
-
-**Answer:**
-
-| Collection | Thread Safety | Details |
-|------------|---------------|---------|
-| `List<T>` | Not thread-safe | Multiple readers OK, any writer requires synchronization |
-| `Dictionary<T>` | Not thread-safe | Same as List<T> |
-| `HashSet<T>` | Not thread-safe | Same as List<T> |
-| `Queue<T>` | Not thread-safe | Same as List<T> |
-| `Stack<T>` | Not thread-safe | Same as List<T> |
-| `ConcurrentDictionary<T>` | Thread-safe | Lock-free reads, atomic updates |
-| `ConcurrentQueue<T>` | Thread-safe | Lock-free implementation |
-| `ConcurrentStack<T>` | Thread-safe | Lock-free implementation |
-| `BlockingCollection<T>` | Thread-safe | Blocking semantics for producer-consumer |
-
-```csharp
-// Thread-unsafe example
-List<int> unsafeList = new List<int>();
-
-// This can cause race conditions
-Parallel.For(0, 1000, i =>
-{
-    unsafeList.Add(i); // NOT SAFE - can corrupt internal state
-});
-
-// Thread-safe alternatives
-ConcurrentBag<int> safeBag = new ConcurrentBag<int>();
-Parallel.For(0, 1000, i =>
-{
-    safeBag.Add(i); // SAFE - thread-safe operations
-});
-
-// Manual synchronization for non-concurrent collections
-List<int> synchronizedList = new List<int>();
-object lockObject = new object();
-
-Parallel.For(0, 1000, i =>
-{
-    lock (lockObject)
-    {
-        synchronizedList.Add(i); // SAFE - but slower due to locking
-    }
-});
-
-// Reader-writer scenarios
-Dictionary<string, int> dict = new Dictionary<string, int>();
-ReaderWriterLockSlim rwLock = new ReaderWriterLockSlim();
-
-// Multiple readers can access simultaneously
-Task.Run(() =>
-{
-    rwLock.EnterReadLock();
-    try
-    {
-        var value = dict.ContainsKey("key1"); // Safe concurrent read
-    }
-    finally
-    {
-        rwLock.ExitReadLock();
-    }
-});
-
-// Writers need exclusive access
-Task.Run(() =>
-{
-    rwLock.EnterWriteLock();
-    try
-    {
-        dict["key1"] = 100; // Exclusive write access
-    }
-    finally
-    {
-        rwLock.ExitWriteLock();
-    }
-});
-```
-
-#### 7. **Explain the internal working of List<T>. How does it grow? What is the capacity vs count?**
-
-**Answer:**
-
-```csharp
-public class ListInternalsDemo
-{
-    public void DemonstrateListGrowth()
-    {
-        List<int> list = new List<int>();
-        
-        Console.WriteLine($"Initial - Count: {list.Count}, Capacity: {list.Capacity}");
-        // Output: Count: 0, Capacity: 0
-        
-        // Add first element
-        list.Add(1);
-        Console.WriteLine($"After 1 add - Count: {list.Count}, Capacity: {list.Capacity}");
-        // Output: Count: 1, Capacity: 4 (default initial capacity)
-        
-        // Add more elements
-        for (int i = 2; i <= 5; i++)
-        {
-            list.Add(i);
-            Console.WriteLine($"After {i} adds - Count: {list.Count}, Capacity: {list.Capacity}");
-        }
-        // Capacity doubles when exceeded: 4 -> 8
-        
-        // Pre-allocate for better performance
-        List<int> optimizedList = new List<int>(1000); // Initial capacity 1000
-        Console.WriteLine($"Pre-allocated - Count: {optimizedList.Count}, Capacity: {optimizedList.Capacity}");
-        // Output: Count: 0, Capacity: 1000
-    }
-}
-
-// Internal structure (simplified):
-public class MyList<T>
-{
-    private T[] _items;
-    private int _size;
-    
-    public MyList()
-    {
-        _items = new T[0];
-        _size = 0;
-    }
-    
-    public void Add(T item)
-    {
-        if (_size == _items.Length)
-        {
-            Grow();
-        }
-        
-        _items[_size] = item;
-        _size++;
-    }
-    
-    private void Grow()
-    {
-        int newCapacity = _items.Length == 0 ? 4 : _items.Length * 2;
-        T[] newArray = new T[newCapacity];
-        Array.Copy(_items, newArray, _size);
-        _items = newArray;
-    }
-    
-    public int Count => _size;
-    public int Capacity => _items.Length;
-}
-```
-
-**Growth Strategy:**
-- Initial capacity: 0
-- First add: Capacity becomes 4
-- When full: Capacity doubles (4 → 8 → 16 → 32...)
-- **Amortized O(1)** insertion time
-- **Memory overhead**: Up to 50% unused capacity
-
-#### 8. **What is the difference between ConcurrentDictionary and Dictionary with locks?**
-
-**Answer:**
-
-```csharp
-// ConcurrentDictionary - Lock-free for reads
-ConcurrentDictionary<string, int> concurrentDict = new ConcurrentDictionary<string, int>();
-
-// Multiple threads can read simultaneously without blocking
-Parallel.For(0, 1000, i =>
-{
-    concurrentDict.TryGetValue($"key{i}", out int value); // Lock-free read
-});
-
-// Atomic operations
-concurrentDict.AddOrUpdate("counter", 1, (key, oldValue) => oldValue + 1);
-
-// Dictionary with manual locking
-Dictionary<string, int> lockedDict = new Dictionary<string, int>();
-ReaderWriterLockSlim rwLock = new ReaderWriterLockSlim();
-
-// Reads require lock acquisition
-Parallel.For(0, 1000, i =>
-{
-    rwLock.EnterReadLock();
-    try
-    {
-        lockedDict.TryGetValue($"key{i}", out int value); // Requires lock
-    }
-    finally
-    {
-        rwLock.ExitReadLock();
-    }
-});
-
-// Performance comparison
-public class ConcurrencyBenchmark
-{
-    private readonly ConcurrentDictionary<int, string> _concurrentDict = new();
-    private readonly Dictionary<int, string> _lockedDict = new();
-    private readonly ReaderWriterLockSlim _lock = new();
-    
-    public void BenchmarkReads()
-    {
-        // Setup data
-        for (int i = 0; i < 10000; i++)
-        {
-            _concurrentDict[i] = $"Value{i}";
-            _lockedDict[i] = $"Value{i}";
-        }
-        
-        // ConcurrentDictionary reads - faster, no contention
-        var sw1 = Stopwatch.StartNew();
-        Parallel.For(0, 100000, i =>
-        {
-            _concurrentDict.TryGetValue(i % 10000, out _);
-        });
-        sw1.Stop();
-        
-        // Locked Dictionary reads - slower due to lock contention
-        var sw2 = Stopwatch.StartNew();
-        Parallel.For(0, 100000, i =>
-        {
-            _lock.EnterReadLock();
-            try
-            {
-                _lockedDict.TryGetValue(i % 10000, out _);
-            }
-            finally
-            {
-                _lock.ExitReadLock();
-            }
-        });
-        sw2.Stop();
-        
-        Console.WriteLine($"ConcurrentDictionary: {sw1.ElapsedMilliseconds}ms");
-        Console.WriteLine($"Locked Dictionary: {sw2.ElapsedMilliseconds}ms");
-    }
-}
-```
-
-**Key Differences:**
-
-| Aspect | ConcurrentDictionary | Dictionary + Locks |
-|--------|---------------------|-------------------|
-| **Read Performance** | Lock-free, very fast | Lock acquisition overhead |
-| **Write Performance** | Optimized atomic operations | Full synchronization required |
-| **Memory Usage** | Higher (lock-free structures) | Lower |
-| **Complexity** | Built-in thread safety | Manual lock management |
-| **Deadlock Risk** | None | Possible with complex locking |
-
-#### 9. **How would you implement a thread-safe cache with expiration using collections?**
-
-**Answer:**
-
-```csharp
-public class ThreadSafeCacheWithExpiration<TKey, TValue>
-{
-    private readonly ConcurrentDictionary<TKey, CacheEntry<TValue>> _cache;
-    private readonly Timer _cleanupTimer;
-    private readonly TimeSpan _defaultExpiration;
-    
-    public ThreadSafeCacheWithExpiration(TimeSpan defaultExpiration, TimeSpan cleanupInterval)
-    {
-        _cache = new ConcurrentDictionary<TKey, CacheEntry<TValue>>();
-        _defaultExpiration = defaultExpiration;
-        
-        // Periodic cleanup of expired items
-        _cleanupTimer = new Timer(CleanupExpiredItems, null, cleanupInterval, cleanupInterval);
-    }
-    
-    public void Set(TKey key, TValue value, TimeSpan? expiration = null)
-    {
-        var expiryTime = DateTime.UtcNow.Add(expiration ?? _defaultExpiration);
-        var entry = new CacheEntry<TValue>(value, expiryTime);
-        
-        _cache.AddOrUpdate(key, entry, (k, oldEntry) => entry);
-    }
-    
-    public bool TryGet(TKey key, out TValue value)
-    {
-        if (_cache.TryGetValue(key, out var entry))
-        {
-            if (entry.ExpiryTime > DateTime.UtcNow)
-            {
-                value = entry.Value;
-                return true;
-            }
-            else
-            {
-                // Remove expired item
-                _cache.TryRemove(key, out _);
-            }
-        }
-        
-        value = default(TValue);
-        return false;
-    }
-    
-    public TValue GetOrAdd(TKey key, Func<TKey, TValue> valueFactory, TimeSpan? expiration = null)
-    {
-        var expiryTime = DateTime.UtcNow.Add(expiration ?? _defaultExpiration);
-        
-        var entry = _cache.AddOrUpdate(
-            key,
-            k => new CacheEntry<TValue>(valueFactory(k), expiryTime),
-            (k, existingEntry) =>
-            {
-                if (existingEntry.ExpiryTime > DateTime.UtcNow)
-                {
-                    return existingEntry; // Return existing if not expired
-                }
-                else
-                {
-                    return new CacheEntry<TValue>(valueFactory(k), expiryTime); // Create new if expired
-                }
-            });
-        
-        return entry.Value;
-    }
-    
-    private void CleanupExpiredItems(object state)
-    {
-        var now = DateTime.UtcNow;
-        var expiredKeys = new List<TKey>();
-        
-        foreach (var kvp in _cache)
-        {
-            if (kvp.Value.ExpiryTime <= now)
-            {
-                expiredKeys.Add(kvp.Key);
-            }
-        }
-        
-        foreach (var key in expiredKeys)
-        {
-            _cache.TryRemove(key, out _);
-        }
-        
-        Console.WriteLine($"Cleaned up {expiredKeys.Count} expired items");
-    }
-    
-    public void Dispose()
-    {
-        _cleanupTimer?.Dispose();
-    }
-    
-    private class CacheEntry<T>
-    {
-        public T Value { get; }
-        public DateTime ExpiryTime { get; }
-        
-        public CacheEntry(T value, DateTime expiryTime)
-        {
-            Value = value;
-            ExpiryTime = expiryTime;
-        }
-    }
-}
-
-// Usage example
-public class CacheUsageExample
-{
-    private readonly ThreadSafeCacheWithExpiration<string, UserProfile> _userCache;
-    
-    public CacheUsageExample()
-    {
-        _userCache = new ThreadSafeCacheWithExpiration<string, UserProfile>(
-            TimeSpan.FromMinutes(30), // Default expiration
-            TimeSpan.FromMinutes(5)   // Cleanup interval
-        );
-    }
-    
-    public async Task<UserProfile> GetUserProfileAsync(string userId)
-    {
-        return _userCache.GetOrAdd(userId, async id =>
-        {
-            // Expensive database call
-            return await LoadUserFromDatabaseAsync(id);
-        }, TimeSpan.FromHours(1)); // Custom expiration for this item
-    }
-    
-    private async Task<UserProfile> LoadUserFromDatabaseAsync(string userId)
-    {
-        // Simulate database call
-        await Task.Delay(100);
-        return new UserProfile { Id = userId, Name = $"User {userId}" };
-    }
-}
-```
-
-#### 10. **Explain memory allocation and garbage collection impact of different collections.**
-
-**Answer:**
-
-```csharp
-public class MemoryAllocationDemo
-{
-    public void DemonstrateMemoryPatterns()
-    {
-        // 1. Value types in collections - no additional allocations
-        List<int> integers = new List<int> { 1, 2, 3, 4, 5 };
-        // Memory: One allocation for the internal array, values stored inline
-        
-        // 2. Reference types - each object is a separate allocation
-        List<string> strings = new List<string> { "A", "B", "C" };
-        // Memory: One allocation for List array + separate allocations for each string
-        
-        // 3. Boxing in non-generic collections
-        ArrayList arrayList = new ArrayList();
-        arrayList.Add(1); // Boxing: int -> object (heap allocation)
-        arrayList.Add(2); // Another boxing allocation
-        // Memory: ArrayList array + boxed int objects on heap
-        
-        // 4. LinkedList - many small allocations
-        LinkedList<int> linkedList = new LinkedList<int>();
-        linkedList.AddLast(1); // Allocates LinkedListNode<int>
-        linkedList.AddLast(2); // Another node allocation
-        // Memory: Each node is a separate allocation (poor cache locality)
-        
-        // 5. Dictionary - hash table with buckets
-        Dictionary<string, int> dictionary = new Dictionary<string, int>();
-        dictionary["key1"] = 1;
-        // Memory: Bucket array + Entry structs + string keys
-        
-        DemonstrateGCPressure();
-    }
-    
-    private void DemonstrateGCPressure()
-    {
-        // High GC pressure - many temporary allocations
-        for (int i = 0; i < 100000; i++)
-        {
-            var list = new List<string>(); // New allocation each iteration
-            list.Add($"Item {i}");         // String allocation
-            // List goes out of scope - eligible for GC
-        }
-        
-        // Low GC pressure - reuse collections
-        var reusableList = new List<string>(1000); // Pre-allocate capacity
-        for (int i = 0; i < 100000; i++)
-        {
-            reusableList.Clear();          // Reuse existing capacity
-            reusableList.Add($"Item {i}"); // Only string allocation
-        }
-        
-        // Object pooling for high-frequency scenarios
-        var listPool = new ObjectPool<List<string>>(() => new List<string>());
-        
-        for (int i = 0; i < 100000; i++)
-        {
-            var list = listPool.Get();     // Reuse from pool
-            try
-            {
-                list.Add($"Item {i}");
-                // Process list
-            }
-            finally
-            {
-                list.Clear();
-                listPool.Return(list);     // Return to pool
-            }
-        }
-    }
-}
-
-// Simple object pool implementation
-public class ObjectPool<T> where T : class
-{
-    private readonly ConcurrentQueue<T> _objects = new ConcurrentQueue<T>();
-    private readonly Func<T> _objectGenerator;
-    
-    public ObjectPool(Func<T> objectGenerator)
-    {
-        _objectGenerator = objectGenerator;
-    }
-    
-    public T Get()
-    {
-        return _objects.TryDequeue(out T item) ? item : _objectGenerator();
-    }
-    
-    public void Return(T item)
-    {
-        _objects.Enqueue(item);
-    }
-}
-
-// Memory-efficient patterns
-public class MemoryEfficientPatterns
-{
-    // Use ArrayPool for temporary arrays
-    public void ProcessLargeData()
-    {
-        var pool = ArrayPool<byte>.Shared;
-        byte[] buffer = pool.Rent(1024); // Rent from pool
-        
-        try
-        {
-            // Use buffer for processing
-        }
-        finally
-        {
-            pool.Return(buffer); // Return to pool
-        }
-    }
-    
-    // Use Span<T> for stack-allocated collections
-    public void ProcessSmallData()
-    {
-        Span<int> numbers = stackalloc int[10]; // Stack allocation
-        for (int i = 0; i < numbers.Length; i++)
-        {
-            numbers[i] = i * i;
-        }
-        // No heap allocation, no GC pressure
-    }
-    
-    // Pre-size collections when size is known
-    public List<string> ProcessKnownSize(int expectedSize)
-    {
-        var result = new List<string>(expectedSize); // Avoid resizing
-        
-        for (int i = 0; i < expectedSize; i++)
-        {
-            result.Add($"Item {i}");
-        }
-        
-        return result;
-    }
-}
-```
-
-**GC Impact Summary:**
-
-| Collection Pattern | GC Pressure | Recommendation |
-|-------------------|-------------|----------------|
-| **Frequent small collections** | High | Use object pooling |
-| **Large collections with known size** | Medium | Pre-allocate capacity |
-| **Boxing in non-generic collections** | High | Use generic collections |
-| **LinkedList for large datasets** | High | Consider List<T> instead |
-| **Dictionary with string keys** | Medium | Consider string interning |
-| **Temporary arrays** | High | Use ArrayPool<T> |
 
 ---
 
-## Quick Reference Summary
+### 63. How to sort collections in C#?
 
-### Collection Selection Guide
+**Answer:**  
+Use `Sort()` method for in-place sorting, `OrderBy()`/`OrderByDescending()` LINQ for new sorted sequence. Can provide custom comparison using `IComparer<T>`, lambda, or `Comparison<T>` delegate.
 
+**Example:**
 ```csharp
-// Choose your collection based on usage pattern:
+List<int> numbers = new List<int> { 3, 1, 4, 1, 5 };
 
-// Random access by index, dynamic sizing
-List<T> list = new List<T>();
+// In-place sort
+numbers.Sort(); // 1, 1, 3, 4, 5
 
-// Key-value lookups, unique keys
-Dictionary<TKey, TValue> dict = new Dictionary<TKey, TValue>();
+// LINQ - returns new sequence
+var sorted = numbers.OrderByDescending(n => n);
 
-// Unique items, set operations
-HashSet<T> set = new HashSet<T>();
-
-// FIFO processing
-Queue<T> queue = new Queue<T>();
-
-// LIFO processing
-Stack<T> stack = new Stack<T>();
-
-// Frequent insertion/deletion in middle
-LinkedList<T> linkedList = new LinkedList<T>();
-
-// Thread-safe key-value operations
-ConcurrentDictionary<TKey, TValue> concurrentDict = new ConcurrentDictionary<TKey, TValue>();
-
-// Producer-consumer scenarios
-BlockingCollection<T> blockingCollection = new BlockingCollection<T>();
+// Custom sorting
+numbers.Sort((a, b) => b.CompareTo(a)); // Descending
 ```
 
-### Performance Quick Reference
+---
 
-| Operation | List<T> | LinkedList<T> | Dictionary<T> | HashSet<T> | Queue<T> | Stack<T> |
-|-----------|---------|---------------|---------------|------------|----------|----------|
-| **Add** | O(1)* | O(1) | O(1)* | O(1)* | O(1) | O(1) |
-| **Remove** | O(n) | O(1)** | O(1)* | O(1)* | O(1) | O(1) |
-| **Search** | O(n) | O(n) | O(1)* | O(1)* | O(n) | O(n) |
-| **Access by Index** | O(1) | O(n) | N/A | N/A | N/A | N/A |
+### 64. What is IComparer and IComparable?
 
-*Amortized time complexity  
-**If you have reference to the node
+**Answer:**  
+`IComparable<T>` defines default comparison within type using `CompareTo()`. `IComparer<T>` defines external comparison logic using `Compare()`. IComparable for natural ordering, IComparer for custom/multiple orderings.
 
-### Memory Usage Guidelines
+**Example:**
+```csharp
+// IComparable - Natural ordering
+public class Person : IComparable<Person>
+{
+    public string Name { get; set; }
+    public int CompareTo(Person other) => Name.CompareTo(other.Name);
+}
 
-1. **Use generic collections** - avoid boxing/unboxing
-2. **Pre-allocate capacity** when size is known
-3. **Consider object pooling** for frequently created collections
-4. **Use concurrent collections** only when needed
-5. **Prefer List<T> over LinkedList<T>** for most scenarios
-6. **Use HashSet<T>** for uniqueness and set operations
-7. **Choose Dictionary<T>** over Hashtable always
+// IComparer - Custom ordering
+public class PersonAgeComparer : IComparer<Person>
+{
+    public int Compare(Person x, Person y) => x.Age.CompareTo(y.Age);
+}
 
-### Thread Safety Summary
+list.Sort(); // Uses IComparable
+list.Sort(new PersonAgeComparer()); // Uses IComparer
+```
 
-- **Thread-Safe**: ConcurrentDictionary, ConcurrentQueue, ConcurrentStack, BlockingCollection
-- **Not Thread-Safe**: List, Dictionary, HashSet, Queue, Stack, LinkedList
-- **Legacy Thread-Safe**: Hashtable, ArrayList (avoid in new code)
+---
 
-This completes the comprehensive C# Collections guide with detailed explanations, code examples, performance considerations, and interview-focused content suitable for experienced developers.
+### 65. What is the purpose of EqualityComparer?
+
+**Answer:**  
+`EqualityComparer<T>` defines custom equality logic for collections like Dictionary, HashSet using `Equals()` and `GetHashCode()`. Allows using custom keys or case-insensitive comparisons.
+
+**Example:**
+```csharp
+// Case-insensitive dictionary
+var dict = new Dictionary<string, int>(
+    StringComparer.OrdinalIgnoreCase);
+dict["Key"] = 1;
+dict["key"] = 2; // Updates same entry
+
+// Custom comparer
+public class PersonComparer : IEqualityComparer<Person>
+{
+    public bool Equals(Person x, Person y) => x.Id == y.Id;
+    public int GetHashCode(Person obj) => obj.Id.GetHashCode();
+}
+
+var set = new HashSet<Person>(new PersonComparer());
+```
+
+---
+
+## Practical Scenarios
+
+### 66. How to remove duplicates from List?
+
+**Answer:**  
+Use `Distinct()` LINQ method or convert to HashSet which automatically removes duplicates. HashSet is more efficient for large lists.
+
+**Example:**
+```csharp
+List<int> numbers = new List<int> { 1, 2, 2, 3, 3, 4 };
+
+// Using LINQ
+List<int> unique1 = numbers.Distinct().ToList();
+
+// Using HashSet - More efficient
+HashSet<int> uniqueSet = new HashSet<int>(numbers);
+List<int> unique2 = uniqueSet.ToList();
+```
+
+**Real-time:** Removing duplicate emails from mailing list.
+
+---
+
+### 67. How to find common elements between two lists?
+
+**Answer:**  
+Use `Intersect()` LINQ method or HashSet's `IntersectWith()`. Intersect returns common elements without modifying original collections.
+
+**Example:**
+```csharp
+List<int> list1 = new List<int> { 1, 2, 3, 4 };
+List<int> list2 = new List<int> { 3, 4, 5, 6 };
+
+// Using LINQ
+var common = list1.Intersect(list2).ToList(); // 3, 4
+
+// Using HashSet
+HashSet<int> set1 = new HashSet<int>(list1);
+set1.IntersectWith(list2); // set1 now: 3, 4
+```
+
+**Real-time:** Finding common skills between job posting and candidate profile.
+
+---
+
+### 68. How to merge two dictionaries?
+
+**Answer:**  
+Use LINQ `Union()`, loop through and add, or C# 9+ collection expressions. Handle duplicate keys appropriately based on requirements.
+
+**Example:**
+```csharp
+var dict1 = new Dictionary<int, string> { { 1, "One" }, { 2, "Two" } };
+var dict2 = new Dictionary<int, string> { { 2, "Deux" }, { 3, "Three" } };
+
+// Method 1: Loop (overwrites duplicates)
+foreach (var kvp in dict2)
+    dict1[kvp.Key] = kvp.Value;
+
+// Method 2: LINQ (skip duplicates)
+var merged = dict1.Concat(dict2.Where(k => !dict1.ContainsKey(k.Key)))
+    .ToDictionary(k => k.Key, v => v.Value);
+```
+
+---
+
+### 69. How to convert List to Dictionary?
+
+**Answer:**  
+Use `ToDictionary()` LINQ method specifying key and value selectors. Ensure keys are unique to avoid `ArgumentException`.
+
+**Example:**
+```csharp
+List<Employee> employees = new List<Employee>
+{
+    new Employee { Id = 1, Name = "John" },
+    new Employee { Id = 2, Name = "Jane" }
+};
+
+// Convert to Dictionary
+Dictionary<int, Employee> dict = employees.ToDictionary(e => e.Id);
+
+// With custom value
+Dictionary<int, string> nameDict = employees.ToDictionary(
+    e => e.Id, 
+    e => e.Name);
+```
+
+**Real-time:** Converting list of products to dictionary for fast lookup by ID.
+
+---
+
+### 70. How to check if collection is null or empty?
+
+**Answer:**  
+Check for null first, then use `Count == 0` or `Any()` for IEnumerable. `Any()` is more efficient for IEnumerable as it stops at first element.
+
+**Example:**
+```csharp
+List<int> numbers = new List<int>();
+
+// For List/Collection - use Count
+if (numbers == null || numbers.Count == 0)
+    Console.WriteLine("Empty or null");
+
+// For IEnumerable - use Any() (more efficient)
+IEnumerable<int> query = numbers.Where(n => n > 5);
+if (query == null || !query.Any())
+    Console.WriteLine("Empty or null");
+
+// Extension method approach
+public static bool IsNullOrEmpty<T>(this IEnumerable<T> source)
+    => source == null || !source.Any();
+```
+
+**Real-time:** Validating user input collections before processing.
+
+---
+
+## 🎯 Key Takeaways
+
+### Performance Summary
+- **Fast Lookup**: Dictionary, HashSet - O(1)
+- **Fast Indexed Access**: List, Array - O(1)
+- **Fast Insert/Delete**: LinkedList, Queue, Stack - O(1)
+- **Sorted Operations**: SortedSet, SortedDictionary - O(log n)
+
+### When to Use What
+- **List<T>**: General purpose, indexed access, dynamic sizing
+- **Dictionary<K,V>**: Key-value pairs, fast lookup
+- **HashSet<T>**: Unique elements, membership testing
+- **Queue<T>**: FIFO processing
+- **Stack<T>**: LIFO processing, undo operations
+- **LinkedList<T>**: Frequent middle insertions/deletions
+- **Concurrent***: Multi-threaded scenarios
+- **Immutable***: Thread-safety without locks, functional programming
+
+### Best Practices
+1. ✅ Always prefer generic collections over non-generic
+2. ✅ Set initial capacity if size is known
+3. ✅ Use appropriate collection for access pattern
+4. ✅ Use concurrent collections in multi-threaded code
+5. ✅ Consider read-only interfaces for API contracts
+6. ✅ Use LINQ for queries, not manual loops
+7. ✅ Dispose enumerators when breaking early
+8. ✅ Avoid modifying collection during enumeration
+
+---
+
+## 📚 Additional Resources
+
+- Microsoft Docs: [Collections and Data Structures](https://docs.microsoft.com/en-us/dotnet/standard/collections/)
+- Performance: [Big-O Complexity Chart](https://www.bigocheatsheet.com/)
+- Concurrent Collections: [Thread-Safe Collections](https://docs.microsoft.com/en-us/dotnet/standard/collections/thread-safe/)
+
+---
+
+**Last Updated**: January 2026  
+**Target Audience**: .NET Developers preparing for technical interviews  
+**Difficulty Level**: Beginner to Expert
