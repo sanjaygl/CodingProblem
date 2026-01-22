@@ -13,21 +13,25 @@ The project contains:
 
 ## Documentation
 
-### Available Documents
+### Core C# Concepts
 
 - [C# Interface vs Abstract Class Guide](docs/CSharp-Interface-vs-AbstractClass-Guide.md) - Comprehensive guide with 40+ interview questions and answers about interfaces and abstract classes in C#
-- [C# Collections Complete Guide](docs/CSharp-Collections-Complete-Guide.md) - Detailed technical documentation covering all C# collection types, performance considerations, and interview questions
-- [C# Design Patterns Complete Guide](docs/CSharp-Design-Patterns-Complete-Guide.md) - Comprehensive guide covering all 23 GoF design patterns with modern C# implementations, real-world examples, and interview questions
-- [C# Boxing, Unboxing, Stack & Heap Guide](docs/CSharp-Boxing-Unboxing-Stack-Heap.md) - Complete guide to value types, reference types, boxing/unboxing, and memory management with performance considerations
+- [C# Collections Complete Guide](docs/CSharp-Collections-Complete-Guide.md) - 70 interview questions covering all C# collection types with concise 3-4 line answers, real-time examples, and performance analysis
+- [C# Boxing, Unboxing, Stack & Heap Guide](docs/CSharp-Boxing-Unboxing-Stack-Heap-Guide.md) - Complete guide to value types, reference types, boxing/unboxing, and memory management with performance considerations
 - [C# ref and out Keywords Guide](docs/CSharp-Ref-Out-Keywords-Guide.md) - Comprehensive guide to parameter passing in C# including ref, out, in modifiers with real-world examples and interview questions
 - [C# Extension Methods Guide](docs/CSharp-Extension-Methods-Guide.md) - Complete guide to extension methods including syntax, best practices, real-world examples, advanced scenarios, and 25+ interview questions
-- [Detailed .NET Coding Interview Questions and Answers](docs/dotnet-coding-interview-questions-detailed.md) - Comprehensive set of .NET interview questions with detailed explanations and code examples covering API design, performance, security, architecture, and best practices
 
-### Coding Interview Questions (Must-Know for 7+ Years Experience)
+### Complete Interview Guides (10+ Years Experience)
 
-- [C# / .NET Core - Must-Know Coding Questions (Complete Guide)](docs/CSharp-DotNetCore-Coding-Interview-Questions-Complete.md) - Comprehensive guide covering Collections & LINQ, String Manipulation, Date & Time, Multithreading & Async, Thread Safety, OOP Design, Data Structures, ASP.NET Core, Dependency Injection, Database & SQL, Microservices, Real-World Scenarios, and System Design with detailed examples and best practices
-- [C# / .NET Core - Interview Coding Questions](docs/CSharp-DotNetCore-Interview-Coding-Questions.md) - Collection of common coding questions asked in C# and .NET Core interviews with solutions and explanations
-- [GitHub Copilot Interview Questions](docs/Copilot-Interview-Questions.md) - Interview questions and insights about GitHub Copilot, AI-assisted development, and best practices for using AI coding assistants
+- **[🔥 C# / .NET Core - Complete Interview Guide](docs/CSharp-DotNetCore-Complete-Interview-Guide.md)** - **NEW!** Consolidated guide with 143+ questions covering Collections & LINQ, String Manipulation, Date & Time, Async/Multithreading, Thread Safety, Design Patterns, Data Structures & Algorithms, ASP.NET Core Web API, Dependency Injection, Entity Framework Core, SQL & Database, Microservices, Advanced Topics (MediatR, Kafka, Rate Limiting), and System Design with concise answers and real-world examples
+
+### Frontend Development
+
+- **[Angular Interview Questions 2026 (v16–21+)](docs/Angular-Interview-Questions-Guide.md)** - 143 comprehensive Angular interview questions and answers (Beginner → Senior → Lead) with complete indexing, covering Signals, Standalone Components, SSR, Control Flow, performance optimization, security, and practical coding challenges with code examples
+
+### AI & Modern Development Tools
+
+- [GitHub Copilot Interview Questions Guide](docs/Copilot-Interview-Questions-Guide.md) - Interview questions and insights about GitHub Copilot, AI-assisted development, and best practices for using AI coding assistants
 
 ### SOLID Design Principles (Object-Oriented Design Foundation)
 
@@ -78,8 +82,20 @@ The project contains:
 - [Strategy](docs/design-patterns/behavioral/strategy.md) - Encapsulate algorithms and make them interchangeable
 - [Template Method](docs/design-patterns/behavioral/template-method.md) - Define algorithm skeleton in base class
 
-### Angular
-- [Angular Interview Questions 2026 (v16–21+)](docs/Angular-Interview-Questions-2026.md) –  Comprehensive, up-to-date Angular interview questions and answers (mid/senior/lead), including Signals, Standalone APIs, SSR, Control Flow, performance, security, and more, with code examples and best practices.
+### Clean Architecture
+
+- [Clean Architecture Index](docs/clean-architecture/index.md) - Complete guide to Clean Architecture principles, implementation in .NET, and best practices
+- [Clean Architecture Overview](docs/clean-architecture/overview.md) - Introduction to Clean Architecture and its core concepts
+- [Dependency Rule](docs/clean-architecture/dependency-rule.md) - Understanding and implementing the dependency rule
+- [Folder Structure for .NET](docs/clean-architecture/folder-structure-dotnet.md) - Practical folder organization for Clean Architecture in .NET projects
+- [Sample Project Walkthrough](docs/clean-architecture/sample-project-walkthrough.md) - Step-by-step implementation guide
+- [Pitfalls and Best Practices](docs/clean-architecture/pitfalls-and-best-practices.md) - Common mistakes and how to avoid them
+
+#### **Clean Architecture Layers**
+- [Entities Layer](docs/clean-architecture/layers/entities.md) - Core business objects and enterprise rules
+- [Use Cases Layer](docs/clean-architecture/layers/use-cases.md) - Application-specific business rules
+- [Interface Adapters Layer](docs/clean-architecture/layers/interface-adapters.md) - Controllers, presenters, and gateways
+- [Frameworks and Drivers Layer](docs/clean-architecture/layers/frameworks-and-drivers.md) - External frameworks, databases, and UI
 
 ## Getting Started
 
@@ -91,9 +107,26 @@ The project contains:
 ## Topics Covered
 
 - **Algorithms**: Factorial calculation, Fibonacci sequence, palindrome detection
-- **Data Structures**: Array manipulation, duplicate detection
-- **C# Concepts**: Interface implementation, abstract classes, inheritance, collections
+- **Data Structures**: Array manipulation, duplicate detection, LRU Cache, Tree traversals
+- **C# Core Concepts**: Interface vs Abstract Class, Collections, Boxing/Unboxing, Memory Management
+- **Advanced C#**: Extension Methods, ref/out/in keywords, LINQ operations
+- **Async & Multithreading**: Task vs Thread, async/await patterns, thread safety
 - **Memory Management**: Value types, reference types, boxing/unboxing, stack/heap allocation
 - **Parameter Passing**: ref, out, in modifiers and their use cases
-- **Best Practices**: SOLID principles, design patterns, performance considerations
-- **Object-Oriented Design**: SOLID principles, design patterns, clean architecture
+- **Object-Oriented Design**: SOLID principles, design patterns (23 GoF patterns), clean architecture
+- **ASP.NET Core**: Web API development, middleware, dependency injection, global exception handling
+- **Entity Framework Core**: LINQ optimization, N+1 problem, eager vs lazy loading
+- **Database & SQL**: Query optimization, stored procedures, indexing strategies
+- **Microservices**: Retry patterns with Polly, Circuit Breaker, Saga Pattern, event-driven architecture
+- **Advanced Topics**: MediatR, CQRS, Apache Kafka, rate limiting, idempotent APIs
+- **System Design**: URL Shortener, Order Management, Payment Processing systems
+- **Frontend**: Angular (v16-21+) with Signals, Standalone Components, SSR
+- **Modern Development**: GitHub Copilot, AI-assisted development practices
+
+## Repository Statistics
+
+- **📚 Total Documents**: 50+ comprehensive guides
+- **❓ Interview Questions**: 500+ questions with detailed answers
+- **💻 Code Examples**: 200+ real-world code snippets
+- **🎯 Coverage**: Beginner to Senior/Lead level
+- **📝 Last Updated**: January 2026
