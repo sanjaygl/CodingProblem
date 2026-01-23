@@ -71,15 +71,27 @@
 12.3 [Saga Pattern](#123-saga-pattern)
 
 ### [13. Advanced Topics](#13-advanced-topics)
-13.1 [MediatR & CQRS](#131-mediatr--cqrs)  
-13.2 [Apache Kafka integration](#132-apache-kafka-integration)  
-13.3 [Rate limiting](#133-rate-limiting)  
-13.4 [Idempotent API](#134-idempotent-api)
+13.1 [MediatR Pattern](#131-mediatr-pattern)  
+13.2 [MediatR vs Traditional Handler Pattern](#132-mediatr-vs-traditional-handler-pattern)  
+13.3 [CQRS Pattern](#133-cqrs-pattern)  
+13.4 [Apache Kafka integration](#134-apache-kafka-integration)  
+13.5 [Kafka Use Cases](#135-kafka-use-cases)  
+13.6 [Kafka Consumer Project Types](#136-kafka-consumer-project-types)  
+13.7 [Rate limiting](#137-rate-limiting)  
+13.8 [Idempotent API](#138-idempotent-api)
 
-### [14. System Design](#14-system-design)
-14.1 [URL Shortener](#141-url-shortener)  
-14.2 [Order Management System](#142-order-management-system)  
-14.3 [Payment Processing System](#143-payment-processing-system)
+### [14. SQL Advanced](#14-sql-advanced)
+14.1 [Magic Tables (inserted/deleted)](#141-magic-tables-inserteddeleted)  
+14.2 [Nested Stored Procedures with Temp Tables](#142-nested-stored-procedures-with-temp-tables)
+
+### [15. Deployment & Build](#15-deployment--build)
+15.1 [Production Build Commands](#151-production-build-commands)  
+15.2 [Deployment Best Practices](#152-deployment-best-practices)
+
+### [16. System Design](#16-system-design)
+16.1 [URL Shortener](#161-url-shortener)  
+16.2 [Order Management System](#162-order-management-system)  
+16.3 [Payment Processing System](#163-payment-processing-system)
 
 ---
 
@@ -1651,49 +1663,44 @@ public class OrderSagaOrchestrator {
 
 ## 13. Advanced Topics
 
-### 13.1 MediatR & CQRS
+### 13.1 MediatR Pattern
 
 **Answer:**  
-MediatR implements mediator pattern for in-process messaging. CQRS separates reads (queries) from writes (commands). Together they enable clean architecture with separated concerns.
+MediatR implements the **Mediator Pattern** for in-process messaging. It decouples requests from handlers, promotes single responsibility, and enables cross-cutting concerns (logging, validation, etc.) through pipeline behaviors.
 
 **Real-time Example:**
 ```csharp
 // Install: Install-Package MediatR
 // Install: Install-Package MediatR.Extensions.Microsoft.DependencyInjection
 
-// Command (Write)
+// Request
 public record CreateOrderCommand(int CustomerId, List<OrderItem> Items) 
     : IRequest<int>;
 
+// Handler
 public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, int> {
     private readonly AppDbContext _context;
+    private readonly ILogger<CreateOrderHandler> _logger;
+    
+    public CreateOrderHandler(AppDbContext context, ILogger<CreateOrderHandler> logger) {
+        _context = context;
+        _logger = logger;
+    }
     
     public async Task<int> Handle(CreateOrderCommand request, 
         CancellationToken cancellationToken) {
+        _logger.LogInformation("Creating order for customer {CustomerId}", request.CustomerId);
+        
         var order = new Order {
             CustomerId = request.CustomerId,
-            Items = request.Items
+            Items = request.Items,
+            CreatedDate = DateTime.UtcNow
         };
         
         _context.Orders.Add(order);
         await _context.SaveChangesAsync(cancellationToken);
         
         return order.Id;
-    }
-}
-
-// Query (Read)
-public record GetOrderQuery(int OrderId) : IRequest<OrderDto>;
-
-public class GetOrderHandler : IRequestHandler<GetOrderQuery, OrderDto> {
-    private readonly AppDbContext _context;
-    
-    public async Task<OrderDto> Handle(GetOrderQuery request, 
-        CancellationToken cancellationToken) {
-        return await _context.Orders
-            .Where(o => o.Id == request.OrderId)
-            .Select(o => new OrderDto { Id = o.Id, Total = o.Total })
-            .FirstOrDefaultAsync(cancellationToken);
     }
 }
 
@@ -1708,64 +1715,638 @@ public class OrdersController : ControllerBase {
     [HttpPost]
     public async Task<ActionResult<int>> CreateOrder(CreateOrderCommand command) {
         var orderId = await _mediator.Send(command);
-        return Ok(orderId);
+        return CreatedAtAction(nameof(GetOrder), new { id = orderId }, orderId);
+    }
+}
+
+// Pipeline Behavior for Logging
+public class LoggingBehavior<TRequest, TResponse> 
+    : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse> {
+    
+    private readonly ILogger<LoggingBehavior<TRequest, TResponse>> _logger;
+    
+    public LoggingBehavior(ILogger<LoggingBehavior<TRequest, TResponse>> logger) {
+        _logger = logger;
     }
     
-    [HttpGet("{id}")]
+    public async Task<TResponse> Handle(TRequest request, 
+        RequestHandlerDelegate<TResponse> next, 
+        CancellationToken cancellationToken) {
+        
+        _logger.LogInformation("Handling {RequestName}", typeof(TRequest).Name);
+        var response = await next();
+        _logger.LogInformation("Handled {RequestName}", typeof(TRequest).Name);
+        
+        return response;
+    }
+}
+
+// Register in Program.cs
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+```
+
+---
+
+### 13.2 MediatR vs Traditional Handler Pattern
+
+**Answer:**  
+MediatR provides a standardized, loosely-coupled approach compared to traditional handler patterns. Here's the key difference:
+
+**Comparison:**
+
+| Aspect | Traditional Handler Pattern | MediatR Pattern |
+|--------|---------------------------|-----------------|
+| **Coupling** | Direct dependency on handler interface | Depends only on `IMediator` |
+| **Registration** | Manual registration per handler | Auto-registration via assembly scan |
+| **Pipeline** | Custom implementation needed | Built-in pipeline behaviors |
+| **Testing** | Need to mock each handler | Mock single `IMediator` interface |
+| **Cross-cutting concerns** | Decorator pattern or manual | Pipeline behaviors (logging, validation) |
+
+**Real-time Example:**
+
+```csharp
+// ❌ TRADITIONAL HANDLER PATTERN
+public interface IOrderHandler {
+    Task<int> CreateOrder(CreateOrderRequest request);
+}
+
+public class OrderHandler : IOrderHandler {
+    private readonly AppDbContext _context;
+    
+    public OrderHandler(AppDbContext context) {
+        _context = context;
+    }
+    
+    public async Task<int> CreateOrder(CreateOrderRequest request) {
+        // Logic here
+        return orderId;
+    }
+}
+
+// Controller with traditional pattern
+public class OrdersController : ControllerBase {
+    private readonly IOrderHandler _orderHandler;
+    private readonly IPaymentHandler _paymentHandler;
+    private readonly IInventoryHandler _inventoryHandler;
+    // ⚠️ Multiple handler dependencies
+    
+    public OrdersController(
+        IOrderHandler orderHandler,
+        IPaymentHandler paymentHandler,
+        IInventoryHandler inventoryHandler) {
+        _orderHandler = orderHandler;
+        _paymentHandler = paymentHandler;
+        _inventoryHandler = inventoryHandler;
+    }
+    
+    [HttpPost]
+    public async Task<ActionResult> CreateOrder(CreateOrderRequest request) {
+        var orderId = await _orderHandler.CreateOrder(request);
+        await _paymentHandler.ProcessPayment(orderId);
+        await _inventoryHandler.ReserveStock(orderId);
+        return Ok(orderId);
+    }
+}
+
+// ✅ MEDIATR PATTERN
+// Controller with MediatR
+public class OrdersController : ControllerBase {
+    private readonly IMediator _mediator;
+    // ✅ Single dependency
+    
+    public OrdersController(IMediator mediator) {
+        _mediator = mediator;
+    }
+    
+    [HttpPost]
+    public async Task<ActionResult> CreateOrder(CreateOrderCommand command) {
+        // MediatR routes to appropriate handler
+        var orderId = await _mediator.Send(command);
+        return Ok(orderId);
+    }
+}
+```
+
+**When to use MediatR:**
+- ✅ Microservices/Clean Architecture
+- ✅ CQRS implementation
+- ✅ Need cross-cutting concerns (validation, logging)
+- ✅ Complex applications with many handlers
+
+**When to use Traditional Handlers:**
+- ✅ Simple CRUD applications
+- ✅ Small team unfamiliar with MediatR
+- ✅ Performance-critical scenarios (MediatR adds minimal overhead)
+
+---
+
+### 13.3 CQRS Pattern
+
+**Answer:**  
+**CQRS (Command Query Responsibility Segregation)** separates read operations (Queries) from write operations (Commands). This allows independent scaling, optimization, and different data models for reads vs writes.
+
+**Key Concepts:**
+- **Command**: Changes state, returns void or ID (Write operation)
+- **Query**: Returns data, never modifies state (Read operation)
+- **Separate Models**: Read model optimized for queries, Write model for business logic
+- **Eventual Consistency**: Read model may lag behind write model
+
+**Real-time Example:**
+```csharp
+// ==================== WRITE SIDE (Commands) ====================
+
+// Command - Modifies state
+public record CreateOrderCommand(int CustomerId, List<OrderItem> Items) 
+    : IRequest<int>;
+
+public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, int> {
+    private readonly WriteDbContext _writeDb;
+    private readonly IEventPublisher _eventPublisher;
+    
+    public async Task<int> Handle(CreateOrderCommand request, 
+        CancellationToken cancellationToken) {
+        
+        // Write to normalized database
+        var order = new Order {
+            CustomerId = request.CustomerId,
+            Items = request.Items,
+            Status = OrderStatus.Pending,
+            CreatedDate = DateTime.UtcNow
+        };
+        
+        _writeDb.Orders.Add(order);
+        await _writeDb.SaveChangesAsync(cancellationToken);
+        
+        // Publish event for read model update
+        await _eventPublisher.PublishAsync(new OrderCreatedEvent {
+            OrderId = order.Id,
+            CustomerId = order.CustomerId,
+            TotalAmount = order.TotalAmount
+        });
+        
+        return order.Id;
+    }
+}
+
+// ==================== READ SIDE (Queries) ====================
+
+// Query - Returns data only
+public record GetOrderQuery(int OrderId) : IRequest<OrderDto>;
+
+public class GetOrderHandler : IRequestHandler<GetOrderQuery, OrderDto> {
+    private readonly ReadDbContext _readDb; // Denormalized, optimized for reads
+    
+    public async Task<OrderDto> Handle(GetOrderQuery request, 
+        CancellationToken cancellationToken) {
+        
+        // Read from denormalized view/table
+        return await _readDb.OrderViews
+            .Where(o => o.OrderId == request.OrderId)
+            .Select(o => new OrderDto {
+                OrderId = o.OrderId,
+                CustomerName = o.CustomerName, // Already joined
+                TotalAmount = o.TotalAmount,
+                Items = o.Items, // Already aggregated
+                Status = o.Status
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+}
+
+// Read Model Projector - Updates read database
+public class OrderProjector {
+    private readonly ReadDbContext _readDb;
+    
+    public async Task Handle(OrderCreatedEvent evt) {
+        var orderView = new OrderView {
+            OrderId = evt.OrderId,
+            CustomerName = evt.CustomerName,
+            TotalAmount = evt.TotalAmount,
+            Status = "Pending",
+            CreatedDate = DateTime.UtcNow
+        };
+        
+        _readDb.OrderViews.Add(orderView);
+        await _readDb.SaveChangesAsync();
+    }
+}
+
+// ==================== Controller ====================
+
+[ApiController]
+[Route("api/[controller]")]
+public class OrdersController : ControllerBase {
+    private readonly IMediator _mediator;
+    
+    [HttpPost] // Command
+    public async Task<ActionResult<int>> CreateOrder(CreateOrderCommand command) {
+        var orderId = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetOrder), new { id = orderId }, orderId);
+    }
+    
+    [HttpGet("{id}")] // Query
     public async Task<ActionResult<OrderDto>> GetOrder(int id) {
         var order = await _mediator.Send(new GetOrderQuery(id));
         return Ok(order);
     }
 }
 
-// Register in Program.cs
-builder.Services.AddMediatR(typeof(Program).Assembly);
+// ==================== Database Context Setup ====================
+
+// Write Database - Normalized
+public class WriteDbContext : DbContext {
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Customer> Customers { get; set; }
+}
+
+// Read Database - Denormalized
+public class ReadDbContext : DbContext {
+    public DbSet<OrderView> OrderViews { get; set; } // Flattened view
+}
+
+public class OrderView {
+    public int OrderId { get; set; }
+    public string CustomerName { get; set; } // Denormalized
+    public decimal TotalAmount { get; set; }
+    public string Status { get; set; }
+    public List<OrderItemView> Items { get; set; } // Pre-joined
+}
+```
+
+**Benefits:**
+- ✅ **Scalability**: Scale reads and writes independently
+- ✅ **Performance**: Optimize read models for specific queries
+- ✅ **Flexibility**: Different databases for read/write (SQL + MongoDB)
+- ✅ **Simplicity**: Simple queries without complex joins
+
+**Trade-offs:**
+- ⚠️ **Complexity**: More code, more infrastructure
+- ⚠️ **Eventual Consistency**: Read model may be slightly behind
+- ⚠️ **Data Synchronization**: Need to keep models in sync
+
+---
+
+### 13.4 Apache Kafka integration
+
+**Answer:**  
+**Apache Kafka** is a distributed event streaming platform for high-throughput, fault-tolerant messaging. It's used for building real-time data pipelines, event-driven architectures, and microservices communication. **Producer** sends messages to topics, **Consumer** reads and processes messages.
+
+**NuGet Package:** `Confluent.Kafka`
+
+**Key Concepts:**
+- **Producer**: Publishes messages to Kafka topics
+- **Consumer**: Subscribes to topics and processes messages
+- **Topic**: Category/feed name to which records are published
+- **Partition**: Topics are split into partitions for parallel processing
+- **Consumer Group**: Multiple consumers working together to process a topic
+
+**Real-time Example:**
+```csharp
+// ==================== INSTALLATION ====================
+// Install-Package Confluent.Kafka
+// dotnet add package Confluent.Kafka
+
+// ==================== PRODUCER ====================
+public interface IKafkaProducer {
+    Task PublishAsync<T>(string topic, string key, T message);
+}
+
+public class KafkaProducer : IKafkaProducer {
+    private readonly IProducer<string, string> _producer;
+    private readonly ILogger<KafkaProducer> _logger;
+    
+    public KafkaProducer(IConfiguration configuration, ILogger<KafkaProducer> logger) {
+        var config = new ProducerConfig {
+            BootstrapServers = configuration["Kafka:BootstrapServers"],
+            ClientId = Environment.MachineName,
+            Acks = Acks.All, // Wait for all replicas
+            EnableIdempotence = true, // Exactly-once semantics
+            MessageTimeoutMs = 10000
+        };
+        
+        _producer = new ProducerBuilder<string, string>(config)
+            .SetErrorHandler((_, error) => logger.LogError("Kafka error: {Error}", error.Reason))
+            .Build();
+        
+        _logger = logger;
+    }
+    
+    public async Task PublishAsync<T>(string topic, string key, T message) {
+        try {
+            var serializedMessage = JsonSerializer.Serialize(message);
+            
+            var result = await _producer.ProduceAsync(topic, 
+                new Message<string, string> {
+                    Key = key,
+                    Value = serializedMessage,
+                    Timestamp = Timestamp.Default
+                });
+            
+            _logger.LogInformation(
+                "Published message to {Topic}, Partition: {Partition}, Offset: {Offset}", 
+                result.Topic, result.Partition.Value, result.Offset.Value);
+        }
+        catch (ProduceException<string, string> ex) {
+            _logger.LogError(ex, "Failed to publish message to topic {Topic}", topic);
+            throw;
+        }
+    }
+    
+    public void Dispose() => _producer?.Dispose();
+}
+
+// ==================== CONSUMER (Background Service) ====================
+public class KafkaConsumerService : BackgroundService {
+    private readonly IConsumer<string, string> _consumer;
+    private readonly ILogger<KafkaConsumerService> _logger;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly string _topic;
+    
+    public KafkaConsumerService(
+        IConfiguration configuration,
+        ILogger<KafkaConsumerService> logger,
+        IServiceProvider serviceProvider) {
+        
+        var config = new ConsumerConfig {
+            BootstrapServers = configuration["Kafka:BootstrapServers"],
+            GroupId = configuration["Kafka:ConsumerGroupId"],
+            AutoOffsetReset = AutoOffsetReset.Earliest,
+            EnableAutoCommit = false, // Manual commit for reliability
+            EnablePartitionEof = true
+        };
+        
+        _consumer = new ConsumerBuilder<string, string>(config)
+            .SetErrorHandler((_, error) => logger.LogError("Kafka error: {Error}", error.Reason))
+            .Build();
+        
+        _logger = logger;
+        _serviceProvider = serviceProvider;
+        _topic = configuration["Kafka:Topic"];
+    }
+    
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
+        _consumer.Subscribe(_topic);
+        _logger.LogInformation("Subscribed to topic: {Topic}", _topic);
+        
+        try {
+            while (!stoppingToken.IsCancellationRequested) {
+                try {
+                    var consumeResult = _consumer.Consume(stoppingToken);
+                    
+                    if (consumeResult.IsPartitionEOF) {
+                        continue;
+                    }
+                    
+                    _logger.LogInformation(
+                        "Received message from {Topic}, Partition: {Partition}, Offset: {Offset}",
+                        consumeResult.Topic, consumeResult.Partition.Value, consumeResult.Offset.Value);
+                    
+                    // Process message with scoped services
+                    using (var scope = _serviceProvider.CreateScope()) {
+                        await ProcessMessageAsync(consumeResult.Message.Value, scope);
+                    }
+                    
+                    // Commit offset after successful processing
+                    _consumer.Commit(consumeResult);
+                }
+                catch (ConsumeException ex) {
+                    _logger.LogError(ex, "Error consuming message");
+                }
+                catch (Exception ex) {
+                    _logger.LogError(ex, "Error processing message");
+                    // Optionally: Send to dead letter queue
+                }
+            }
+        }
+        finally {
+            _consumer.Close();
+            _consumer.Dispose();
+        }
+    }
+    
+    private async Task ProcessMessageAsync(string messageValue, IServiceScope scope) {
+        var orderService = scope.ServiceProvider.GetRequiredService<IOrderService>();
+        
+        var orderEvent = JsonSerializer.Deserialize<OrderCreatedEvent>(messageValue);
+        await orderService.ProcessOrderAsync(orderEvent);
+    }
+}
+
+// ==================== USAGE IN API ====================
+[ApiController]
+[Route("api/[controller]")]
+public class OrdersController : ControllerBase {
+    private readonly IKafkaProducer _kafkaProducer;
+    private readonly ILogger<OrdersController> _logger;
+    
+    public OrdersController(IKafkaProducer kafkaProducer, ILogger<OrdersController> logger) {
+        _kafkaProducer = kafkaProducer;
+        _logger = logger;
+    }
+    
+    [HttpPost]
+    public async Task<ActionResult<int>> CreateOrder(CreateOrderRequest request) {
+        var order = new Order {
+            CustomerId = request.CustomerId,
+            Items = request.Items,
+            CreatedDate = DateTime.UtcNow
+        };
+        
+        // Save to database
+        // ...
+        
+        // Publish event to Kafka
+        var orderEvent = new OrderCreatedEvent {
+            OrderId = order.Id,
+            CustomerId = order.CustomerId,
+            TotalAmount = order.TotalAmount,
+            Items = order.Items
+        };
+        
+        await _kafkaProducer.PublishAsync(
+            topic: "order-events",
+            key: order.Id.ToString(),
+            message: orderEvent);
+        
+        _logger.LogInformation("Order {OrderId} created and published to Kafka", order.Id);
+        
+        return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order.Id);
+    }
+}
+
+// ==================== REGISTRATION IN PROGRAM.CS ====================
+// appsettings.json
+/*
+{
+  "Kafka": {
+    "BootstrapServers": "localhost:9092",
+    "ConsumerGroupId": "order-service-group",
+    "Topic": "order-events"
+  }
+}
+*/
+
+// Program.cs
+builder.Services.AddSingleton<IKafkaProducer, KafkaProducer>();
+builder.Services.AddHostedService<KafkaConsumerService>();
+
+// Domain services
+builder.Services.AddScoped<IOrderService, OrderService>();
 ```
 
 ---
 
-### 13.2 Apache Kafka integration
+### 13.5 Kafka Use Cases
 
 **Answer:**  
-Kafka is distributed event streaming platform for high-throughput messaging. Use for event-driven architectures, log aggregation, or real-time data pipelines. Producer sends messages, Consumer reads from topics.
+Apache Kafka is ideal for scenarios requiring high-throughput, fault-tolerant, scalable event streaming.
+
+**Real-World Use Cases:**
+
+| Use Case | Description | Example |
+|----------|-------------|---------|
+| **Event-Driven Microservices** | Decouple services via async events | Order service publishes `OrderCreated`, Payment service consumes |
+| **Real-Time Analytics** | Stream data for real-time processing | User activity tracking, clickstream analysis |
+| **Log Aggregation** | Centralized logging from multiple services | All microservices send logs to Kafka → Elasticsearch |
+| **Change Data Capture (CDC)** | Capture database changes | Sync data between databases, update search indexes |
+| **Message Queue Replacement** | Durable, scalable alternative to RabbitMQ | Job processing, task distribution |
+| **Event Sourcing** | Store all state changes as events | Financial transactions, audit trails |
+| **Stream Processing** | Real-time data transformation | Fraud detection, recommendation engines |
+| **Notification System** | Send emails/SMS/push notifications | User activity triggers → Notification service consumes |
 
 **Real-time Example:**
 ```csharp
-// Install: Install-Package Confluent.Kafka
+// Use Case: Order Processing System with Kafka
 
-// Producer
-public class KafkaProducer {
-    private readonly IProducer<string, string> _producer;
+// 1. Order Service (Producer)
+public class OrderService {
+    private readonly IKafkaProducer _kafka;
     
-    public KafkaProducer(string bootstrapServers) {
-        var config = new ProducerConfig {
-            BootstrapServers = bootstrapServers
-        };
-        _producer = new ProducerBuilder<string, string>(config).Build();
-    }
-    
-    public async Task PublishAsync(string topic, string key, string message) {
-        var result = await _producer.ProduceAsync(topic, 
-            new Message<string, string> {
-                Key = key,
-                Value = message
-            });
+    public async Task<int> CreateOrderAsync(CreateOrderRequest request) {
+        var order = await SaveOrderToDatabase(request);
         
-        Console.WriteLine($"Published to {result.TopicPartitionOffset}");
+        // Publish event
+        await _kafka.PublishAsync("order-events", order.Id.ToString(), new {
+            EventType = "OrderCreated",
+            OrderId = order.Id,
+            CustomerId = order.CustomerId,
+            TotalAmount = order.TotalAmount,
+            Timestamp = DateTime.UtcNow
+        });
+        
+        return order.Id;
     }
 }
 
-// Consumer (Background Service)
-public class KafkaConsumer : BackgroundService {
+// 2. Payment Service (Consumer)
+public class PaymentConsumerService : BackgroundService {
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
+        _consumer.Subscribe("order-events");
+        
+        while (!stoppingToken.IsCancellationRequested) {
+            var message = _consumer.Consume(stoppingToken);
+            var orderEvent = JsonSerializer.Deserialize<OrderEvent>(message.Value);
+            
+            if (orderEvent.EventType == "OrderCreated") {
+                await _paymentService.ProcessPaymentAsync(orderEvent.OrderId);
+            }
+        }
+    }
+}
+
+// 3. Inventory Service (Consumer)
+public class InventoryConsumerService : BackgroundService {
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
+        _consumer.Subscribe("order-events");
+        
+        while (!stoppingToken.IsCancellationRequested) {
+            var message = _consumer.Consume(stoppingToken);
+            var orderEvent = JsonSerializer.Deserialize<OrderEvent>(message.Value);
+            
+            if (orderEvent.EventType == "OrderCreated") {
+                await _inventoryService.ReserveStockAsync(orderEvent.OrderId);
+            }
+        }
+    }
+}
+
+// 4. Notification Service (Consumer)
+public class NotificationConsumerService : BackgroundService {
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
+        _consumer.Subscribe("order-events");
+        
+        while (!stoppingToken.IsCancellationRequested) {
+            var message = _consumer.Consume(stoppingToken);
+            var orderEvent = JsonSerializer.Deserialize<OrderEvent>(message.Value);
+            
+            if (orderEvent.EventType == "OrderCreated") {
+                await _emailService.SendOrderConfirmationAsync(orderEvent.OrderId);
+            }
+        }
+    }
+}
+```
+
+**When to Use Kafka:**
+- ✅ High throughput (millions of messages/sec)
+- ✅ Need message replay capability
+- ✅ Multiple consumers for same events
+- ✅ Event-driven architecture
+- ✅ Real-time stream processing
+
+**When NOT to Use Kafka:**
+- ❌ Simple request-response patterns (use REST/gRPC)
+- ❌ Low-latency requirements (<5ms)
+- ❌ Small-scale applications
+- ❌ Complex routing logic (use RabbitMQ)
+
+---
+
+### 13.6 Kafka Consumer Project Types
+
+**Answer:**  
+Kafka consumers can be implemented in different .NET project types depending on your architecture and requirements.
+
+**Project Types:**
+
+| Project Type | Use Case | Pros | Cons |
+|--------------|----------|------|------|
+| **Worker Service** | Dedicated consumer app | Isolated, easy scaling | Separate deployment |
+| **ASP.NET Core Web API** | Consumer + API in same app | Single deployment | Couples concerns |
+| **Console Application** | Simple consumers, scripts | Lightweight, simple | Manual lifetime management |
+| **Azure Functions** | Serverless event processing | Auto-scaling, serverless | Azure-specific |
+| **Background Service (IHostedService)** | Part of existing app | Shared infrastructure | Same process as API |
+
+**Real-time Examples:**
+
+```csharp
+// ==================== 1. WORKER SERVICE (RECOMMENDED) ====================
+// Project Type: Worker Service (.NET 8)
+// Create: dotnet new worker -n OrderConsumerWorker
+
+// Program.cs
+var builder = Host.CreateApplicationBuilder(args);
+builder.Services.AddHostedService<KafkaConsumerWorker>();
+builder.Services.AddScoped<IOrderProcessor, OrderProcessor>();
+
+var host = builder.Build();
+host.Run();
+
+// Worker.cs
+public class KafkaConsumerWorker : BackgroundService {
+    private readonly ILogger<KafkaConsumerWorker> _logger;
     private readonly IConsumer<string, string> _consumer;
     
-    public KafkaConsumer(string bootstrapServers, string groupId) {
-        var config = new ConsumerConfig {
-            BootstrapServers = bootstrapServers,
-            GroupId = groupId,
+    public KafkaConsumerWorker(ILogger<KafkaConsumerWorker> logger, IConfiguration config) {
+        _logger = logger;
+        var consumerConfig = new ConsumerConfig {
+            BootstrapServers = config["Kafka:BootstrapServers"],
+            GroupId = "order-consumer-group",
             AutoOffsetReset = AutoOffsetReset.Earliest
         };
-        _consumer = new ConsumerBuilder<string, string>(config).Build();
+        _consumer = new ConsumerBuilder<string, string>(consumerConfig).Build();
     }
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
@@ -1773,27 +2354,124 @@ public class KafkaConsumer : BackgroundService {
         
         while (!stoppingToken.IsCancellationRequested) {
             var result = _consumer.Consume(stoppingToken);
-            Console.WriteLine($"Received: {result.Message.Value}");
-            
+            _logger.LogInformation("Processing: {Message}", result.Message.Value);
             // Process message
-            await ProcessOrderEvent(result.Message.Value);
         }
-    }
-    
-    private Task ProcessOrderEvent(string message) {
-        // Business logic
-        return Task.CompletedTask;
     }
 }
 
-// Register in Program.cs
-builder.Services.AddSingleton<KafkaProducer>(sp => 
-    new KafkaProducer("localhost:9092"));
-builder.Services.AddHostedService<KafkaConsumer>(sp => 
-    new KafkaConsumer("localhost:9092", "order-group"));
+// ==================== 2. ASP.NET CORE WEB API ====================
+// Project Type: ASP.NET Core Web API
+// Use when: Consumer + API endpoints in same service
+
+// Program.cs
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllers();
+builder.Services.AddHostedService<KafkaBackgroundConsumer>(); // Consumer
+builder.Services.AddScoped<IOrderService, OrderService>();
+
+var app = builder.Build();
+app.MapControllers();
+app.Run();
+
+// KafkaBackgroundConsumer.cs
+public class KafkaBackgroundConsumer : BackgroundService {
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IConsumer<string, string> _consumer;
+    
+    public KafkaBackgroundConsumer(IServiceProvider serviceProvider, IConfiguration config) {
+        _serviceProvider = serviceProvider;
+        var consumerConfig = new ConsumerConfig {
+            BootstrapServers = config["Kafka:BootstrapServers"],
+            GroupId = "api-consumer-group"
+        };
+        _consumer = new ConsumerBuilder<string, string>(consumerConfig).Build();
+    }
+    
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
+        _consumer.Subscribe("order-events");
+        
+        while (!stoppingToken.IsCancellationRequested) {
+            var result = _consumer.Consume(stoppingToken);
+            
+            // Use scoped services
+            using (var scope = _serviceProvider.CreateScope()) {
+                var orderService = scope.ServiceProvider.GetRequiredService<IOrderService>();
+                await orderService.ProcessAsync(result.Message.Value);
+            }
+        }
+    }
+}
+
+// ==================== 3. CONSOLE APPLICATION ====================
+// Project Type: Console App
+// Use when: Simple consumer, one-off processing
+
+// Program.cs
+using Confluent.Kafka;
+
+var config = new ConsumerConfig {
+    BootstrapServers = "localhost:9092",
+    GroupId = "console-consumer-group",
+    AutoOffsetReset = AutoOffsetReset.Earliest
+};
+
+using var consumer = new ConsumerBuilder<string, string>(config).Build();
+consumer.Subscribe("order-events");
+
+Console.WriteLine("Kafka consumer started. Press Ctrl+C to exit.");
+
+var cts = new CancellationTokenSource();
+Console.CancelKeyPress += (_, e) => {
+    e.Cancel = true;
+    cts.Cancel();
+};
+
+try {
+    while (!cts.Token.IsCancellationRequested) {
+        var result = consumer.Consume(cts.Token);
+        Console.WriteLine($"Received: {result.Message.Value}");
+        
+        // Process message
+        ProcessOrder(result.Message.Value);
+        
+        consumer.Commit(result);
+    }
+}
+catch (OperationCanceledException) {
+    consumer.Close();
+}
+
+void ProcessOrder(string message) {
+    // Business logic
+    Console.WriteLine($"Processing order: {message}");
+}
+
+// ==================== 4. AZURE FUNCTION (Serverless) ====================
+// NuGet: Microsoft.Azure.WebJobs.Extensions.Kafka
+
+[FunctionName("KafkaOrderConsumer")]
+public static async Task Run(
+    [KafkaTrigger("localhost:9092", "order-events", ConsumerGroup = "azure-function-group")]
+    string kafkaEvent,
+    ILogger log) {
+    
+    log.LogInformation($"Kafka trigger function processed: {kafkaEvent}");
+    
+    var orderEvent = JsonSerializer.Deserialize<OrderEvent>(kafkaEvent);
+    await ProcessOrderAsync(orderEvent);
+}
 ```
 
+**Recommendation:**
+- **Production Microservices**: Use **Worker Service** (dedicated, scalable)
+- **Monolithic App**: Use **ASP.NET Core with IHostedService**
+- **Simple Scenarios**: Use **Console App**
+- **Cloud/Serverless**: Use **Azure Functions**
+
 ---
+
+### 13.7 Rate limiting
 
 ### 13.3 Rate limiting
 
@@ -1938,9 +2616,654 @@ public class OrderService {
 
 ---
 
-## 14. System Design
+## 14. SQL Advanced
 
-### 14.1 URL Shortener
+### 14.1 Magic Tables (inserted/deleted)
+
+**Answer:**  
+**Magic tables** (`inserted` and `deleted`) are special **temporary tables** automatically created by SQL Server during DML operations (INSERT, UPDATE, DELETE) within triggers. They store the **before** and **after** values of affected rows.
+
+**Key Points:**
+- **`inserted`**: Contains new values (used in INSERT and UPDATE triggers)
+- **`deleted`**: Contains old values (used in DELETE and UPDATE triggers)
+- **UPDATE trigger**: Has access to BOTH `inserted` (new values) and `deleted` (old values)
+- **Scope**: Only accessible within the trigger context
+- **Structure**: Same schema as the table that fired the trigger
+
+**Real-time Example:**
+```sql
+-- ==================== CREATE TABLES ====================
+CREATE TABLE Product (
+    ProductId INT PRIMARY KEY,
+    ProductName VARCHAR(100),
+    Price DECIMAL(10, 2),
+    StockQuantity INT,
+    LastModified DATETIME
+);
+
+CREATE TABLE ProductAudit (
+    AuditId INT PRIMARY KEY IDENTITY(1,1),
+    ProductId INT,
+    OldPrice DECIMAL(10, 2),
+    NewPrice DECIMAL(10, 2),
+    OldStock INT,
+    NewStock INT,
+    ChangeType VARCHAR(20),
+    ModifiedBy VARCHAR(100),
+    ModifiedDate DATETIME
+);
+
+-- ==================== INSERT TRIGGER (using 'inserted') ====================
+CREATE TRIGGER trg_Product_AfterInsert
+ON Product
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- 'inserted' table contains new rows
+    INSERT INTO ProductAudit (ProductId, NewPrice, NewStock, ChangeType, ModifiedBy, ModifiedDate)
+    SELECT 
+        i.ProductId,
+        i.Price AS NewPrice,
+        i.StockQuantity AS NewStock,
+        'INSERT' AS ChangeType,
+        SYSTEM_USER AS ModifiedBy,
+        GETDATE() AS ModifiedDate
+    FROM inserted i;
+    
+    PRINT 'Audit record created for INSERT';
+END;
+
+-- Test INSERT trigger
+INSERT INTO Product VALUES (1, 'Laptop', 999.99, 10, GETDATE());
+SELECT * FROM ProductAudit; -- Shows audit record with NewPrice and NewStock
+
+-- ==================== UPDATE TRIGGER (using both 'inserted' and 'deleted') ====================
+CREATE TRIGGER trg_Product_AfterUpdate
+ON Product
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- 'deleted' table contains OLD values
+    -- 'inserted' table contains NEW values
+    INSERT INTO ProductAudit (
+        ProductId, 
+        OldPrice, NewPrice, 
+        OldStock, NewStock, 
+        ChangeType, ModifiedBy, ModifiedDate
+    )
+    SELECT 
+        i.ProductId,
+        d.Price AS OldPrice,        -- From 'deleted' (old value)
+        i.Price AS NewPrice,         -- From 'inserted' (new value)
+        d.StockQuantity AS OldStock, -- From 'deleted' (old value)
+        i.StockQuantity AS NewStock, -- From 'inserted' (new value)
+        'UPDATE' AS ChangeType,
+        SYSTEM_USER AS ModifiedBy,
+        GETDATE() AS ModifiedDate
+    FROM inserted i
+    INNER JOIN deleted d ON i.ProductId = d.ProductId
+    WHERE i.Price <> d.Price OR i.StockQuantity <> d.StockQuantity;
+END;
+
+-- Test UPDATE trigger
+UPDATE Product SET Price = 899.99, StockQuantity = 8 WHERE ProductId = 1;
+SELECT * FROM ProductAudit; 
+-- Shows: OldPrice = 999.99, NewPrice = 899.99, OldStock = 10, NewStock = 8
+
+-- ==================== DELETE TRIGGER (using 'deleted') ====================
+CREATE TRIGGER trg_Product_AfterDelete
+ON Product
+AFTER DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- 'deleted' table contains rows that were deleted
+    INSERT INTO ProductAudit (ProductId, OldPrice, OldStock, ChangeType, ModifiedBy, ModifiedDate)
+    SELECT 
+        d.ProductId,
+        d.Price AS OldPrice,
+        d.StockQuantity AS OldStock,
+        'DELETE' AS ChangeType,
+        SYSTEM_USER AS ModifiedBy,
+        GETDATE() AS ModifiedDate
+    FROM deleted d;
+END;
+
+-- Test DELETE trigger
+DELETE FROM Product WHERE ProductId = 1;
+SELECT * FROM ProductAudit; -- Shows audit record with OldPrice and OldStock
+
+-- ==================== INSTEAD OF TRIGGER ====================
+-- Validate before allowing changes
+CREATE TRIGGER trg_Product_InsteadOfUpdate
+ON Product
+INSTEAD OF UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Check if price increase is more than 20%
+    IF EXISTS (
+        SELECT 1 
+        FROM inserted i
+        INNER JOIN deleted d ON i.ProductId = d.ProductId
+        WHERE i.Price > d.Price * 1.2
+    )
+    BEGIN
+        RAISERROR('Price increase cannot exceed 20%', 16, 1);
+        ROLLBACK TRANSACTION;
+        RETURN;
+    END
+    
+    -- If valid, perform the update
+    UPDATE p
+    SET 
+        p.ProductName = i.ProductName,
+        p.Price = i.Price,
+        p.StockQuantity = i.StockQuantity,
+        p.LastModified = GETDATE()
+    FROM Product p
+    INNER JOIN inserted i ON p.ProductId = i.ProductId;
+END;
+```
+
+**Magic Tables Summary:**
+
+| Operation | `inserted` Contains | `deleted` Contains |
+|-----------|-------------------|-------------------|
+| **INSERT** | New rows | Empty |
+| **UPDATE** | New (after) values | Old (before) values |
+| **DELETE** | Empty | Deleted rows |
+
+**Interview Tip:** Magic tables are crucial for audit trails, data validation, and maintaining history in enterprise applications.
+
+---
+
+### 14.2 Nested Stored Procedures with Temp Tables
+
+**Answer:**  
+**Nested stored procedures** are stored procedures that call other stored procedures. **Temp tables** (`#TempTable`) and **table variables** (`@TableVariable`) have different scopes:
+- **Temp Tables (#)**: Visible to current session and all nested stored procedures
+- **Table Variables (@)**: Local to the current stored procedure only (NOT visible to nested calls)
+
+**Real-time Example:**
+```sql
+-- ==================== CREATE BASE TABLES ====================
+CREATE TABLE Orders (
+    OrderId INT PRIMARY KEY,
+    CustomerId INT,
+    OrderDate DATETIME,
+    TotalAmount DECIMAL(10, 2)
+);
+
+CREATE TABLE OrderItems (
+    OrderItemId INT PRIMARY KEY,
+    OrderId INT,
+    ProductName VARCHAR(100),
+    Quantity INT,
+    Price DECIMAL(10, 2)
+);
+
+INSERT INTO Orders VALUES (1, 101, '2026-01-15', 500), (2, 102, '2026-01-20', 750);
+INSERT INTO OrderItems VALUES 
+    (1, 1, 'Laptop', 1, 500),
+    (2, 2, 'Mouse', 2, 25),
+    (3, 2, 'Keyboard', 1, 700);
+
+-- ==================== SCENARIO: 3 NESTED STORED PROCEDURES ====================
+
+-- ============ SP3: Innermost procedure (uses temp table from SP1) ============
+CREATE PROCEDURE usp_CalculateOrderSummary
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- ✅ Can access #OrderSummary created in SP1
+    -- ❌ Cannot access @CustomerOrders (table variable from SP1)
+    
+    SELECT 
+        AVG(TotalAmount) AS AverageOrderValue,
+        MAX(TotalAmount) AS MaxOrderValue,
+        MIN(TotalAmount) AS MinOrderValue,
+        COUNT(*) AS TotalOrders
+    FROM #OrderSummary;  -- ✅ Temp table accessible here
+    
+    PRINT 'SP3: Calculated summary from temp table';
+END;
+GO
+
+-- ============ SP2: Middle procedure (calls SP3) ============
+CREATE PROCEDURE usp_ProcessOrderDetails
+    @CustomerId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- ✅ Can access #OrderSummary from SP1
+    PRINT 'SP2: Processing order details';
+    
+    SELECT * FROM #OrderSummary 
+    WHERE CustomerId = @CustomerId;
+    
+    -- Create local temp table visible to SP3
+    CREATE TABLE #OrderItems (
+        OrderId INT,
+        ProductName VARCHAR(100),
+        TotalValue DECIMAL(10, 2)
+    );
+    
+    INSERT INTO #OrderItems
+    SELECT 
+        oi.OrderId,
+        oi.ProductName,
+        oi.Quantity * oi.Price AS TotalValue
+    FROM OrderItems oi
+    INNER JOIN #OrderSummary os ON oi.OrderId = os.OrderId
+    WHERE os.CustomerId = @CustomerId;
+    
+    -- Call nested SP3
+    EXEC usp_CalculateOrderSummary;
+    
+    -- Temp table created in SP2 is automatically dropped when SP2 ends
+END;
+GO
+
+-- ============ SP1: Outermost procedure (calls SP2) ============
+CREATE PROCEDURE usp_GetCustomerOrders
+    @CustomerId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    PRINT 'SP1: Starting customer order processing';
+    
+    -- ✅ TEMP TABLE: Visible to all nested SPs
+    CREATE TABLE #OrderSummary (
+        OrderId INT,
+        CustomerId INT,
+        OrderDate DATETIME,
+        TotalAmount DECIMAL(10, 2)
+    );
+    
+    -- ❌ TABLE VARIABLE: NOT visible to nested SPs
+    DECLARE @CustomerOrders TABLE (
+        OrderId INT,
+        OrderDate DATETIME
+    );
+    
+    -- Populate temp table
+    INSERT INTO #OrderSummary
+    SELECT OrderId, CustomerId, OrderDate, TotalAmount
+    FROM Orders
+    WHERE CustomerId = @CustomerId;
+    
+    -- Populate table variable
+    INSERT INTO @CustomerOrders
+    SELECT OrderId, OrderDate
+    FROM Orders
+    WHERE CustomerId = @CustomerId;
+    
+    PRINT 'SP1: Temp table and table variable populated';
+    
+    -- Call nested SP2 (which will call SP3)
+    EXEC usp_ProcessOrderDetails @CustomerId;
+    
+    -- Display results
+    SELECT * FROM #OrderSummary;
+    SELECT * FROM @CustomerOrders; -- Only visible in SP1
+    
+    -- Temp table automatically dropped when session ends
+END;
+GO
+
+-- ==================== EXECUTE THE NESTED CHAIN ====================
+EXEC usp_GetCustomerOrders @CustomerId = 102;
+
+-- OUTPUT:
+-- SP1: Starting customer order processing
+-- SP1: Temp table and table variable populated
+-- SP2: Processing order details
+-- SP3: Calculated summary from temp table
+
+-- ==================== KEY DIFFERENCES ====================
+
+-- TEMP TABLE (#TempTable)
+CREATE TABLE #TempOrders (OrderId INT);  -- Created in tempdb
+-- ✅ Visible to nested stored procedures
+-- ✅ Can be indexed
+-- ✅ Causes recompilation if schema changes
+-- ⚠️ Persists until session ends or explicitly dropped
+
+-- TABLE VARIABLE (@TableVariable)
+DECLARE @TempOrders TABLE (OrderId INT);  -- In-memory
+-- ❌ NOT visible to nested stored procedures
+-- ✅ Automatically cleaned up
+-- ✅ Less recompilation overhead
+-- ⚠️ Cannot be indexed (except inline constraints)
+-- ⚠️ No statistics, can cause poor query plans with large datasets
+```
+
+**Scope Accessibility Table:**
+
+| Feature | Temp Table (#) | Table Variable (@) |
+|---------|---------------|-------------------|
+| **Visible to nested SPs** | ✅ Yes | ❌ No |
+| **Lifetime** | Until dropped or session ends | Current batch/SP only |
+| **Can be indexed** | ✅ Yes | ⚠️ Only inline indexes |
+| **Statistics** | ✅ Yes | ❌ No |
+| **Recompilation** | ⚠️ Can cause | ✅ Minimal |
+| **Best for** | Large datasets, nested SPs | Small datasets (<100 rows) |
+
+**Interview Tip:** Use **temp tables** when you need to share data across nested stored procedures or work with large datasets. Use **table variables** for small datasets within a single procedure.
+
+---
+
+## 15. Deployment & Build
+
+### 15.1 Production Build Commands
+
+**Answer:**  
+The **`dotnet publish`** command creates a production-ready build by compiling the application and copying all dependencies to an output folder. It's optimized for deployment to servers.
+
+**Key Commands:**
+
+```bash
+# ==================== BASIC PUBLISH ====================
+dotnet publish -c Release
+
+# ==================== PUBLISH WITH OUTPUT PATH ====================
+dotnet publish -c Release -o ./publish
+
+# ==================== SELF-CONTAINED DEPLOYMENT ====================
+# Includes .NET runtime (no need to install .NET on server)
+dotnet publish -c Release -r win-x64 --self-contained true -o ./publish
+
+# For Linux
+dotnet publish -c Release -r linux-x64 --self-contained true -o ./publish
+
+# ==================== FRAMEWORK-DEPENDENT DEPLOYMENT ====================
+# Requires .NET runtime installed on server (smaller package)
+dotnet publish -c Release --self-contained false -o ./publish
+
+# ==================== SINGLE FILE EXECUTABLE ====================
+dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true -o ./publish
+
+# ==================== TRIMMED BUILD (Reduce size) ====================
+dotnet publish -c Release -r linux-x64 --self-contained true /p:PublishTrimmed=true -o ./publish
+
+# ==================== READY TO RUN (Faster startup) ====================
+dotnet publish -c Release -r win-x64 --self-contained true /p:PublishReadyToRun=true -o ./publish
+```
+
+**Real-time Example with Full Project:**
+
+```bash
+# ==================== PROJECT STRUCTURE ====================
+# MyWebApi/
+#   ├── MyWebApi.csproj
+#   ├── Program.cs
+#   ├── Controllers/
+#   ├── appsettings.json
+#   └── appsettings.Production.json
+
+# ==================== 1. CLEAN PREVIOUS BUILDS ====================
+dotnet clean
+
+# ==================== 2. RESTORE DEPENDENCIES ====================
+dotnet restore
+
+# ==================== 3. BUILD IN RELEASE MODE ====================
+dotnet build -c Release
+
+# ==================== 4. RUN TESTS (Optional but recommended) ====================
+dotnet test -c Release --no-build
+
+# ==================== 5. PUBLISH FOR PRODUCTION ====================
+# For Windows Server (IIS)
+dotnet publish -c Release -r win-x64 --self-contained false -o ./publish/windows
+
+# For Linux Server (Docker/Ubuntu)
+dotnet publish -c Release -r linux-x64 --self-contained false -o ./publish/linux
+
+# For Azure App Service (Framework-dependent)
+dotnet publish -c Release -o ./publish/azure
+
+# ==================== 6. PUBLISH WITH ENVIRONMENT TRANSFORMATION ====================
+dotnet publish -c Release -o ./publish /p:EnvironmentName=Production
+
+# ==================== 7. DOCKER BUILD (Production) ====================
+docker build -t mywebapi:latest -f Dockerfile .
+docker run -d -p 8080:80 --name mywebapi-container mywebapi:latest
+```
+
+**Production-Ready Dockerfile:**
+```dockerfile
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY ["MyWebApi.csproj", "./"]
+RUN dotnet restore "MyWebApi.csproj"
+COPY . .
+RUN dotnet build "MyWebApi.csproj" -c Release -o /app/build
+
+# Publish stage
+FROM build AS publish
+RUN dotnet publish "MyWebApi.csproj" -c Release -o /app/publish
+
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+EXPOSE 80
+EXPOSE 443
+ENTRYPOINT ["dotnet", "MyWebApi.dll"]
+```
+
+**Build Configuration in .csproj:**
+```xml
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    
+    <!-- Production optimizations -->
+    <PublishTrimmed>true</PublishTrimmed>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishSingleFile>false</PublishSingleFile>
+    
+    <!-- Remove debugging symbols in release -->
+    <DebugType>None</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+</Project>
+```
+
+---
+
+### 15.2 Deployment Best Practices
+
+**Answer:**  
+Production deployments require proper configuration management, security hardening, monitoring, and rollback strategies.
+
+**Real-time Checklist:**
+
+```csharp
+// ==================== 1. ENVIRONMENT-SPECIFIC CONFIGURATION ====================
+// appsettings.Production.json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Warning",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=prod-sql;Database=ProdDb;User Id=sa;Password=${SQL_PASSWORD};"
+  },
+  "Kafka": {
+    "BootstrapServers": "prod-kafka-1:9092,prod-kafka-2:9092",
+    "ConsumerGroupId": "prod-consumer-group"
+  },
+  "Redis": {
+    "Configuration": "prod-redis:6379,password=${REDIS_PASSWORD}"
+  }
+}
+
+// ==================== 2. SECURE SECRETS MANAGEMENT ====================
+// Program.cs
+var builder = WebApplication.CreateBuilder(args);
+
+// Use Azure Key Vault in production
+if (builder.Environment.IsProduction())
+{
+    builder.Configuration.AddAzureKeyVault(
+        new Uri(builder.Configuration["KeyVault:Url"]),
+        new DefaultAzureCredential());
+}
+
+// Use User Secrets in development
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>();
+}
+
+// ==================== 3. HEALTH CHECKS ====================
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<AppDbContext>()
+    .AddRedis(builder.Configuration["Redis:Configuration"])
+    .AddKafka(builder.Configuration["Kafka:BootstrapServers"]);
+
+var app = builder.Build();
+
+// Health check endpoints
+app.MapHealthChecks("/health");
+app.MapHealthChecks("/health/ready");
+app.MapHealthChecks("/health/live");
+
+// ==================== 4. PRODUCTION MIDDLEWARE CONFIGURATION ====================
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/error");
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        // Cache static files for 1 year in production
+        ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=31536000");
+    }
+});
+
+// ==================== 5. DATABASE MIGRATION ON STARTUP ====================
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    
+    if (app.Environment.IsProduction())
+    {
+        // Only apply migrations if approved
+        if (builder.Configuration.GetValue<bool>("ApplyMigrations"))
+        {
+            await dbContext.Database.MigrateAsync();
+        }
+    }
+    else
+    {
+        await dbContext.Database.MigrateAsync();
+    }
+}
+```
+
+**Deployment Scripts:**
+
+```powershell
+# ==================== POWERSHELL: DEPLOY TO IIS ====================
+# deploy-to-iis.ps1
+
+param(
+    [string]$SiteName = "MyWebApi",
+    [string]$PublishPath = "./publish",
+    [string]$IISPath = "C:\inetpub\wwwroot\MyWebApi"
+)
+
+Write-Host "Starting deployment to IIS..." -ForegroundColor Green
+
+# Stop IIS site
+Stop-WebSite -Name $SiteName
+
+# Backup current version
+$backupPath = "C:\Backups\$SiteName-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+Copy-Item -Path $IISPath -Destination $backupPath -Recurse
+
+# Deploy new version
+Remove-Item -Path "$IISPath\*" -Recurse -Force
+Copy-Item -Path "$PublishPath\*" -Destination $IISPath -Recurse
+
+# Start IIS site
+Start-WebSite -Name $SiteName
+
+Write-Host "Deployment completed successfully!" -ForegroundColor Green
+```
+
+```bash
+# ==================== BASH: DEPLOY TO LINUX ====================
+#!/bin/bash
+# deploy-to-linux.sh
+
+APP_NAME="mywebapi"
+PUBLISH_PATH="./publish"
+DEPLOY_PATH="/var/www/$APP_NAME"
+SERVICE_NAME="$APP_NAME.service"
+
+echo "Starting deployment to Linux..."
+
+# Stop service
+sudo systemctl stop $SERVICE_NAME
+
+# Backup current version
+BACKUP_PATH="/var/backups/$APP_NAME-$(date +%Y%m%d-%H%M%S)"
+sudo cp -r $DEPLOY_PATH $BACKUP_PATH
+
+# Deploy new version
+sudo rm -rf $DEPLOY_PATH/*
+sudo cp -r $PUBLISH_PATH/* $DEPLOY_PATH/
+
+# Set permissions
+sudo chown -R www-data:www-data $DEPLOY_PATH
+sudo chmod +x $DEPLOY_PATH/$APP_NAME
+
+# Start service
+sudo systemctl start $SERVICE_NAME
+sudo systemctl status $SERVICE_NAME
+
+echo "Deployment completed successfully!"
+```
+
+**Key Deployment Checklist:**
+- ✅ Use `dotnet publish -c Release`
+- ✅ Environment-specific `appsettings.{Environment}.json`
+- ✅ Secure secrets with Azure Key Vault/AWS Secrets Manager
+- ✅ Enable health checks
+- ✅ Configure logging (Serilog, Application Insights)
+- ✅ Set up monitoring and alerts
+- ✅ Use Blue-Green or Canary deployment strategies
+- ✅ Automated rollback plan
+- ✅ Load testing before production
+- ✅ Database migration strategy
+
+---
+
+## 16. System Design
+
+### 16.1 URL Shortener
 
 **Answer:**  
 Design includes: unique short code generation (base62 encoding), URL storage with mapping, redirection service, analytics tracking. Consider collision handling, expiration, and scale with distributed caching.
@@ -2037,7 +3360,7 @@ public class UrlController : ControllerBase {
 
 ---
 
-### 14.2 Order Management System
+### 16.2 Order Management System
 
 **Answer:**  
 Design includes: order creation, state machine for order status, inventory management, payment processing, notification system. Use events for communication between services, implement saga pattern for distributed transactions.
@@ -2120,7 +3443,7 @@ public class OrderService {
 
 ---
 
-### 14.3 Payment Processing System
+### 16.3 Payment Processing System
 
 **Answer:**  
 Design includes: multiple payment gateways (Strategy pattern), transaction logging, idempotency, retry mechanism, webhook handling for async updates, PCI compliance for card data, reconciliation for accounting.
@@ -2249,7 +3572,7 @@ public class PaymentWebhookController : ControllerBase {
 - ✅ Common design patterns (Factory, Strategy, Singleton)
 - ✅ Entity Framework optimization
 - ✅ REST API best practices
-- ✅ Dependency Injection lifetimes
+- ✅ Dependency Injection lifetimes (Scoped, Singleton, Transient)
 
 ### Important (Mid-Level)
 - ✅ N+1 problem and solutions
@@ -2257,19 +3580,35 @@ public class PaymentWebhookController : ControllerBase {
 - ✅ Pagination and filtering
 - ✅ Custom middleware
 - ✅ SQL query optimization
-- ✅ Retry and circuit breaker patterns
+- ✅ Retry and circuit breaker patterns (Polly)
 - ✅ Rate limiting
 - ✅ Idempotent APIs
+- ✅ Magic tables in SQL (inserted/deleted)
+- ✅ Stored procedures with temp tables
 
 ### Advanced (Senior Level)
-- ✅ Microservices patterns (Saga, CQRS)
+- ✅ **MediatR Pattern** (in-process messaging)
+- ✅ **MediatR vs Traditional Handler Pattern**
+- ✅ **CQRS Pattern** (Command Query Responsibility Segregation)
+- ✅ **Apache Kafka integration** (Producer/Consumer)
+- ✅ **Kafka use cases** (Event-driven, real-time streaming)
+- ✅ **Kafka consumer project types** (Worker Service, Background Service)
+- ✅ Microservices patterns (Saga, Event Sourcing)
 - ✅ Event-driven architecture
-- ✅ Apache Kafka integration
 - ✅ System design problems
 - ✅ Performance optimization
 - ✅ Distributed caching
-- ✅ Message queues
+- ✅ **Production build commands** (dotnet publish)
+- ✅ **Deployment best practices**
 - ✅ Container orchestration basics
+
+### SQL & Database
+- ✅ Magic tables (inserted/deleted in triggers)
+- ✅ Nested stored procedures with temp tables vs table variables
+- ✅ 2nd highest salary query
+- ✅ Remove duplicate records
+- ✅ Pagination in SQL
+- ✅ Query optimization techniques
 
 ---
 
@@ -2312,6 +3651,117 @@ public class PaymentWebhookController : ControllerBase {
 
 ---
 
+## ❓ Frequently Asked Questions (Quick Answers)
+
+### Q1: What NuGet package is used for Kafka?
+**Answer:** `Confluent.Kafka`
+```bash
+dotnet add package Confluent.Kafka
+```
+
+### Q2: Which project type is used for Kafka consumer?
+**Answer:** 
+- **Worker Service** (recommended for dedicated consumers)
+- **ASP.NET Core with IHostedService/BackgroundService** (when combined with APIs)
+- **Console Application** (for simple scenarios)
+
+```bash
+# Create Worker Service
+dotnet new worker -n KafkaConsumerWorker
+```
+
+### Q3: What is the MediatR pattern and how is it different from handler pattern?
+**Answer:**
+- **MediatR**: Implements mediator pattern for in-process messaging. Single dependency (`IMediator`) in controllers.
+- **Traditional Handler**: Direct handler dependencies for each operation.
+
+**Key Difference**: MediatR decouples controllers from handlers, supports pipeline behaviors (logging, validation), and enables cleaner architecture.
+
+See [Section 13.1 (MediatR)](#131-mediatr-pattern) and [Section 13.2 (Comparison)](#132-mediatr-vs-traditional-handler-pattern)
+
+### Q4: What is the CQRS pattern?
+**Answer:** **Command Query Responsibility Segregation** - Separates read (Query) and write (Command) operations with different models. Enables independent scaling and optimization.
+
+See [Section 13.3 (CQRS)](#133-cqrs-pattern)
+
+### Q5: How to consume Kafka topic?
+**Answer:**
+```csharp
+// Create Consumer with BackgroundService
+public class KafkaConsumer : BackgroundService {
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
+        _consumer.Subscribe("topic-name");
+        while (!stoppingToken.IsCancellationRequested) {
+            var result = _consumer.Consume(stoppingToken);
+            // Process message
+        }
+    }
+}
+```
+
+See [Section 13.4 (Kafka Integration)](#134-apache-kafka-integration)
+
+### Q6: What are Producer and Consumer in Kafka?
+**Answer:**
+- **Producer**: Publishes messages to Kafka topics
+- **Consumer**: Subscribes to topics and processes messages
+- Producers push data, Consumers pull data from topics
+
+See [Section 13.4 (Kafka Integration)](#134-apache-kafka-integration)
+
+### Q7: What types of Dependency Injection in .NET Core?
+**Answer:**
+- **Transient**: New instance every time (lightweight, stateless services)
+- **Scoped**: One instance per HTTP request (DbContext, request-specific services)
+- **Singleton**: Single instance for application lifetime (caching, logging)
+
+See [Section 9.1 (DI Lifetimes)](#91-scoped-vs-singleton-vs-transient)
+
+### Q8: What are use cases of Kafka?
+**Answer:**
+- Event-driven microservices communication
+- Real-time analytics and stream processing
+- Log aggregation
+- Change Data Capture (CDC)
+- Event sourcing
+- Notification systems
+
+See [Section 13.5 (Kafka Use Cases)](#135-kafka-use-cases)
+
+### Q9: What are magic tables in SQL?
+**Answer:** Special temporary tables in SQL Server triggers:
+- **`inserted`**: Contains new/after values (INSERT, UPDATE)
+- **`deleted`**: Contains old/before values (DELETE, UPDATE)
+
+Used for audit trails and data validation in triggers.
+
+See [Section 14.1 (Magic Tables)](#141-magic-tables-inserteddeleted)
+
+### Q10: What is the production build command in .NET?
+**Answer:**
+```bash
+# Basic production build
+dotnet publish -c Release -o ./publish
+
+# Self-contained (includes runtime)
+dotnet publish -c Release -r win-x64 --self-contained true -o ./publish
+
+# Framework-dependent (smaller size)
+dotnet publish -c Release --self-contained false -o ./publish
+```
+
+See [Section 15.1 (Build Commands)](#151-production-build-commands)
+
+### Q11: Nested stored procedures with temp tables - will temp table and variable be accessible in 3rd SP?
+**Answer:**
+- **Temp Table (#)**: ✅ YES - Accessible in all nested stored procedures
+- **Table Variable (@)**: ❌ NO - Only accessible in the SP where it was declared
+
+See [Section 14.2 (Nested Stored Procedures)](#142-nested-stored-procedures-with-temp-tables)
+
+---
+
 **Good luck with your interview! 🚀**
 
-*Document Version: 1.0 | Last Updated: January 2026*
+*Document Version: 2.0 | Last Updated: January 2026*
+*Now includes: MediatR, CQRS, Kafka Deep Dive, SQL Magic Tables, Production Deployment*
