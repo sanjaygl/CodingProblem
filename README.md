@@ -23,7 +23,9 @@ The project contains:
 
 ### Complete Interview Guides (10+ Years Experience)
 
-- **[🔥 C# / .NET Core - Complete Interview Guide](docs/CSharp-DotNetCore-Complete-Interview-Guide.md)** - **NEW!** Consolidated guide with 143+ questions covering Collections & LINQ, String Manipulation, Date & Time, Async/Multithreading, Thread Safety, Design Patterns, Data Structures & Algorithms, ASP.NET Core Web API, Dependency Injection, Entity Framework Core, SQL & Database, Microservices, Advanced Topics (MediatR, Kafka, Rate Limiting), and System Design with concise answers and real-world examples
+- **[🎯 C# 100 Senior Interview Questions](docs/CSharp-100-Senior-Interview-Questions.md)** - **NEW!** Comprehensive collection of 100 high-level C# interview questions for Senior/Principal Software Engineers (11+ years experience) covering CLR & Memory Management, Advanced Language Features, Design Patterns, ASP.NET Core, EF Core, Microservices, Distributed Systems, Performance Optimization, Testing, Cloud Architecture, and Modern .NET with concise explanations, real-world examples, and production-level considerations
+
+- **[🔥 C# / .NET Core - Complete Interview Guide](docs/CSharp-DotNetCore-Complete-Interview-Guide.md)** - Consolidated guide with 143+ questions covering Collections & LINQ, String Manipulation, Date & Time, Async/Multithreading, Thread Safety, Design Patterns, Data Structures & Algorithms, ASP.NET Core Web API, Dependency Injection, Entity Framework Core, SQL & Database, Microservices, Advanced Topics (MediatR, Kafka, Rate Limiting), and System Design with concise answers and real-world examples
 
 ### REST API Development
 
