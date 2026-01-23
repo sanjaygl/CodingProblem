@@ -15,11 +15,12 @@ The project contains:
 
 ### Core C# Concepts
 
-- [C# Interface vs Abstract Class Guide](docs/CSharp-Interface-vs-AbstractClass-Guide.md) - Comprehensive guide with 40+ interview questions and answers about interfaces and abstract classes in C#
-- [C# Collections Complete Guide](docs/CSharp-Collections-Complete-Guide.md) - 70 interview questions covering all C# collection types with concise 3-4 line answers, real-time examples, and performance analysis
-- [C# Boxing, Unboxing, Stack & Heap Guide](docs/CSharp-Boxing-Unboxing-Stack-Heap-Guide.md) - Complete guide to value types, reference types, boxing/unboxing, and memory management with performance considerations
-- [C# ref and out Keywords Guide](docs/CSharp-Ref-Out-Keywords-Guide.md) - Comprehensive guide to parameter passing in C# including ref, out, in modifiers with real-world examples and interview questions
-- [C# Extension Methods Guide](docs/CSharp-Extension-Methods-Guide.md) - Complete guide to extension methods including syntax, best practices, real-world examples, advanced scenarios, and 25+ interview questions
+- **[⚙️ CLR (Common Language Runtime) - Complete Guide](docs/csharp/CLR-Complete-Guide.md)** - **NEW!** Comprehensive CLR reference covering architecture, execution flow, JIT compilation (Tiered JIT with PGO), Garbage Collection (generational model), CTS/CLS, BCL, Thread Pool, Assembly Loader, Exception Manager, Type Checker, real-world scenarios (Web API, high-performance data processing), performance tuning (.NET 10 strategies: JIT, R2R, Native AOT), 12 interview Q&A, and CLR vs JVM vs V8 comparison with visual diagrams, code examples, and best practices for senior-level interviews
+- [C# Interface vs Abstract Class Guide](docs/csharp/CSharp-Interface-vs-AbstractClass-Guide.md) - Comprehensive guide with 40+ interview questions and answers about interfaces and abstract classes in C#
+- [C# Collections Complete Guide](docs/csharp/CSharp-Collections-Complete-Guide.md) - 70 interview questions covering all C# collection types with concise 3-4 line answers, real-time examples, and performance analysis
+- [C# Boxing, Unboxing, Stack & Heap Guide](docs/csharp/CSharp-Boxing-Unboxing-Stack-Heap-Guide.md) - Complete guide to value types, reference types, boxing/unboxing, and memory management with performance considerations
+- [C# ref and out Keywords Guide](docs/csharp/CSharp-Ref-Out-Keywords-Guide.md) - Comprehensive guide to parameter passing in C# including ref, out, in modifiers with real-world examples and interview questions
+- [C# Extension Methods Guide](docs/csharp/CSharp-Extension-Methods-Guide.md) - Complete guide to extension methods including syntax, best practices, real-world examples, advanced scenarios, and 25+ interview questions
 
 ### Complete Interview Guides (10+ Years Experience)
 
@@ -119,11 +120,12 @@ The project contains:
 
 - **Algorithms**: Factorial calculation, Fibonacci sequence, palindrome detection
 - **Data Structures**: Array manipulation, duplicate detection, LRU Cache, Tree traversals
-- **C# Core Concepts**: Interface vs Abstract Class, Collections, Boxing/Unboxing, Memory Management
+- **C# Core Concepts**: Interface vs Abstract Class, Collections, Boxing/Unboxing, Memory Management, Extension Methods, ref/out/in keywords
+- **CLR & Runtime**: CLR architecture, JIT compilation (Tiered JIT, PGO), Garbage Collection (Gen 0/1/2, LOH), CTS/CLS, BCL, Thread Pool, Assembly Loader, Exception Manager, Type Checker, IL/MSIL, Managed vs Unmanaged code, .NET 10 compilation strategies (JIT, R2R, Native AOT)
 - **Advanced C#**: Extension Methods, ref/out/in keywords, LINQ operations
 - **REST API Development**: HTTP methods, idempotency, authentication (JWT, OAuth 2.0), authorization, security, rate limiting, versioning, CORS, pagination, caching, webhooks, error handling, API Gateway, GraphQL vs REST, file uploads, API testing, mobile optimization, backwards compatibility
 - **Async & Multithreading**: Task vs Thread, async/await patterns, thread safety
-- **Memory Management**: Value types, reference types, boxing/unboxing, stack/heap allocation
+- **Memory Management**: Value types, reference types, boxing/unboxing, stack/heap allocation, GC performance tuning
 - **Parameter Passing**: ref, out, in modifiers and their use cases
 - **Object-Oriented Design**: SOLID principles, design patterns (23 GoF patterns), clean architecture
 - **ASP.NET Core**: Web API development, middleware, dependency injection, global exception handling
@@ -137,8 +139,9 @@ The project contains:
 
 ## Repository Statistics
 
-- **📚 Total Documents**: 53+ comprehensive guides
-- **❓ Interview Questions**: 625+ questions with detailed answers
-- **💻 Code Examples**: 350+ real-world code snippets
-- **🎯 Coverage**: Beginner to Senior/Lead level
-- **📝 Last Updated**: January 2026
+- **📚 Total Documents**: 54+ comprehensive guides
+- **❓ Interview Questions**: 650+ questions with detailed answers
+- **💻 Code Examples**: 375+ real-world code snippets
+- **🎯 Coverage**: Beginner to Senior/Lead level (11+ years experience)
+- **� Latest Additions**: CLR Complete Guide, C# 100 Senior Interview Questions
+- **�📝 Last Updated**: January 2026 (.NET 10)
