@@ -2,7 +2,7 @@
 
 ## About This Project
 
-This is a C# coding practice repository containing various programming problems and ## Repository Statistics
+This is a C# - - [Request Lifecycle in ASP.NET Core - From Client to Response](docs/ASP.NET%20Core/Request-Lifecycle-Guide.md) - Complete request lifecycle flow, middleware pipeline, routing, filters vs middleware, model binding, and debugging scenarios with 10 interview questionsDependency Injection in ASP.NET Core - Lifetimes, Best Practices & Real Examples](docs/ASP.NET%20Core/DependencyInjection-Complete-Guide.md) - Built-in DI container, three service lifetimes (Transient/Scoped/Singleton), constructor injection, captive dependencies, and anti-patterns with 10 interview questionsoding practice repository containing various programming problems and ## Repository Statistics
 
 - **📚 Total Documents**: 56+ comprehensive guides
 - **❓ Interview Questions**: 687+ questions with detailed answers
@@ -20,49 +20,54 @@ The project contains:
 
 ## Documentation
 
+### .NET Runtime & CLR
+
+- [CLR (Common Language Runtime) - Complete Guide](docs/CSharp/CLR-Complete-Guide.md) - Comprehensive CLR architecture, JIT compilation, GC, execution flow, and performance tuning with 12 interview Q&A
+
 ### Core C# Concepts
 
-- **[⚙️ CLR (Common Language Runtime) - Complete Guide](docs/csharp/CLR-Complete-Guide.md)** - Comprehensive CLR architecture, JIT compilation, GC, execution flow, and performance tuning with 12 interview Q&A
-- **[🎯 C# Delegates - Complete Guide](docs/csharp/CSharp-Delegates-Complete-Guide.md)** - Type-safe function pointers, multicast delegates, Action/Func/Predicate, and real-world use cases with 7 interview questions
-- [C# Interface vs Abstract Class Guide](docs/csharp/CSharp-Interface-vs-AbstractClass-Guide.md) - 40+ interview questions about interfaces and abstract classes in C#
-- [C# Collections Complete Guide](docs/csharp/CSharp-Collections-Complete-Guide.md) - 70 interview questions covering all C# collection types with performance analysis
-- [C# Boxing, Unboxing, Stack & Heap Guide](docs/csharp/CSharp-Boxing-Unboxing-Stack-Heap-Guide.md) - Value/reference types, boxing/unboxing, and memory management
-- [C# ref and out Keywords Guide](docs/csharp/CSharp-Ref-Out-Keywords-Guide.md) - Parameter passing with ref, out, in modifiers and real-world examples
-- [C# Extension Methods Guide](docs/csharp/CSharp-Extension-Methods-Guide.md) - Extension method syntax, best practices, and 25+ interview questions
+- [C# Delegates - Complete Guide](docs/CSharp/CSharp-Delegates-Complete-Guide.md) - Type-safe function pointers, multicast delegates, Action/Func/Predicate, and real-world use cases with 7 interview questions
+- [C# Interface vs Abstract Class Guide](docs/CSharp/CSharp-Interface-vs-AbstractClass-Guide.md) - 40+ interview questions about interfaces and abstract classes in C#
+- [C# Collections Complete Guide](docs/CSharp/CSharp-Collections-Complete-Guide.md) - 70 interview questions covering all C# collection types with performance analysis
+- [C# Boxing, Unboxing, Stack & Heap Guide](docs/CSharp/CSharp-Boxing-Unboxing-Stack-Heap-Guide.md) - Value/reference types, boxing/unboxing, and memory management
+- [C# ref and out Keywords Guide](docs/CSharp/CSharp-Ref-Out-Keywords-Guide.md) - Parameter passing with ref, out, in modifiers and real-world examples
+- [C# Extension Methods Guide](docs/CSharp/CSharp-Extension-Methods-Guide.md) - Extension method syntax, best practices, and 25+ interview questions
 
 ### Complete Interview Guides (10+ Years Experience)
 
-- **[🎯 C# 100 Senior Interview Questions](docs/CSharp-100-Senior-Interview-Questions.md)** - 100 high-level C# interview questions for Senior/Principal Engineers (11+ years) covering CLR, Advanced Features, Design Patterns, and Cloud Architecture
-- **[🔥 C# / .NET Core - Complete Interview Guide](docs/CSharp-DotNetCore-Complete-Interview-Guide.md)** - 143+ questions covering Collections, LINQ, Async, Threading, Design Patterns, ASP.NET Core, EF Core, Microservices, and System Design
+- [C# 100 Senior Interview Questions](docs/CSharp-100-Senior-Interview-Questions.md) - 100 high-level C# interview questions for Senior/Principal Engineers (11+ years) covering CLR, Advanced Features, Design Patterns, and Cloud Architecture
+- [C# / .NET Core - Complete Interview Guide](docs/CSharp-DotNetCore-Complete-Interview-Guide.md) - 143+ questions covering Collections, LINQ, Async, Threading, Design Patterns, ASP.NET Core, EF Core, Microservices, and System Design
 
 ### REST API Development
 
-- **[🌐 REST API Interview Questions - Complete Guide](docs/REST-API-Interview-Questions-Guide.md)** - 50 comprehensive REST API questions covering fundamentals, HTTP methods, authentication (JWT, OAuth 2.0), security, versioning, and API design best practices
+- [REST API Interview Questions - Complete Guide](docs/REST-API-Interview-Questions-Guide.md) - 50 comprehensive REST API questions covering fundamentals, HTTP methods, authentication (JWT, OAuth 2.0), security, versioning, and API design best practices
 
 ### Database & SQL
 
-- **[📊 SQL Interview Questions - Complete Guide](docs/SQL-Interview-Questions-Guide.md)** - 50 SQL questions covering DDL/DML/DCL/TCL, JOINs, indexes, normalization, transactions, locks, performance optimization, and practical troubleshooting scenarios
-- **[🗃️ Entity Framework Core - Complete Interview Guide](docs/EF-Core-Interview-Questions-Guide.md)** - 25 EF Core questions covering DbContext, Migrations, Change Tracking, Loading strategies, LINQ, performance optimization, and real-world examples
+- [SQL Interview Questions - Complete Guide](docs/SQL-Interview-Questions-Guide.md) - 50 SQL questions covering DDL/DML/DCL/TCL, JOINs, indexes, normalization, transactions, locks, performance optimization, and practical troubleshooting scenarios
+- [Entity Framework Core - Complete Interview Guide](docs/EF-Core-Interview-Questions-Guide.md) - 25 EF Core questions covering DbContext, Migrations, Change Tracking, Loading strategies, LINQ, performance optimization, and real-world examples
 
 ### ASP.NET Core
 
-- **[🌍 Environment Management in ASP.NET Core - Development, Staging & Production](docs/ASP.NET%20Core/Environment-Management-Guide.md)** - Environment fundamentals, ASPNETCORE_ENVIRONMENT variable, environment-specific configuration, IWebHostEnvironment, conditional middleware, and deployment scenarios with 10 interview questions
+- [Short-Circuiting the Middleware Pipeline in ASP.NET Core](docs/ASP.NET%20Core/Middleware-Short-Circuiting-Guide.md) - What short-circuiting means, normal vs short-circuited flow, Use() vs Run(), Map()/MapWhen() branching, real-world use cases, and common mistakes with 10 interview questions
 
-- **[📝 Logging in ASP.NET Core - Best Practices, Providers & Real Examples](docs/ASP.NET%20Core/Logging-Complete-Guide.md)** - Built-in logging with ILogger<T>, six log levels, structured logging, request/response middleware, correlation IDs, and production best practices with 10 interview questions
+- [Environment Management in ASP.NET Core - Development, Staging & Production](docs/ASP.NET%20Core/Environment-Management-Guide.md) - Environment fundamentals, ASPNETCORE_ENVIRONMENT variable, environment-specific configuration, IWebHostEnvironment, conditional middleware, and deployment scenarios with 10 interview questions
 
-- **[⚙️ Configuration & Options Pattern in ASP.NET Core - Clean and Maintainable Settings](docs/ASP.NET%20Core/Configuration-Options-Pattern-Guide.md)** - Configuration system with multiple providers, Options Pattern with strongly-typed POCOs, IOptions/IOptionsSnapshot/IOptionsMonitor interfaces, validation, and real-world use cases with 10 interview questions
+- [Logging in ASP.NET Core - Best Practices, Providers & Real Examples](docs/ASP.NET%20Core/Logging-Complete-Guide.md) - Built-in logging with ILogger<T>, six log levels, structured logging, request/response middleware, correlation IDs, and production best practices with 10 interview questions
+
+- [Configuration & Options Pattern in ASP.NET Core - Clean and Maintainable Settings](docs/ASP.NET%20Core/Configuration-Options-Pattern-Guide.md) - Configuration system with multiple providers, Options Pattern with strongly-typed POCOs, IOptions/IOptionsSnapshot/IOptionsMonitor interfaces, validation, and real-world use cases with 10 interview questions
 
 - **[� - **[🔧 Dependency Injection in ASP.NET Core - Lifetimes, Best Practices & Real Examples](docs/ASP.NET%20Core/DependencyInjection-Complete-Guide.md)** - Built-in DI container, three service lifetimes (Transient/Scoped/Singleton), constructor injection, captive dependencies, and anti-patterns with 10 interview questions
 
 - **[�🔄 - **[🔄 Request Lifecycle in ASP.NET Core - From Client to Response](docs/ASP.NET%20Core/Request-Lifecycle-Guide.md)** - Complete request lifecycle flow, middleware pipeline, routing, filters vs middleware, model binding, and debugging scenarios with 10 interview questions
 
-- **[🌐 - **[🌐 Kestrel Web Server in ASP.NET Core - Architecture, Hosting & Real Use Cases](docs/ASP.NET%20Core/Kestrel-Web-Server-Guide.md)** - Cross-platform Kestrel web server, hosting models, reverse proxy setup, In-Process vs Out-of-Process, and production scenarios with 12 interview questions
+- [Kestrel Web Server in ASP.NET Core - Architecture, Hosting & Real Use Cases](docs/ASP.NET%20Core/Kestrel-Web-Server-Guide.md) - Cross-platform Kestrel web server, hosting models, reverse proxy setup, In-Process vs Out-of-Process, and production scenarios with 12 interview questions
 
-- **[⚙️ - **[⚙️ Middleware in ASP.NET Core - Complete Guide with Custom Middleware](docs/ASP.NET%20Core/Middleware-Complete-Guide.md)** - Request-response pipeline, built-in middleware, custom middleware creation, ordering rules, short-circuiting, and Middleware vs Filters comparison with 10 interview questions
+- [Middleware in ASP.NET Core - Complete Guide with Custom Middleware](docs/ASP.NET%20Core/Middleware-Complete-Guide.md) - Request-response pipeline, built-in middleware, custom middleware creation, ordering rules, short-circuiting, and Middleware vs Filters comparison with 10 interview questions
 
 ### Frontend Development
 
-- **[Angular Interview Questions 2026 (v16–21+)](docs/Angular-Interview-Questions-Guide.md)** - 143 Angular interview questions (Beginner to Lead) covering Signals, Standalone Components, SSR, Control Flow, and performance optimization with code examples
+- [Angular Interview Questions 2026 (v16–21+)](docs/Angular-Interview-Questions-Guide.md) - 143 Angular interview questions (Beginner to Lead) covering Signals, Standalone Components, SSR, Control Flow, and performance optimization with code examples
 
 ### AI & Modern Development Tools
 
@@ -119,7 +124,7 @@ The project contains:
 
 ### Clean Architecture
 
-- **[🏛️ Implementing Clean Architecture / Onion Architecture in ASP.NET Core](docs/clean-architecture/Implementing-Clean-Architecture-ASPNET-Core.md)** - Clean Architecture and Onion Architecture implementation with core principles, project structure, layer-by-layer explanation, and real-world Order Management example with 10 interview Q&As
+- [Implementing Clean Architecture / Onion Architecture in ASP.NET Core](docs/clean-architecture/Implementing-Clean-Architecture-ASPNET-Core.md) - Clean Architecture and Onion Architecture implementation with core principles, project structure, layer-by-layer explanation, and real-world Order Management example with 10 interview Q&As
 
 ## Getting Started
 
@@ -136,7 +141,7 @@ The project contains:
 - **CLR & Runtime**: CLR architecture, JIT compilation (Tiered JIT, PGO), Garbage Collection (Gen 0/1/2, LOH), CTS/CLS, BCL, Thread Pool, Assembly Loader, Exception Manager, Type Checker, IL/MSIL, Managed vs Unmanaged code, .NET 10 compilation strategies (JIT, R2R, Native AOT)
 - **Advanced C#**: Extension Methods, ref/out/in keywords, LINQ operations, Delegates, Action/Func/Predicate
 - **REST API Development**: HTTP methods, idempotency, authentication (JWT, OAuth 2.0), authorization, security, rate limiting, versioning, CORS, pagination, caching, webhooks, error handling, API Gateway, GraphQL vs REST, file uploads, API testing, mobile optimization, backwards compatibility
-- **ASP.NET Core**: Environment Management (ASPNETCORE_ENVIRONMENT variable, Development/Staging/Production environments, environment-specific configuration with appsettings.{Environment}.json, IWebHostEnvironment service, conditional middleware and features, deployment scenarios: Docker/Kubernetes/Azure), Logging (ILogger<T>, six log levels: Trace/Debug/Information/Warning/Error/Critical, structured logging with message templates, request/response middleware, correlation IDs, exception handling, production scenarios), Configuration & Options Pattern (IConfiguration, IOptions/IOptionsSnapshot/IOptionsMonitor, strongly-typed settings, validation, environment-specific config, secrets management), Dependency Injection (three lifetimes: Transient/Scoped/Singleton, constructor injection, DI container, service registration, captive dependencies, anti-patterns, DI in middleware), Request Lifecycle (Client → Kestrel → Middleware → Routing → Auth → Controller → Response flow, middleware interception, filters, model binding, response creation, debugging scenarios), Kestrel web server (cross-platform hosting, reverse proxy setup, In-Process vs Out-of-Process, SSL termination, production scenarios), Middleware (request-response pipeline, built-in middleware, custom middleware creation, middleware ordering, short-circuiting, Middleware vs Filters), dependency injection, Web API development, global exception handling
+- **ASP.NET Core**: Environment Management (ASPNETCORE_ENVIRONMENT variable, Development/Staging/Production environments, environment-specific configuration with appsettings.{Environment}.json, IWebHostEnvironment service, conditional middleware and features, deployment scenarios: Docker/Kubernetes/Azure), Logging (ILogger<T>, six log levels: Trace/Debug/Information/Warning/Error/Critical, structured logging with message templates, request/response middleware, correlation IDs, exception handling, production scenarios), Configuration & Options Pattern (IConfiguration, IOptions/IOptionsSnapshot/IOptionsMonitor, strongly-typed settings, validation, environment-specific config, secrets management), Dependency Injection (three lifetimes: Transient/Scoped/Singleton, constructor injection, DI container, service registration, captive dependencies, anti-patterns, DI in middleware), Request Lifecycle (Client → Kestrel → Middleware → Routing → Auth → Controller → Response flow, middleware interception, filters, model binding, response creation, debugging scenarios), Kestrel web server (cross-platform hosting, reverse proxy setup, In-Process vs Out-of-Process, SSL termination, production scenarios), Middleware (request-response pipeline, built-in middleware, custom middleware creation, middleware ordering, short-circuiting, Middleware vs Filters), Short-Circuiting (what it means, Use() vs Run(), Map()/MapWhen() branching, conditional termination, performance considerations), dependency injection, Web API development, global exception handling
 - **Async & Multithreading**: Task vs Thread, async/await patterns, thread safety
 - **Memory Management**: Value types, reference types, boxing/unboxing, stack/heap allocation, GC performance tuning
 - **Parameter Passing**: ref, out, in modifiers and their use cases
@@ -152,9 +157,9 @@ The project contains:
 
 ## Repository Statistics
 
-- **📚 Total Documents**: 61+ comprehensive guides
-- **❓ Interview Questions**: 737+ questions with detailed answers
-- **💻 Code Examples**: 490+ real-world code snippets
+- **📚 Total Documents**: 62+ comprehensive guides
+- **❓ Interview Questions**: 747+ questions with detailed answers
+- **💻 Code Examples**: 510+ real-world code snippets
 - **🎯 Coverage**: Beginner to Senior/Lead level (11+ years experience)
-- **🔥 Latest Additions**: Environment Management Guide, Logging Guide, Configuration & Options Pattern Guide
+- **🔥 Latest Additions**: Middleware Short-Circuiting Guide, Environment Management Guide, Logging Guide
 - **📝 Last Updated**: January 2026 (.NET 10)
