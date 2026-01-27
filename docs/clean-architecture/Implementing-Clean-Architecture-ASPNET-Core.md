@@ -27,7 +27,11 @@ Your business logic should not depend on ASP.NET Core, Entity Framework, or any 
 
 ### Visual Representation
 
-![Clean Architecture Diagram](https://github.com/ardalis/CleanArchitecture/raw/main/docs/images/clean-architecture.png)
+![Clean Architecture Diagram](https://blog.cleancoder.com/uncle-bob/images/2012-08-13-the-clean-architecture/CleanArchitecture.jpg)
+
+![Clean Architecture Diagram Asp Net](https://blog.ndepend.com/wp-content/uploads/Clean-Architecture-Diagram-Asp-Net.png)
+
+![Data Flow](https://miro.medium.com/v2/1*jH0iI7-MSQYgLUrqTUm6mg.png)
 
 *Image Credit: [Clean Architecture by Uncle Bob](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)*
 
