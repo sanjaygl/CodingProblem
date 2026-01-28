@@ -26,7 +26,7 @@ The project contains:
 
 ### Core C# Concepts
 
-- [C# Interview Questions - Complete Guide (150 Questions)](docs/CSharp/CSharp-Interview-Questions-Complete.md) - 150 interview questions covering C# basics to advanced topics: access modifiers, OOP, value/reference types, ref/out/in, readonly/const, var/dynamic/object, exception handling, collections, generics, LINQ, delegates/events, async/await, memory management, GC, DI basics, CLR/CTS/CLS, reflection, and more
+- [C# Interview Questions - Complete Guide (154 Questions)](docs/CSharp/CSharp-Interview-Questions-Complete.md) - 154 interview questions covering C# basics to advanced topics: access modifiers, OOP, value/reference types, ref/out/in, readonly/const, var/dynamic/object, exception handling, collections, generics, LINQ, delegates/events, async/await, memory management, GC, DI basics, CLR/CTS/CLS, reflection, and more. **NEW**: Includes why/when to use static, sealed, private, and protected constructors
 
 - [C# Delegates - Complete Guide](docs/CSharp/CSharp-Delegates-Complete-Guide.md) - Type-safe function pointers, multicast delegates, Action/Func/Predicate, and real-world use cases with 7 interview questions
 - [C# Interface vs Abstract Class Guide](docs/CSharp/CSharp-Interface-vs-AbstractClass-Guide.md) - 40+ interview questions about interfaces and abstract classes in C#
@@ -175,8 +175,8 @@ The project contains:
 ## Repository Statistics
 
 - **📚 Total Documents**: 70+ comprehensive guides
-- **❓ Interview Questions**: 967+ questions with detailed answers
-- **💻 Code Examples**: 670+ real-world code snippets
+- **❓ Interview Questions**: 971+ questions with detailed answers
+- **💻 Code Examples**: 674+ real-world code snippets
 - **🎯 Coverage**: Beginner to Senior/Lead level (11+ years experience)
-- **🔥 Latest Additions**: C# Interview Questions Complete (150 Q&A), Deployment & Hosting Guide, Caching Guide
+- **🔥 Latest Additions**: C# Interview Questions Complete (154 Q&A), Deployment & Hosting Guide, Caching Guide
 - **📝 Last Updated**: January 2026 (.NET 10)
