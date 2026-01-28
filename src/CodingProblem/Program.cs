@@ -4,8 +4,6 @@
     {
         static void Main(string[] args)
         {
-            Paindrome();
-
             Console.WriteLine(Fibonacci.GetFibonacci(1)); // Example call to avoid unused method warning
             Console.WriteLine(Fibonacci.GetFibonacciSeries(1)); // Example call to avoid unused method warning
 
@@ -33,21 +31,6 @@
             FlattenNestedCollections.FlattenAndPrint();
 
             Console.ReadLine();
-        }
-
-        private static void Paindrome()
-        {
-            Console.WriteLine("Enter a string to check if it's a palindrome:");
-            // string? inputPalindrome = Console.ReadLine();
-            string? inputPalindrome = "madam";
-            if (string.IsNullOrWhiteSpace(inputPalindrome))
-            {
-                Console.WriteLine("Invalid input.");
-            }
-
-            //// Using the built-in method to check for palindrome
-            bool isPalindrome = Palindrome.IsPalindrome(inputPalindrome);
-            Console.WriteLine($"The String [{inputPalindrome}] Palindrome: {isPalindrome}");
         }
     }
 }
