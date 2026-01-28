@@ -26,6 +26,8 @@ The project contains:
 
 ### Core C# Concepts
 
+- [C# Access Modifiers - Complete Guide](docs/csharp/CSharp-Access-Modifiers-Complete-Guide.md) - Comprehensive guide on all 6 access modifiers (public, private, protected, internal, protected internal, private protected) with comparison tables, practical examples, interview Q&A, common mistakes, and decision trees. Includes working code examples in ClassLibraryA project
+
 - [C# Interview Questions - Complete Guide (154 Questions)](docs/csharp/CSharp-Interview-Questions-Complete.md) - 154 interview questions covering C# basics to advanced topics: access modifiers, OOP, value/reference types, ref/out/in, readonly/const, var/dynamic/object, exception handling, collections, generics, LINQ, delegates/events, async/await, memory management, GC, DI basics, CLR/CTS/CLS, reflection, and more. **NEW**: Includes why/when to use static, sealed, private, and protected constructors
 
 - [C# Delegates - Complete Guide](docs/csharp/CSharp-Delegates-Complete-Guide.md) - Type-safe function pointers, multicast delegates, Action/Func/Predicate, and real-world use cases with 7 interview questions
@@ -177,9 +179,9 @@ The project contains:
 
 ## Repository Statistics
 
-- **📚 Total Documents**: 71+ comprehensive guides
-- **❓ Interview Questions**: 1,071+ questions with detailed answers
-- **💻 Code Examples**: 694+ real-world code snippets
+- **📚 Total Documents**: 72+ comprehensive guides
+- **❓ Interview Questions**: 1,086+ questions with detailed answers
+- **💻 Code Examples**: 720+ real-world code snippets
 - **🎯 Coverage**: Beginner to Senior/Lead level (11+ years experience)
-- **🔥 Latest Additions**: ASP.NET MVC Complete Guide (100 Q&A), C# Interview Questions (154 Q&A), Deployment & Hosting Guide
+- **🔥 Latest Additions**: C# Access Modifiers Complete Guide, ASP.NET MVC (100 Q&A), C# Interview Questions (154 Q&A)
 - **📝 Last Updated**: January 2026 (.NET 10)

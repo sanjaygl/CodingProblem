@@ -27,6 +27,7 @@
   </Folder>
   <Folder Name="/src/">
     <File Path="README.md" />
+    <Project Path="src/ClassLibraryA/ClassLibraryA.csproj" Id="fcf79e41-ea0e-47f6-8a7f-bdf4d277c971" />
     <Project Path="src/CodingProblem/CodingProblem.csproj" />
   </Folder>
 </Solution>
