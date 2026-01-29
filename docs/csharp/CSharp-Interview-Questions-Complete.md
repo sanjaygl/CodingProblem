@@ -1,4 +1,4 @@
-# C# Interview Questions – Complete Guide (154 Questions: Basic to Advanced)
+# C# Interview Questions – Complete Guide
 
 ## C# Basics
 
@@ -140,6 +140,18 @@ A. Prevents a class from being inherited or a method from being overridden. Use 
 **Q24. Why and when should you use the `sealed` keyword?**  
 A. Use `sealed` for security (prevent malicious inheritance), performance (enables compiler optimizations like devirtualization), or design intent (class is complete and not meant for extension). Example: `string` class is sealed in .NET.
 
+**Q25. Can you inherit static class ?**  
+A: ❌ No, a static class cannot be inherited in C#.
+Static classes are implicitly sealed and abstract, so they do not support inheritance or polymorphism.
+
+**Q26. Can we inherit a class that has a private constructor?**
+A. ❌ No, a class with only a private constructor cannot be inherited because the constructor is not accessible to derived classes, so the base class cannot be initialized.
+
+**Q27. Can an abstract class be sealed?**
+A. ❌ No, an abstract class cannot be sealed because abstract requires the class to be inherited, while sealed prevents inheritance.
+
+**Q28. Is it possible to allow inheritance up to a certain level and then stop it?**
+A. ✅ Yes, by using a sealed class or sealed override methods at the desired level in the inheritance hierarchy, you can allow inheritance initially and then prevent further extension.
 ---
 
 ## Classes vs Structs
@@ -600,4 +612,4 @@ A. Returns the left operand if not `null`, otherwise returns the right operand. 
 
 ---
 
-**Total Questions: 150** covering C# from basics to advanced topics, designed for interview preparation.
+covering C# from basics to advanced topics, designed for interview preparation.
