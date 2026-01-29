@@ -32,6 +32,8 @@
 
             Yield.Test();
 
+            JaggedArray.JaggedArrayDemo();
+
             Console.ReadLine();
         }
     }
