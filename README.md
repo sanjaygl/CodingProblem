@@ -1,15 +1,8 @@
-# CodingProblem
+# ASP.NET Core Interview Questions & C# Coding Practice
 
 ## About This Project
 
-This is a C# - - [Request Lifecycle in ASP. NET Core - From Client to Response](docs/ASP. NET%20Core/Request-Lifecycle-Guide.md) - Complete request lifecycle flow, middleware pipeline, routing, filters vs middleware, model binding, and debugging scenarios with 10 interview questionsDependency Injection in ASP. NET Core - Lifetimes, Best Practices & Real Examples](docs/ASP. NET%20Core/DependencyInjection-Complete-Guide.md) - Built-in DI container, three service lifetimes (Transient/Scoped/Singleton), constructor injection, captive dependencies, and anti-patterns with 10 interview questionsoding practice repository containing various programming problems and ## Repository Statistics
-
-* **📚 Total Documents**: 56+ comprehensive guides
-* **❓ Interview Questions**: 687+ questions with detailed answers
-* **💻 Code Examples**: 400+ real-world code snippets
-* **🎯 Coverage**: Beginner to Senior/Lead level (11+ years experience)
-* **🔥 Latest Additions**: Kestrel Web Server Guide, Middleware Complete Guide, CLR Complete Guide
-* **📝 Last Updated**: January 2026 (. NET 10)s. The project includes implementations of common algorithms and data structure problems, along with comprehensive documentation about C# concepts.
+This is a comprehensive C# and ASP.NET Core interview preparation repository containing various programming problems and solutions. The project includes implementations of common algorithms and data structure problems, along with comprehensive documentation about C# concepts, ASP.NET Core features, and software design principles.
 
 ## Project Structure
 
@@ -20,7 +13,7 @@ The project contains:
 
 ## Documentation
 
-### . NET Runtime & CLR
+### .NET Runtime & CLR
 
 * [CLR (Common Language Runtime) - Complete Guide](docs/csharp/CLR-Complete-Guide.md) - Comprehensive CLR architecture, JIT compilation, GC, execution flow, and performance tuning with 12 interview Q&A
 
@@ -40,7 +33,7 @@ The project contains:
 ### Complete Interview Guides (10+ Years Experience)
 
 * [C# 100 Senior Interview Questions](docs/CSharp-100-Senior-Interview-Questions.md) - 100 high-level C# interview questions for Senior/Principal Engineers (11+ years) covering CLR, Advanced Features, Design Patterns, and Cloud Architecture
-* [C# / . NET Core - Complete Interview Guide](docs/CSharp-DotNetCore-Complete-Interview-Guide.md) - 143+ questions covering Collections, LINQ, Async, Threading, Design Patterns, ASP. NET Core, EF Core, Microservices, and System Design
+* [C# / .NET Core - Complete Interview Guide](docs/CSharp-DotNetCore-Complete-Interview-Guide.md) - 143+ questions covering Collections, LINQ, Async, Threading, Design Patterns, ASP.NET Core, EF Core, Microservices, and System Design
 
 ### REST API Development
 
@@ -51,39 +44,39 @@ The project contains:
 * [SQL Interview Questions - Complete Guide](docs/SQL-Interview-Questions-Guide.md) - 50 SQL questions covering DDL/DML/DCL/TCL, JOINs, indexes, normalization, transactions, locks, performance optimization, and practical troubleshooting scenarios
 * [Entity Framework Core - Complete Interview Guide](docs/EF-Core-Interview-Questions-Guide.md) - 25 EF Core questions covering DbContext, Migrations, Change Tracking, Loading strategies, LINQ, performance optimization, and real-world examples
 
-### ASP. NET Core
+### ASP.NET Core
 
-* [ASP. NET MVC Interview Questions - Complete Guide (100 Questions)](docs/ASP. NET%20Core/ASPNET-MVC-Interview-Questions-Complete.md) - 100 comprehensive MVC questions covering MVC architecture, request lifecycle, routing (conventional vs attribute), controllers & actions, action results, model binding & validation, data annotations, filters (Authorization/Action/Result/Exception), dependency injection, ViewBag/ViewData/TempData, Razor view engine, layouts/partial views/view components, Tag Helpers vs HTML Helpers, forms & anti-forgery tokens, authentication & authorization, sessions/cookies, exception handling, and security best practices
+* [ASP.NET MVC Interview Questions - Complete Guide (100 Questions)](docs/ASP.NET%20Core/ASPNET-MVC-Interview-Questions-Complete.md) - 100 comprehensive MVC questions covering MVC architecture, request lifecycle, routing (conventional vs attribute), controllers & actions, action results, model binding & validation, data annotations, filters (Authorization/Action/Result/Exception), dependency injection, ViewBag/ViewData/TempData, Razor view engine, layouts/partial views/view components, Tag Helpers vs HTML Helpers, forms & anti-forgery tokens, authentication & authorization, sessions/cookies, exception handling, and security best practices
 
-* [Deployment & Hosting in ASP. NET Core - From Local to Production](docs/ASP. NET%20Core/Deployment-Hosting-Guide.md) - Hosting models (in-process vs out-of-process), web servers (Kestrel, IIS, Nginx), reverse proxy architecture, deploying to IIS and Linux, Docker containerization, environment configuration, secrets management, HTTPS/SSL termination, health checks, horizontal scaling, and common deployment mistakes with 10 interview questions
+* [Deployment & Hosting in ASP.NET Core - From Local to Production](docs/ASP.NET%20Core/Deployment-Hosting-Guide.md) - Hosting models (in-process vs out-of-process), web servers (Kestrel, IIS, Nginx), reverse proxy architecture, deploying to IIS and Linux, Docker containerization, environment configuration, secrets management, HTTPS/SSL termination, health checks, horizontal scaling, and common deployment mistakes with 10 interview questions
 
-* [Caching in ASP. NET Core - Improving Performance and Scalability](docs/ASP. NET%20Core/Caching-Guide.md) - What caching is, difference between in-memory and distributed caching, three types (IMemoryCache, IDistributedCache, Response Caching), cache expiration strategies (absolute, sliding), implementing caching with Redis, cache invalidation, real-world use cases, and common mistakes with 10 interview questions
+* [Caching in ASP.NET Core - Improving Performance and Scalability](docs/ASP.NET%20Core/Caching-Guide.md) - What caching is, difference between in-memory and distributed caching, three types (IMemoryCache, IDistributedCache, Response Caching), cache expiration strategies (absolute, sliding), implementing caching with Redis, cache invalidation, real-world use cases, and common mistakes with 10 interview questions
 
-* [Rate Limiting in ASP. NET Core - Protecting APIs from Abuse](docs/ASP. NET%20Core/Rate-Limiting-Guide.md) - What rate limiting is, difference from throttling, why it's important, built-in rate limiting in . NET 7+, four algorithms (Fixed Window, Sliding Window, Token Bucket, Concurrency), implementing per-user and per-API-key limits, handling HTTP 429 responses, real-world use cases, and common mistakes with 10 interview questions
+* [Rate Limiting in ASP.NET Core - Protecting APIs from Abuse](docs/ASP.NET%20Core/Rate-Limiting-Guide.md) - What rate limiting is, difference from throttling, why it's important, built-in rate limiting in .NET 7+, four algorithms (Fixed Window, Sliding Window, Token Bucket, Concurrency), implementing per-user and per-API-key limits, handling HTTP 429 responses, real-world use cases, and common mistakes with 10 interview questions
 
-* [API Versioning in ASP. NET Core - Designing Evolvable APIs](docs/ASP. NET%20Core/API-Versioning-Guide.md) - Why API versioning is needed, breaking vs non-breaking changes, common versioning strategies (URL, query string, header, media type), implementing versioning with Asp. Versioning. Mvc, deprecating API versions, Swagger integration, and common mistakes with 10 interview questions
+* [API Versioning in ASP.NET Core - Designing Evolvable APIs](docs/ASP.NET%20Core/API-Versioning-Guide.md) - Why API versioning is needed, breaking vs non-breaking changes, common versioning strategies (URL, query string, header, media type), implementing versioning with Asp.Versioning.Mvc, deprecating API versions, Swagger integration, and common mistakes with 10 interview questions
 
-* [CORS in ASP. NET Core - Securing Cross-Origin Requests](docs/ASP. NET%20Core/CORS-Guide.md) - What CORS is, Same-Origin Policy, simple vs preflight requests, CORS headers, configuring CORS policies, middleware order, CORS with authentication, and common mistakes with 10 interview questions
+* [CORS in ASP.NET Core - Securing Cross-Origin Requests](docs/ASP.NET%20Core/CORS-Guide.md) - What CORS is, Same-Origin Policy, simple vs preflight requests, CORS headers, configuring CORS policies, middleware order, CORS with authentication, and common mistakes with 10 interview questions
 
-* [Authentication & Authorization in ASP. NET Core](docs/ASP. NET%20Core/Authentication-Authorization-Guide.md) - Authentication vs Authorization, JWT Bearer tokens, configuring authentication, role-based and policy-based authorization, claims-based authorization, [Authorize] attribute, middleware order, and common security mistakes with 10 interview questions
+* [Authentication & Authorization in ASP.NET Core](docs/ASP.NET%20Core/Authentication-Authorization-Guide.md) - Authentication vs Authorization, JWT Bearer tokens, configuring authentication, role-based and policy-based authorization, claims-based authorization, [Authorize] attribute, middleware order, and common security mistakes with 10 interview questions
 
-* [Model Binding & Model Validation in ASP. NET Core](docs/ASP. NET%20Core/Model-Binding-Validation-Guide.md) - How request data is mapped to parameters, binding sources (FromRoute, FromQuery, FromBody, FromHeader, FromForm), data annotations validation, automatic validation with [ApiController], custom validation, and common mistakes with 10 interview questions
+* [Model Binding & Model Validation in ASP.NET Core](docs/ASP.NET%20Core/Model-Binding-Validation-Guide.md) - How request data is mapped to parameters, binding sources (FromRoute, FromQuery, FromBody, FromHeader, FromForm), data annotations validation, automatic validation with [ApiController], custom validation, and common mistakes with 10 interview questions
 
-* [Short-Circuiting the Middleware Pipeline in ASP. NET Core](docs/ASP. NET%20Core/Middleware-Short-Circuiting-Guide.md) - What short-circuiting means, normal vs short-circuited flow, Use() vs Run(), Map()/MapWhen() branching, real-world use cases, and common mistakes with 10 interview questions
+* [Short-Circuiting the Middleware Pipeline in ASP.NET Core](docs/ASP.NET%20Core/Middleware-Short-Circuiting-Guide.md) - What short-circuiting means, normal vs short-circuited flow, Use() vs Run(), Map()/MapWhen() branching, real-world use cases, and common mistakes with 10 interview questions
 
-* [Environment Management in ASP. NET Core - Development, Staging & Production](docs/ASP. NET%20Core/Environment-Management-Guide.md) - Environment fundamentals, ASPNETCORE_ENVIRONMENT variable, environment-specific configuration, IWebHostEnvironment, conditional middleware, and deployment scenarios with 10 interview questions
+* [Environment Management in ASP.NET Core - Development, Staging & Production](docs/ASP.NET%20Core/Environment-Management-Guide.md) - Environment fundamentals, ASPNETCORE_ENVIRONMENT variable, environment-specific configuration, IWebHostEnvironment, conditional middleware, and deployment scenarios with 10 interview questions
 
-* [Logging in ASP. NET Core - Best Practices, Providers & Real Examples](docs/ASP. NET%20Core/Logging-Complete-Guide.md) - Built-in logging with ILogger<T>, six log levels, structured logging, request/response middleware, correlation IDs, and production best practices with 10 interview questions
+* [Logging in ASP.NET Core - Best Practices, Providers & Real Examples](docs/ASP.NET%20Core/Logging-Complete-Guide.md) - Built-in logging with ILogger<T>, six log levels, structured logging, request/response middleware, correlation IDs, and production best practices with 10 interview questions
 
-* [Configuration & Options Pattern in ASP. NET Core - Clean and Maintainable Settings](docs/ASP. NET%20Core/Configuration-Options-Pattern-Guide.md) - Configuration system with multiple providers, Options Pattern with strongly-typed POCOs, IOptions/IOptionsSnapshot/IOptionsMonitor interfaces, validation, and real-world use cases with 10 interview questions
+* [Configuration & Options Pattern in ASP.NET Core - Clean and Maintainable Settings](docs/ASP.NET%20Core/Configuration-Options-Pattern-Guide.md) - Configuration system with multiple providers, Options Pattern with strongly-typed POCOs, IOptions/IOptionsSnapshot/IOptionsMonitor interfaces, validation, and real-world use cases with 10 interview questions
 
-* [Dependency Injection in ASP. NET Core - Lifetimes, Best Practices & Real Examples](docs/ASP. NET%20Core/DependencyInjection-Complete-Guide.md) - Built-in DI container, three service lifetimes (Transient/Scoped/Singleton), constructor injection, captive dependencies, and anti-patterns with 10 interview questions
+* [Dependency Injection in ASP.NET Core - Lifetimes, Best Practices & Real Examples](docs/ASP.NET%20Core/DependencyInjection-Complete-Guide.md) - Built-in DI container, three service lifetimes (Transient/Scoped/Singleton), constructor injection, captive dependencies, and anti-patterns with 10 interview questions
 
-* [Request Lifecycle in ASP. NET Core - From Client to Response](docs/ASP. NET%20Core/Request-Lifecycle-Guide.md) - Complete request lifecycle flow, middleware pipeline, routing, filters vs middleware, model binding, and debugging scenarios with 10 interview questions
+* [Request Lifecycle in ASP.NET Core - From Client to Response](docs/ASP.NET%20Core/Request-Lifecycle-Guide.md) - Complete request lifecycle flow, middleware pipeline, routing, filters vs middleware, model binding, and debugging scenarios with 10 interview questions
 
-* [Kestrel Web Server in ASP. NET Core - Architecture, Hosting & Real Use Cases](docs/ASP. NET%20Core/Kestrel-Web-Server-Guide.md) - Cross-platform Kestrel web server, hosting models, reverse proxy setup, In-Process vs Out-of-Process, and production scenarios with 12 interview questions
+* [Kestrel Web Server in ASP.NET Core - Architecture, Hosting & Real Use Cases](docs/ASP.NET%20Core/Kestrel-Web-Server-Guide.md) - Cross-platform Kestrel web server, hosting models, reverse proxy setup, In-Process vs Out-of-Process, and production scenarios with 12 interview questions
 
-* [Middleware in ASP. NET Core - Complete Guide with Custom Middleware](docs/ASP. NET%20Core/Middleware-Complete-Guide.md) - Request-response pipeline, built-in middleware, custom middleware creation, ordering rules, short-circuiting, and Middleware vs Filters comparison with 10 interview questions
+* [Middleware in ASP.NET Core - Complete Guide with Custom Middleware](docs/ASP.NET%20Core/Middleware-Complete-Guide.md) - Request-response pipeline, built-in middleware, custom middleware creation, ordering rules, short-circuiting, and Middleware vs Filters comparison with 10 interview questions
 
 ### Frontend Development
 
@@ -97,7 +90,7 @@ The project contains:
 
 #### **SOLID Overview**
 
-* [SOLID Design Principles Introduction](docs/solid-principles/SOLID-Design-Principles-Introduction.md) - SOLID principles overview with history, cross-principle comparisons, and ASP. NET Core applications
+* [SOLID Design Principles Introduction](docs/solid-principles/SOLID-Design-Principles-Introduction.md) - SOLID principles overview with history, cross-principle comparisons, and ASP.NET Core applications
 
 #### **The Five SOLID Principles**
 
@@ -150,7 +143,7 @@ The project contains:
 
 ### Clean Architecture
 
-* [Implementing Clean Architecture / Onion Architecture in ASP. NET Core](docs/clean-architecture/Implementing-Clean-Architecture-ASPNET-Core.md) - Clean Architecture and Onion Architecture implementation with core principles, project structure, layer-by-layer explanation, and real-world Order Management example with 10 interview Q&As
+* [Implementing Clean Architecture / Onion Architecture in ASP.NET Core](docs/clean-architecture/Implementing-Clean-Architecture-ASPNET-Core.md) - Clean Architecture and Onion Architecture implementation with core principles, project structure, layer-by-layer explanation, and real-world Order Management example with 10 interview Q&As
 
 ## Getting Started
 
@@ -165,16 +158,16 @@ The project contains:
 * **Data Structures**: Array manipulation, duplicate detection, LRU Cache, Tree traversals
 * **C# Core Concepts**: Interface vs Abstract Class, Collections, Boxing/Unboxing, Memory Management, Extension Methods, ref/out/in keywords, Delegates (type-safe function pointers, multicast delegates, events)
 * **C# Interview Questions**: 150 comprehensive Q&A covering access modifiers, OOP principles (encapsulation/inheritance/polymorphism/abstraction), value/reference types, ref/out/in keywords, readonly/const, var/dynamic/object, exception handling, collections/generics, LINQ, delegates/events/Func/Action, async/await/Task, memory management/GC/IDisposable, DI basics, CLR/JIT/CTS/CLS, reflection, attributes, serialization, pattern matching, nullable reference types
-* **CLR & Runtime**: CLR architecture, JIT compilation (Tiered JIT, PGO), Garbage Collection (Gen 0/1/2, LOH), CTS/CLS, BCL, Thread Pool, Assembly Loader, Exception Manager, Type Checker, IL/MSIL, Managed vs Unmanaged code, . NET 10 compilation strategies (JIT, R2R, Native AOT)
+* **CLR & Runtime**: CLR architecture, JIT compilation (Tiered JIT, PGO), Garbage Collection (Gen 0/1/2, LOH), CTS/CLS, BCL, Thread Pool, Assembly Loader, Exception Manager, Type Checker, IL/MSIL, Managed vs Unmanaged code, .NET 10 compilation strategies (JIT, R2R, Native AOT)
 * **Advanced C#**: Extension Methods, ref/out/in keywords, LINQ operations, Delegates, Action/Func/Predicate
 * **REST API Development**: HTTP methods, idempotency, authentication (JWT, OAuth 2.0), authorization, security, rate limiting, versioning, CORS, pagination, caching, webhooks, error handling, API Gateway, GraphQL vs REST, file uploads, API testing, mobile optimization, backwards compatibility
-* **ASP. NET MVC**: 100 comprehensive Q&A covering MVC architecture (Model/View/Controller), request lifecycle, routing (conventional vs attribute), controllers & action methods, action results (ViewResult/JsonResult/IActionResult), model binding & validation, data annotations, filters (Authorization/Action/Result/Exception), dependency injection, ViewBag/ViewData/TempData, Razor view engine, layouts/partial views/view components, Tag Helpers vs HTML Helpers, forms & anti-forgery tokens, authentication & authorization ([Authorize]/[AllowAnonymous]), role-based & policy-based authorization, sessions/cookies, middleware vs filters, exception handling, CSRF protection
-* **ASP. NET Core**: Environment Management (ASPNETCORE_ENVIRONMENT variable, Development/Staging/Production environments, environment-specific configuration with appsettings.{Environment}.json, IWebHostEnvironment service, conditional middleware and features, deployment scenarios: Docker/Kubernetes/Azure), Logging (ILogger<T>, six log levels: Trace/Debug/Information/Warning/Error/Critical, structured logging with message templates, request/response middleware, correlation IDs, exception handling, production scenarios), Configuration & Options Pattern (IConfiguration, IOptions/IOptionsSnapshot/IOptionsMonitor, strongly-typed settings, validation, environment-specific config, secrets management), Dependency Injection (three lifetimes: Transient/Scoped/Singleton, constructor injection, DI container, service registration, captive dependencies, anti-patterns, DI in middleware), Request Lifecycle (Client → Kestrel → Middleware → Routing → Auth → Controller → Response flow, middleware interception, filters, model binding, response creation, debugging scenarios), Kestrel web server (cross-platform hosting, reverse proxy setup, In-Process vs Out-of-Process, SSL termination, production scenarios), Middleware (request-response pipeline, built-in middleware, custom middleware creation, middleware ordering, short-circuiting, Middleware vs Filters), Short-Circuiting (what it means, Use() vs Run(), Map()/MapWhen() branching, conditional termination, performance considerations), Model Binding & Validation (binding sources: FromRoute/FromQuery/FromBody/FromHeader/FromForm, data annotations, [ApiController] automatic validation, custom validation, ModelState), Authentication & Authorization (authentication vs authorization, JWT Bearer tokens, role-based and policy-based authorization, claims-based authorization, [Authorize] attribute, UseAuthentication/UseAuthorization middleware order), CORS (Cross-Origin Resource Sharing, Same-Origin Policy, simple vs preflight requests, OPTIONS method, Access-Control headers, AllowAnyOrigin vs AllowCredentials, middleware order, CORS with authentication), API Versioning (breaking vs non-breaking changes, URL/query string/header/media type versioning strategies, Asp. Versioning. Mvc package, [ApiVersion] attribute, deprecating versions, Swagger integration with multiple versions), Rate Limiting (built-in . NET 7+ middleware, four algorithms: Fixed Window/Sliding Window/Token Bucket/Concurrency Limiter, per-user and per-API-key limits, HTTP 429 responses, Retry-After header, protecting expensive operations, DDoS prevention), Caching (IMemoryCache for single-server, IDistributedCache with Redis for multi-server, Response Caching for HTTP responses, absolute vs sliding expiration, cache invalidation strategies, GetOrCreate pattern, cache hit/miss optimization), Deployment & Hosting (in-process vs out-of-process hosting, Kestrel behind reverse proxy (IIS/Nginx/Apache), deploying to Windows/IIS and Linux, Docker multi-stage builds, systemd services, SSL termination, forwarded headers, health checks (liveness/readiness), horizontal scaling with load balancers, secrets management with Key Vault), dependency injection, Web API development, global exception handling
+* **ASP.NET MVC**: 100 comprehensive Q&A covering MVC architecture (Model/View/Controller), request lifecycle, routing (conventional vs attribute), controllers & action methods, action results (ViewResult/JsonResult/IActionResult), model binding & validation, data annotations, filters (Authorization/Action/Result/Exception), dependency injection, ViewBag/ViewData/TempData, Razor view engine, layouts/partial views/view components, Tag Helpers vs HTML Helpers, forms & anti-forgery tokens, authentication & authorization ([Authorize]/[AllowAnonymous]), role-based & policy-based authorization, sessions/cookies, middleware vs filters, exception handling, CSRF protection
+* **ASP.NET Core**: Environment Management (ASPNETCORE_ENVIRONMENT variable, Development/Staging/Production environments, environment-specific configuration with appsettings.{Environment}.json, IWebHostEnvironment service, conditional middleware and features, deployment scenarios: Docker/Kubernetes/Azure), Logging (ILogger<T>, six log levels: Trace/Debug/Information/Warning/Error/Critical, structured logging with message templates, request/response middleware, correlation IDs, exception handling, production scenarios), Configuration & Options Pattern (IConfiguration, IOptions/IOptionsSnapshot/IOptionsMonitor, strongly-typed settings, validation, environment-specific config, secrets management), Dependency Injection (three lifetimes: Transient/Scoped/Singleton, constructor injection, DI container, service registration, captive dependencies, anti-patterns, DI in middleware), Request Lifecycle (Client → Kestrel → Middleware → Routing → Auth → Controller → Response flow, middleware interception, filters, model binding, response creation, debugging scenarios), Kestrel web server (cross-platform hosting, reverse proxy setup, In-Process vs Out-of-Process, SSL termination, production scenarios), Middleware (request-response pipeline, built-in middleware, custom middleware creation, middleware ordering, short-circuiting, Middleware vs Filters), Short-Circuiting (what it means, Use() vs Run(), Map()/MapWhen() branching, conditional termination, performance considerations), Model Binding & Validation (binding sources: FromRoute/FromQuery/FromBody/FromHeader/FromForm, data annotations, [ApiController] automatic validation, custom validation, ModelState), Authentication & Authorization (authentication vs authorization, JWT Bearer tokens, role-based and policy-based authorization, claims-based authorization, [Authorize] attribute, UseAuthentication/UseAuthorization middleware order), CORS (Cross-Origin Resource Sharing, Same-Origin Policy, simple vs preflight requests, OPTIONS method, Access-Control headers, AllowAnyOrigin vs AllowCredentials, middleware order, CORS with authentication), API Versioning (breaking vs non-breaking changes, URL/query string/header/media type versioning strategies, Asp.Versioning.Mvc package, [ApiVersion] attribute, deprecating versions, Swagger integration with multiple versions), Rate Limiting (built-in .NET 7+ middleware, four algorithms: Fixed Window/Sliding Window/Token Bucket/Concurrency Limiter, per-user and per-API-key limits, HTTP 429 responses, Retry-After header, protecting expensive operations, DDoS prevention), Caching (IMemoryCache for single-server, IDistributedCache with Redis for multi-server, Response Caching for HTTP responses, absolute vs sliding expiration, cache invalidation strategies, GetOrCreate pattern, cache hit/miss optimization), Deployment & Hosting (in-process vs out-of-process hosting, Kestrel behind reverse proxy (IIS/Nginx/Apache), deploying to Windows/IIS and Linux, Docker multi-stage builds, systemd services, SSL termination, forwarded headers, health checks (liveness/readiness), horizontal scaling with load balancers, secrets management with Key Vault), dependency injection, Web API development, global exception handling
 * **Async & Multithreading**: Task vs Thread, async/await patterns, thread safety
 * **Memory Management**: Value types, reference types, boxing/unboxing, stack/heap allocation, GC performance tuning
 * **Parameter Passing**: ref, out, in modifiers and their use cases
 * **Object-Oriented Design**: SOLID principles, design patterns (23 GoF patterns), clean architecture
-* **ASP. NET Core**: Web API development, middleware, dependency injection, global exception handling
+* **ASP.NET Core**: Web API development, middleware, dependency injection, global exception handling
 * **Entity Framework Core**: DbContext & DbSet, Code First vs Database First, Migrations, Change Tracking, Lazy/Eager/Explicit Loading, Tracking vs No-Tracking queries, LINQ optimization, N+1 problem, AsNoTracking, Raw SQL, Transactions, Concurrency handling, EF Core vs Dapper, Performance optimization, Navigation Properties, Include/ThenInclude, Shadow Properties, Connection Resiliency, Soft Delete, Value Conversions, Split Query, Owned Types, Global Query Filters, Find() vs FirstOrDefault()
 * **Database & SQL**: 50 questions covering DDL/DML/DCL/TCL commands, JOINs, indexes (clustered vs non-clustered), stored procedures vs functions, transactions & ACID, locks & deadlocks, query optimization, execution plans, pagination, NULL handling, plus 25 real-world scenarios (deadlocks, race conditions, query timeouts, data migration, SQL injection, bulk inserts, trigger optimization, CTE performance, recursive queries, and production troubleshooting)
 * **Microservices**: Retry patterns with Polly, Circuit Breaker, Saga Pattern, event-driven architecture
@@ -186,8 +179,8 @@ The project contains:
 ## Repository Statistics
 
 * **📚 Total Documents**: 72+ comprehensive guides
-* **❓ Interview Questions**: 1, 086+ questions with detailed answers
+* **❓ Interview Questions**: 1,086+ questions with detailed answers
 * **💻 Code Examples**: 720+ real-world code snippets
 * **🎯 Coverage**: Beginner to Senior/Lead level (11+ years experience)
-* **🔥 Latest Additions**: C# Access Modifiers Complete Guide, ASP. NET MVC (100 Q&A), C# Interview Questions (154 Q&A)
-* **📝 Last Updated**: January 2026 (. NET 10)
+* **🔥 Latest Additions**: C# Access Modifiers Complete Guide, ASP.NET MVC (100 Q&A), C# Interview Questions (154 Q&A)
+* **📝 Last Updated**: January 2026 (.NET 10)

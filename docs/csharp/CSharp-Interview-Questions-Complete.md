@@ -145,13 +145,13 @@ A. Use `sealed` for security (prevent malicious inheritance), performance (enabl
 A: ❌ No, a static class cannot be inherited in C#.
 Static classes are implicitly sealed and abstract, so they do not support inheritance or polymorphism.
 
-**Q3.11. Can we inherit a class that has a private constructor?**
+**Q3.11. Can we inherit a class that has a private constructor?** 
 A. ❌ No, a class with only a private constructor cannot be inherited because the constructor is not accessible to derived classes, so the base class cannot be initialized.
 
-**Q3.12. Can an abstract class be sealed?**
+**Q3.12. Can an abstract class be sealed?** 
 A. ❌ No, an abstract class cannot be sealed because abstract requires the class to be inherited, while sealed prevents inheritance.
 
-**Q3.13. Is it possible to allow inheritance up to a certain level and then stop it?**
+**Q3.13. Is it possible to allow inheritance up to a certain level and then stop it?** 
 A. ✅ Yes, by using a sealed class or sealed override methods at the desired level in the inheritance hierarchy, you can allow inheritance initially and then prevent further extension.
 
 ---
@@ -195,14 +195,15 @@ A. No. Interfaces cannot have constructors because they cannot be instantiated d
 **Q5.7. What are default interface methods (C# 8)?**  
 A. Interfaces can now have default implementations for methods, allowing you to add new methods to existing interfaces without breaking implementations. Use sparingly to maintain interface simplicity.
 
-**Q5.8. Can an abstract class be instantiated?**
+**Q5.8. Can an abstract class be instantiated?** 
 A. ❌ No, an abstract class cannot be instantiated because it may contain unimplemented (abstract) members and is meant to be used only as a base class.
 
-**Q5.9. Why can’t we make an abstract class sealed?**
+**Q5.9. Why can’t we make an abstract class sealed?** 
 A. ❌ Because abstract requires a class to be inherited and implemented, while sealed prevents inheritance—both have opposite purposes and cannot be used together.
 
-**Q5.10. Can abstract classes have private constructors?**
+**Q5.10. Can abstract classes have private constructors?** 
 A. ❌ No, abstract classes cannot have only private constructors because derived classes must be able to call a base constructor; however, they can have protected or internal constructors to control instantiation.
+
 ---
 
 ## Constructors & Destructors
