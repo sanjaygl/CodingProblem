@@ -50,7 +50,9 @@ The project contains:
 
 * [ASP.NET MVC Interview Questions - Complete Guide (100 Questions)](docs/ASP.NET%20Core/ASPNET-MVC-Interview-Questions-Complete.md) - 100 comprehensive MVC questions covering MVC architecture, request lifecycle, routing (conventional vs attribute), controllers & actions, action results, model binding & validation, data annotations, filters (Authorization/Action/Result/Exception), dependency injection, ViewBag/ViewData/TempData, Razor view engine, layouts/partial views/view components, Tag Helpers vs HTML Helpers, forms & anti-forgery tokens, authentication & authorization, sessions/cookies, exception handling, and security best practices
 
-* [HTTP Status Codes - Complete Guide for REST APIs](docs/ASP.NET%20Core/HTTP-Status-Codes-Complete-Guide.md)
+* [HTTP Status Codes - Complete Guide for REST APIs](docs/ASP.NET%20Core/HTTP-Status-Codes-Complete-Guide.md) - Comprehensive guide on HTTP status codes (1xx-5xx series), when to use each code, REST API best practices, ASP.NET Core IActionResult examples, Do's and Don'ts, quick reference summary, and interview questions
+
+* [JWT Authentication - Complete Configuration Guide](docs/ASP.NET%20Core/JWT-Authentication-Complete-Guide.md) - Complete JWT implementation: JWT structure, configuration in appsettings.json and Program.cs, token generation and validation, middleware setup, protecting endpoints with [Authorize], role-based authorization, refresh tokens, best practices, security considerations, and 10 interview questions
 
 * [Deployment & Hosting in ASP.NET Core - From Local to Production](docs/ASP.NET%20Core/Deployment-Hosting-Guide.md) - Hosting models (in-process vs out-of-process), web servers (Kestrel, IIS, Nginx), reverse proxy architecture, deploying to IIS and Linux, Docker containerization, environment configuration, secrets management, HTTPS/SSL termination, health checks, horizontal scaling, and common deployment mistakes with 10 interview questions
 

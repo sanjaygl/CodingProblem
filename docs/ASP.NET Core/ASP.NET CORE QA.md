@@ -596,3 +596,232 @@ public class CustomMiddleware
 - It enables the chaining of middleware components
 - Each middleware receives the next `RequestDelegate` to call
 - This creates the pipeline pattern for request processing
+
+---
+
+## Q. What is the difference between AddScoped, AddTransient, and AddSingleton in ASP.NET Core?
+
+**A.**
+
+`AddScoped`, `AddTransient`, and `AddSingleton` define the lifetime of dependency injection services in ASP.NET Core. They control how many instances are created and when they are reused.
+
+### Main Points
+
+- **AddScoped** → One instance per HTTP request (shared within the same request)
+- **AddTransient** → New instance every time it is injected (even within the same request)
+- **AddSingleton** → One instance for the entire application lifetime (shared across all requests)
+
+### AddScoped Example
+
+```csharp
+// Registration
+builder.Services.AddScoped<IUserService, UserService>();
+
+// Usage in Controllers
+public class EmployeeController : ControllerBase
+{
+    private readonly IUserService _userService;
+    
+    public EmployeeController(IUserService userService)
+    {
+        _userService = userService; // Instance A
+    }
+}
+
+public class OrderController : ControllerBase
+{
+    private readonly IUserService _userService;
+    
+    public OrderController(IUserService userService)
+    {
+        _userService = userService; // Same Instance A (within same request)
+    }
+}
+```
+
+**Result:** One instance created per HTTP request and shared between both controllers in the same request.
+
+---
+
+### AddTransient Example
+
+```csharp
+// Registration
+builder.Services.AddTransient<IUserService, UserService>();
+
+// Usage in Controllers
+public class EmployeeController : ControllerBase
+{
+    private readonly IUserService _userService;
+    
+    public EmployeeController(IUserService userService)
+    {
+        _userService = userService; // Instance A
+    }
+}
+
+public class OrderController : ControllerBase
+{
+    private readonly IUserService _userService;
+    
+    public OrderController(IUserService userService)
+    {
+        _userService = userService; // Instance B (different instance)
+    }
+}
+```
+
+**Result:** Two separate instances created per HTTP request. `EmployeeController` gets Instance A, `OrderController` gets Instance B.
+
+---
+
+### AddSingleton Example
+
+```csharp
+// Registration
+builder.Services.AddSingleton<IUserService, UserService>();
+
+// Usage in Controllers
+public class EmployeeController : ControllerBase
+{
+    private readonly IUserService _userService;
+    
+    public EmployeeController(IUserService userService)
+    {
+        _userService = userService; // Instance A
+    }
+}
+
+public class OrderController : ControllerBase
+{
+    private readonly IUserService _userService;
+    
+    public OrderController(IUserService userService)
+    {
+        _userService = userService; // Same Instance A
+    }
+}
+```
+
+**Result:** One instance created for the entire application lifetime and shared across all requests and controllers.
+
+---
+
+### Quick Comparison
+
+| Lifetime | Instances Per Request | Shared Across Requests | Use Case |
+|----------|----------------------|------------------------|----------|
+| **AddScoped** | 1 (shared within request) | No | Database contexts, request-specific services |
+| **AddTransient** | Multiple (one per injection) | No | Lightweight, stateless services |
+| **AddSingleton** | 1 (application-wide) | Yes | Configuration, caching, logging |
+
+---
+
+## Q. What is the difference between Middleware, Filters, and DelegatingHandler in ASP.NET Core?
+
+**A.**
+
+Middleware, Filters, and DelegatingHandler are three different components that handle request/response processing at different levels. Middleware works on the entire application pipeline, Filters work inside the MVC pipeline around controller actions, and DelegatingHandler handles outgoing HTTP requests to external APIs.
+
+### Main Points
+
+- **Middleware** → Handles incoming HTTP requests globally (entire application pipeline)
+- **Filters** → Executes inside MVC pipeline around controller actions
+- **DelegatingHandler** → Processes outgoing HTTP requests via HttpClient
+
+### Middleware
+
+Handles incoming HTTP requests and responses globally. Executes before and after the request reaches MVC or endpoints.
+
+**Common uses:** Logging, authentication, exception handling, CORS
+
+**Example:**
+
+```csharp
+public class RequestLoggingMiddleware
+{
+    private readonly RequestDelegate _next;
+
+    public RequestLoggingMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        Console.WriteLine($"Request: {context.Request.Path}");
+        await _next(context);
+        Console.WriteLine($"Response: {context.Response.StatusCode}");
+    }
+}
+
+// Registration
+app.UseMiddleware<RequestLoggingMiddleware>();
+```
+
+### Filters
+
+Run inside the MVC pipeline around controller actions. Can be applied at global, controller, or action level.
+
+**Common uses:** Validation, authorization, action-specific logging
+
+**Example:**
+
+```csharp
+public class LogActionFilter : IActionFilter
+{
+    public void OnActionExecuting(ActionExecutingContext context)
+    {
+        Console.WriteLine($"Action executing: {context.ActionDescriptor.DisplayName}");
+    }
+
+    public void OnActionExecuted(ActionExecutedContext context)
+    {
+        Console.WriteLine($"Action executed");
+    }
+}
+
+// Apply at action level
+[ServiceFilter(typeof(LogActionFilter))]
+[HttpGet]
+public IActionResult GetUsers() => Ok();
+```
+
+### DelegatingHandler
+
+Used with HttpClient to process outgoing HTTP requests to external APIs.
+
+**Common uses:** Adding headers (tokens), logging external calls, retry logic
+
+**Example:**
+
+```csharp
+public class AuthTokenHandler : DelegatingHandler
+{
+    protected override async Task<HttpResponseMessage> SendAsync(
+        HttpRequestMessage request, 
+        CancellationToken cancellationToken)
+    {
+        // Add token to outgoing request
+        request.Headers.Authorization = 
+            new AuthenticationHeaderValue("Bearer", "your-token");
+
+        return await base.SendAsync(request, cancellationToken);
+    }
+}
+
+// Registration
+builder.Services.AddTransient<AuthTokenHandler>();
+builder.Services.AddHttpClient<IExternalApiClient, ExternalApiClient>()
+    .AddHttpMessageHandler<AuthTokenHandler>();
+```
+
+### Comparison Table
+
+| Feature | Middleware | Filters | DelegatingHandler |
+|---------|-----------|---------|-------------------|
+| **Works on** | Incoming HTTP requests | Controller/Action execution | Outgoing HTTP requests |
+| **Scope** | Entire application pipeline | MVC pipeline only | HttpClient only |
+| **Level** | Global only | Global / Controller / Action | Per HttpClient |
+| **Runs when** | Before MVC/Endpoints | Inside MVC around actions | Before external API call |
+| **Common use** | Logging, Auth, Exception handling | Validation, Authorization | Add headers, Retry logic |
