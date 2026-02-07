@@ -7,6 +7,7 @@
         {
             List<int> seen = new List<int>();
             List<int> duplicates = new List<int>();
+
             foreach (int num in nums)
             {
                 if (seen.Contains(num))

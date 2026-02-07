@@ -19,6 +19,8 @@ The project contains:
 
 ### Core C# Concepts
 
+* [C# Coding Questions - Complete Guide (50 Questions)](docs/CSharp/CSharp-Coding-Questions-Complete-Guide.md) - **NEW** 50 real-world coding problems for Senior .NET developers with optimized O(n) solutions and detailed internal code comments. Covers: Collections & Algorithms (Two Sum, Anagrams, Top K Frequent), LINQ & Data Processing (Remove Duplicates, Flatten, Join, Pagination), Async/Multithreading (Parallel API calls, SemaphoreSlim, Producer-Consumer, Cancellation), Memory & Performance (IDisposable, File Streaming, Span<T>, Object Pooling), String Parsing (Palindrome), Design Patterns (In-Memory Cache, Rate Limiter, Retry Logic), Advanced Data Structures (LRU Cache), Real-world API Processing (Batch Processing), Concurrency (Thread-safe Bank Transfers), and Senior Scenarios (Parallel DB calls). Includes Top 10 Most Asked Questions and interview tips
+
 * [C# Access Modifiers - Complete Guide](docs/csharp/CSharp-Access-Modifiers-Complete-Guide.md) - Comprehensive guide on all 6 access modifiers (public, private, protected, internal, protected internal, private protected) with comparison tables, practical examples, interview Q&A, common mistakes, and decision trees. Includes working code examples in ClassLibraryA project
 
 * [C# yield Keyword - Complete Guide with Iterators & Lazy Evaluation](docs/csharp/CSharp-Yield-Keyword-Complete-Guide.md) - Comprehensive guide on yield keyword for creating custom iterators: yield return vs yield break, lazy evaluation, deferred execution, memory efficiency, infinite sequences, yield with try-catch-finally, relationship with LINQ, IAsyncEnumerable for async scenarios, real-world use cases (file processing, database pagination, tree traversal), performance considerations, 15 interview Q&A, and best practices
@@ -161,6 +163,7 @@ The project contains:
 ## Topics Covered
 
 * **Algorithms**: Factorial calculation, Fibonacci sequence, palindrome detection
+* **Coding Problems (50 Questions)**: Two Sum, Find Duplicates, Group Anagrams, Top K Frequent Elements, Remove Duplicates with LINQ, Flatten Nested Collections, List Joins, Pagination, Multiple Enumeration Detection, Parallel API Calls, SemaphoreSlim Concurrency, Producer-Consumer Pattern, Thread-Safe Singleton, Task Cancellation, IDisposable Pattern, Large File Processing, Span<T> Performance, Object Pooling, Memory Leak Detection, Palindrome Checking, Word Frequency Counter, Balanced Brackets, In-Memory Cache with Expiration, Rate Limiter, Retry with Exponential Backoff, Generic Repository, LRU Cache, Custom IEnumerable, Priority Queue, Batch Processing, Thread-Safe Bank Transfers, Parallel Data Aggregation, Reduce API Response Time
 * **Data Structures**: Array manipulation, duplicate detection, LRU Cache, Tree traversals
 * **C# Core Concepts**: Interface vs Abstract Class, Collections, Boxing/Unboxing, Memory Management, Extension Methods, ref/out/in keywords, Delegates (type-safe function pointers, multicast delegates, events), yield keyword (iterators, lazy evaluation, deferred execution, infinite sequences, IAsyncEnumerable)
 * **C# Interview Questions**: 154 comprehensive Q&A covering access modifiers, OOP principles (encapsulation/inheritance/polymorphism/abstraction), value/reference types, ref/out/in keywords, readonly/const, var/dynamic/object, exception handling, collections/generics, LINQ, delegates/events/Func/Action, async/await/Task, memory management/GC/IDisposable, DI basics, CLR/JIT/CTS/CLS, reflection, attributes, serialization, pattern matching, nullable reference types
@@ -184,9 +187,9 @@ The project contains:
 
 ## Repository Statistics
 
-* **📚 Total Documents**: 73+ comprehensive guides
-* **❓ Interview Questions**: 1,101+ questions with detailed answers
-* **💻 Code Examples**: 750+ real-world code snippets
+* **📚 Total Documents**: 74+ comprehensive guides
+* **❓ Interview Questions**: 1,151+ questions with detailed answers
+* **💻 Code Examples**: 800+ real-world code snippets
 * **🎯 Coverage**: Beginner to Senior/Lead level (11+ years experience)
-* **🔥 Latest Additions**: C# yield Keyword Complete Guide, C# Access Modifiers Complete Guide, ASP.NET MVC (100 Q&A)
-* **📝 Last Updated**: January 2026 (.NET 10)
+* **🔥 Latest Additions**: C# Coding Questions Complete Guide (50 Problems), C# yield Keyword Complete Guide, C# Access Modifiers Complete Guide, ASP.NET MVC (100 Q&A)
+* **📝 Last Updated**: February 2026 (.NET 10)

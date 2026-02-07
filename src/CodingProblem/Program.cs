@@ -24,15 +24,13 @@
             Logger logger = Logger.GetInstance;
             logger.Log("Hello");
 
-            FindUpperCase.FindUpperCaseIterative("abcdeGTXYZqghABCD");
-
+            FindFirstUppercaseRecursive.FirstUppercaseProblem("abcdeGTXYZqghABCD");
             SecondHighestInArray.FindSecondHighest(new int[] { 10, 5, 8, 12, 7 });
-
             FlattenNestedCollections.FlattenAndPrint();
-
             Yield.Test();
-
             JaggedArray.JaggedArrayDemo();
+            Console.WriteLine(string.Join(", ", TwoSumProblem.TwoSumValues(new int[] { 2, 7, 11, 15 }, 9)));
+            GroupAnagramsProblem.GroupAnagrams();
 
             Console.ReadLine();
         }

@@ -4,16 +4,36 @@
     {
         public static void FlattenAndPrint()
         {
-            var numbers = new List<List<int>>
+            var input = new List<List<int>>
               {
-                  new() { 1, 2, 2 },
-                  new() { 3, 4 },
-                  new() { 5 }
+                  new List<int> { 1, 2, 2 },
+                  new List<int> { 3, 4 },
+                  new List<int> { 5 }
               };
 
-            var flat = numbers.SelectMany(x => x).ToList();
+            var result = Flatten(input);
 
-            Console.WriteLine("Flattened Collection: " + string.Join(", ", flat));
+            Console.WriteLine("Flattened Collection: " + string.Join(", ", result));
+        }
+
+        public static List<int> Flatten(List<List<int>> nestedList)
+        {
+            return nestedList.SelectMany(x => x).ToList();
+        }
+
+        public static List<int> FlattenList(List<List<int>> nestedList)
+        {
+            var result = new List<int>();
+
+            foreach (var list in nestedList)
+            {
+                foreach (var item in list)
+                {
+                    result.Add(item);
+                }
+            }
+
+            return result;
         }
     }
 }
