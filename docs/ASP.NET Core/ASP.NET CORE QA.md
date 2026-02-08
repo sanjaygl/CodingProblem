@@ -1,16 +1,16 @@
-# ASP.NET Core Interview Questions
+# ASP. NET Core Interview Questions
 
 ## Table of Contents
 
-1. [What is IHostedService?](#q-what-is-ihostedservice)
-2. [Explain ASP.NET Core](#q-explain-aspnet-core)
-3. [How do you design a highly scalable ASP.NET Core application?](#q-how-do-you-design-a-highly-scalable-aspnet-core-application)
-4. [What is resilience?](#q-what-is-resilience)
-5. [Monolith vs Microservices in ASP.NET Core — when would you choose each?](#q-monolith-vs-microservices-in-aspnet-core--when-would-you-choose-each)
-6. [What is rate limiting?](#q-what-is-rate-limiting)
-7. [Why do we need to configure rate limiting?](#q-why-do-we-need-to-configure-rate-limiting)
-8. [How do we configure rate limiting in ASP.NET Core?](#q-how-do-we-configure-rate-limiting-in-aspnet-core)
-9. [What is middleware in ASP.NET Core?](#q-what-is-middleware-in-aspnet-core)
+01. [What is IHostedService?](#q-what-is-ihostedservice)
+02. [Explain ASP.NET Core](#q-explain-aspnet-core)
+03. [How do you design a highly scalable ASP.NET Core application?](#q-how-do-you-design-a-highly-scalable-aspnet-core-application)
+04. [What is resilience?](#q-what-is-resilience)
+05. [Monolith vs Microservices in ASP.NET Core — when would you choose each?](#q-monolith-vs-microservices-in-aspnet-core--when-would-you-choose-each)
+06. [What is rate limiting?](#q-what-is-rate-limiting)
+07. [Why do we need to configure rate limiting?](#q-why-do-we-need-to-configure-rate-limiting)
+08. [How do we configure rate limiting in ASP.NET Core?](#q-how-do-we-configure-rate-limiting-in-aspnet-core)
+09. [What is middleware in ASP.NET Core?](#q-what-is-middleware-in-aspnet-core)
 10. [How do you create a custom middleware?](#q-how-do-you-create-a-custom-middleware)
 11. [What is the difference between Use, Run, and Map in ASP.NET Core?](#q-what-is-the-difference-between-use-run-and-map-in-aspnet-core)
 12. [What is the difference between Host.CreateApplicationBuilder and WebApplication.CreateBuilder?](#q-what-is-the-difference-between-hostcreateapplicationbuilder-and-webapplicationcreatebuilder)
@@ -23,6 +23,7 @@
 19. [Can Middleware short-circuit the request? When would you do that?](#q-can-middleware-short-circuit-the-request-when-would-you-do-that)
 20. [How do you reload configuration without restarting the app in ASP.NET Core?](#q-how-do-you-reload-configuration-without-restarting-the-app-in-aspnet-core)
 21. [How do you implement Event-Driven Architecture in .NET using Kafka? (Short)](#q-how-do-you-implement-event-driven-architecture-in-net-using-kafka-short)
+22. [Why do we use Event-Driven Architecture instead of direct API-to-API communication?](#q-why-do-we-use-event-driven-architecture-instead-of-direct-api-to-api-communication)
 
 ---
 
@@ -30,62 +31,62 @@
 
 **A.**
 
-IHostedService is an interface in .NET used to run background service or long-running tasks in ASP.NET Core application, outside the normal HTTP request-response lifecycle.
+IHostedService is an interface in . NET used to run background service or long-running tasks in ASP. NET Core application, outside the normal HTTP request-response lifecycle.
 
-IHostedService is used to run background tasks in ASP.NET Core that start and stop with the application lifecycle
+IHostedService is used to run background tasks in ASP. NET Core that start and stop with the application lifecycle
 
 ### Main Points
 
-- Used for background processing
-- Runs independently of HTTP requests
-- Starts with application startup
-- Stops gracefully on application shutdown
-- Commonly used for queues, schedulers, and consumers
-- Integrated with the ASP.NET Core hosting model
+* Used for background processing
+* Runs independently of HTTP requests
+* Starts with application startup
+* Stops gracefully on application shutdown
+* Commonly used for queues, schedulers, and consumers
+* Integrated with the ASP. NET Core hosting model
 
 ---
 
-## Q. Explain ASP.NET Core
+## Q. Explain ASP. NET Core
 
 **A.**
 
-ASP.NET Core is a modern, open-source web framework for building cross-platform web apps and APIs.
+ASP. NET Core is a modern, open-source web framework for building cross-platform web apps and APIs.
 
 ### Main Points
 
-- Modern, open-source web framework
-- Lightweight and modular architecture
-- Cross-platform: runs on Windows, Linux, and macOS
-- Unifies MVC and Web API into a single model
-- Flexible for web apps, mobile backends, and IoT applications
-- Backed by Microsoft and the .NET community
-- Offers strong tooling and extensive documentation
-- Vibrant ecosystem with active community support
+* Modern, open-source web framework
+* Lightweight and modular architecture
+* Cross-platform: runs on Windows, Linux, and macOS
+* Unifies MVC and Web API into a single model
+* Flexible for web apps, mobile backends, and IoT applications
+* Backed by Microsoft and the . NET community
+* Offers strong tooling and extensive documentation
+* Vibrant ecosystem with active community support
 
 ---
 
-## Q. How do you design a highly scalable ASP.NET Core application?
+## Q. How do you design a highly scalable ASP. NET Core application?
 
 **A.**
 
-Designing a highly scalable ASP.NET Core application means building the system in a way that it can handle increasing traffic and data load efficiently by using stateless architecture, asynchronous processing, optimized data access, and horizontal scaling without degrading performance.
+Designing a highly scalable ASP. NET Core application means building the system in a way that it can handle increasing traffic and data load efficiently by using stateless architecture, asynchronous processing, optimized data access, and horizontal scaling without degrading performance.
 
-Designing a scalable ASP.NET Core application focuses on efficient resource usage, performance optimization, and the ability to scale out easily as demand grows.
+Designing a scalable ASP. NET Core application focuses on efficient resource usage, performance optimization, and the ability to scale out easily as demand grows.
 
 ### Main Points
 
-- Follows stateless architecture to enable horizontal scaling
-- Uses asynchronous programming (async/await) to improve throughput
-- Applies clean architecture and separation of concerns
-- Optimizes database queries, indexing, and pagination
-- Uses caching to reduce database load
-- Supports horizontal scaling using load balancers and containers
-- Offloads long-running tasks using background processing or messaging
-- Includes monitoring, logging, and resilience mechanisms
-- Uses health checks for readiness and liveness probes
-- Implements rate limiting and throttling to protect APIs from overload
-- Applies resilience patterns like retries, timeouts, and circuit breakers
-- Secures the application using token-based authentication and authorization
+* Follows stateless architecture to enable horizontal scaling
+* Uses asynchronous programming (async/await) to improve throughput
+* Applies clean architecture and separation of concerns
+* Optimizes database queries, indexing, and pagination
+* Uses caching to reduce database load
+* Supports horizontal scaling using load balancers and containers
+* Offloads long-running tasks using background processing or messaging
+* Includes monitoring, logging, and resilience mechanisms
+* Uses health checks for readiness and liveness probes
+* Implements rate limiting and throttling to protect APIs from overload
+* Applies resilience patterns like retries, timeouts, and circuit breakers
+* Secures the application using token-based authentication and authorization
 
 ### Example
 
@@ -126,10 +127,10 @@ Resilience is the ability of an application to handle temporary failures gracefu
 
 ### Main Points
 
-- Handles temporary failures (API, network, database)
-- Prevents cascading failures
-- Improves system availability
-- Very important in distributed systems
+* Handles temporary failures (API, network, database)
+* Prevents cascading failures
+* Improves system availability
+* Very important in distributed systems
 
 ### Example
 
@@ -162,7 +163,7 @@ public class ExternalApiClient
 
 ---
 
-## Q. Monolith vs Microservices in ASP.NET Core — when would you choose each?
+## Q. Monolith vs Microservices in ASP. NET Core — when would you choose each?
 
 **A.**
 
@@ -170,43 +171,43 @@ A Monolithic architecture is a single, unified application where all features ar
 
 ### When would you choose a Monolith?
 
-A monolith is a single ASP.NET Core application where all modules (UI, business logic, data access) are built, deployed, and scaled together.
+A monolith is a single ASP. NET Core application where all modules (UI, business logic, data access) are built, deployed, and scaled together.
 
 #### Main Points
 
-- Simple architecture and easy to develop
-- Faster initial development and deployment
-- Easier debugging and testing
-- Lower operational and infrastructure cost
-- Best for small to medium applications
-- Suitable for small teams or early-stage products
+* Simple architecture and easy to develop
+* Faster initial development and deployment
+* Easier debugging and testing
+* Lower operational and infrastructure cost
+* Best for small to medium applications
+* Suitable for small teams or early-stage products
 
 #### Choose Monolith when:
 
-- Application is small or medium-sized
-- Team size is small
-- Requirements are stable
-- Scalability needs are moderate
+* Application is small or medium-sized
+* Team size is small
+* Requirements are stable
+* Scalability needs are moderate
 
 ### When would you choose Microservices?
 
-Microservices architecture breaks the application into independent ASP.NET Core services, each responsible for a specific business capability and deployable separately.
+Microservices architecture breaks the application into independent ASP. NET Core services, each responsible for a specific business capability and deployable separately.
 
 #### Main Points
 
-- Independent deployment and scaling
-- Better fault isolation
-- Each service can scale independently
-- Suitable for large and complex systems
-- Supports distributed and cloud-native systems
-- Requires strong DevOps and monitoring
+* Independent deployment and scaling
+* Better fault isolation
+* Each service can scale independently
+* Suitable for large and complex systems
+* Supports distributed and cloud-native systems
+* Requires strong DevOps and monitoring
 
 #### Choose Microservices when:
 
-- Application is large and complex
-- Different modules have different scaling needs
-- Multiple teams work independently
-- High availability and fault isolation are required
+* Application is large and complex
+* Different modules have different scaling needs
+* Multiple teams work independently
+* High availability and fault isolation are required
 
 ---
 
@@ -226,37 +227,37 @@ Rate limiting is configured to protect system resources, maintain performance, a
 
 ### Main Points
 
-- Prevents API abuse and denial-of-service (DoS) attacks
-- Protects backend resources like CPU, memory, and database
-- Ensures fair usage among multiple clients
-- Improves application stability and availability
-- Avoids system overload during traffic spikes
-- Helps control unexpected or malicious traffic
-- Commonly used in public and high-traffic APIs
+* Prevents API abuse and denial-of-service (DoS) attacks
+* Protects backend resources like CPU, memory, and database
+* Ensures fair usage among multiple clients
+* Improves application stability and availability
+* Avoids system overload during traffic spikes
+* Helps control unexpected or malicious traffic
+* Commonly used in public and high-traffic APIs
 
 ### Simple Real-World Example
 
 **Without rate limiting:**
-- One client can send thousands of requests and overload the system
+* One client can send thousands of requests and overload the system
 
 **With rate limiting:**
-- Each client is allowed only a fixed number of requests per time window
+* Each client is allowed only a fixed number of requests per time window
 
 ---
 
-## Q. How do we configure rate limiting in ASP.NET Core?
+## Q. How do we configure rate limiting in ASP. NET Core?
 
 **A.**
 
-In ASP.NET Core, rate limiting can be configured using the built-in rate limiting middleware to control how many requests a client can make within a given time window. This helps protect APIs from abuse and ensures stable performance.
+In ASP. NET Core, rate limiting can be configured using the built-in rate limiting middleware to control how many requests a client can make within a given time window. This helps protect APIs from abuse and ensures stable performance.
 
 ### Main Points
 
-- Configured at the middleware level
-- Can limit requests per IP, user, or route
-- Prevents API abuse and traffic spikes
-- Improves application stability
-- Built-in support available in modern ASP.NET Core
+* Configured at the middleware level
+* Can limit requests per IP, user, or route
+* Prevents API abuse and traffic spikes
+* Improves application stability
+* Built-in support available in modern ASP. NET Core
 
 ### Example
 
@@ -285,26 +286,26 @@ app.Run();
 
 ### Code Explanation
 
-- Allows 10 requests per minute per client
-- Extra requests are rejected automatically
-- Protects the API from overload
+* Allows 10 requests per minute per client
+* Extra requests are rejected automatically
+* Protects the API from overload
 
 ---
 
-## Q. What is middleware in ASP.NET Core?
+## Q. What is middleware in ASP. NET Core?
 
 **A.**
 
-Middleware is a component in .NET that handles HTTP requests and responses as they flow through the ASP.NET Core request pipeline. Each middleware can process the request, modify the response, or pass control to the next middleware.
+Middleware is a component in . NET that handles HTTP requests and responses as they flow through the ASP. NET Core request pipeline. Each middleware can process the request, modify the response, or pass control to the next middleware.
 
 ### Main Points
 
-- Executes on every HTTP request
-- Forms a request–response pipeline
-- Can read or modify request and response
-- Can short-circuit the pipeline
-- Order of middleware matters
-- Used for logging, authentication, error handling, etc.
+* Executes on every HTTP request
+* Forms a request–response pipeline
+* Can read or modify request and response
+* Can short-circuit the pipeline
+* Order of middleware matters
+* Used for logging, authentication, error handling, etc.
 
 ---
 
@@ -352,26 +353,26 @@ app.Run();
 
 ### Code Explanation
 
-- Middleware runs for every request
-- Logs request path before processing
-- Calls the next middleware using `_next`
-- Logs response status after execution
+* Middleware runs for every request
+* Logs request path before processing
+* Calls the next middleware using `_next`
+* Logs response status after execution
 
 ---
 
-## Q. What is the difference between Use, Run, and Map in ASP.NET Core?
+## Q. What is the difference between Use, Run, and Map in ASP. NET Core?
 
 **A.**
 
-`Use`, `Run`, and `Map` are methods used to configure middleware in the ASP.NET Core request pipeline, but they differ in how and when the request is passed to the next middleware.
+`Use` , `Run` , and `Map` are methods used to configure middleware in the ASP. NET Core request pipeline, but they differ in how and when the request is passed to the next middleware.
 
 ### Main Points
 
-- `Use` → Adds middleware and can call the next middleware
-- `Run` → Adds terminal middleware (does not call next)
-- `Map` → Branches the pipeline based on request path
-- Order of middleware matters
-- Used to control request flow
+* `Use` → Adds middleware and can call the next middleware
+* `Run` → Adds terminal middleware (does not call next)
+* `Map` → Branches the pipeline based on request path
+* Order of middleware matters
+* Used to control request flow
 
 ### Use
 
@@ -438,52 +439,52 @@ This middleware runs only for `/admin` requests.
 
 | Method | Calls Next | Pipeline Ends | Conditional |
 |--------|-----------|---------------|-------------|
-| `Use`  | Yes       | No            | No          |
-| `Run`  | No        | Yes           | No          |
-| `Map`  | Depends   | Depends       | Yes (Path-based) |
+| `Use` | Yes       | No            | No          |
+| `Run` | No        | Yes           | No          |
+| `Map` | Depends   | Depends       | Yes (Path-based) |
 
 ---
 
-## Q. What is the difference between Host.CreateApplicationBuilder and WebApplication.CreateBuilder?
+## Q. What is the difference between Host. CreateApplicationBuilder and WebApplication. CreateBuilder?
 
 **A.**
 
-Both are used to configure and build .NET applications, but they are intended for different types of apps. `Host.CreateApplicationBuilder` is used for generic .NET applications (like background services or console apps), while `WebApplication.CreateBuilder` is specifically designed for ASP.NET Core web applications.
+Both are used to configure and build . NET applications, but they are intended for different types of apps. `Host.CreateApplicationBuilder` is used for generic . NET applications (like background services or console apps), while `WebApplication.CreateBuilder` is specifically designed for ASP. NET Core web applications.
 
 ### Main Points
 
-**Host.CreateApplicationBuilder**
+**Host. CreateApplicationBuilder**
 
-- Creates a generic host
-- Used for worker services, background jobs, console apps
-- Does not include web features by default
-- Requires manual configuration for web hosting
-- More flexible for non-web workloads
+* Creates a generic host
+* Used for worker services, background jobs, console apps
+* Does not include web features by default
+* Requires manual configuration for web hosting
+* More flexible for non-web workloads
 
-**WebApplication.CreateBuilder**
+**WebApplication. CreateBuilder**
 
-- Creates a web host
-- Used for ASP.NET Core APIs, MVC, Razor Pages
-- Includes Kestrel, routing, middleware by default
-- Simplifies startup configuration
-- Most commonly used for web applications
+* Creates a web host
+* Used for ASP. NET Core APIs, MVC, Razor Pages
+* Includes Kestrel, routing, middleware by default
+* Simplifies startup configuration
+* Most commonly used for web applications
 
 ---
 
-## Q. Explain the request processing pipeline in ASP.NET Core.
+## Q. Explain the request processing pipeline in ASP. NET Core.
 
 **A.**
 
-The request processing pipeline in ASP.NET Core is a sequence of middleware components that process HTTP requests and generate responses. Each middleware can inspect, modify, or short-circuit the request/response flow.
+The request processing pipeline in ASP. NET Core is a sequence of middleware components that process HTTP requests and generate responses. Each middleware can inspect, modify, or short-circuit the request/response flow.
 
 ### Main Points
 
-- Request flows through a chain of middleware components
-- Each middleware can process the request before and after the next component
-- Middleware order is critical and determines execution sequence
-- Pipeline can be short-circuited by any middleware
-- Response flows back through the same middleware in reverse order
-- Supports cross-cutting concerns like logging, authentication, error handling
+* Request flows through a chain of middleware components
+* Each middleware can process the request before and after the next component
+* Middleware order is critical and determines execution sequence
+* Pipeline can be short-circuited by any middleware
+* Response flows back through the same middleware in reverse order
+* Supports cross-cutting concerns like logging, authentication, error handling
 
 ### High-Level Pipeline Diagram
 
@@ -507,22 +508,22 @@ The request processing pipeline in ASP.NET Core is a sequence of middleware comp
 └──────────────────────────────────────────────────────────────────────────────────────┘
 
 Flow Explanation:
-1. Request enters Middleware 1 → executes logic → calls next()
-2. Request enters Middleware 2 → executes logic → calls next()
-3. Request enters Middleware 3 → executes logic → reaches endpoint
-4. Response flows back through Middleware 3 → executes remaining logic
-5. Response flows back through Middleware 2 → executes remaining logic
-6. Response flows back through Middleware 1 → executes remaining logic
-7. Response is returned to client
+01. Request enters Middleware 1 → executes logic → calls next()
+02. Request enters Middleware 2 → executes logic → calls next()
+03. Request enters Middleware 3 → executes logic → reaches endpoint
+04. Response flows back through Middleware 3 → executes remaining logic
+05. Response flows back through Middleware 2 → executes remaining logic
+06. Response flows back through Middleware 1 → executes remaining logic
+07. Response is returned to client
 ```
 
 ### Key Pipeline Characteristics
 
-- **Sequential Processing**: Middleware executes in the order they are registered
-- **Bidirectional Flow**: Request flows down, response flows back up
-- **Short-Circuiting**: Any middleware can stop the pipeline and return a response
-- **Composable**: Middleware can be added, removed, or reordered easily
-- **Cross-Cutting Concerns**: Handles logging, caching, security across all requests
+* **Sequential Processing**: Middleware executes in the order they are registered
+* **Bidirectional Flow**: Request flows down, response flows back up
+* **Short-Circuiting**: Any middleware can stop the pipeline and return a response
+* **Composable**: Middleware can be added, removed, or reordered easily
+* **Cross-Cutting Concerns**: Handles logging, caching, security across all requests
 
 ### Example
 
@@ -549,17 +550,17 @@ app.Run();
 
 **A.**
 
-In ASP.NET Core, a Request delegate is a function that processes and handles an incoming HTTP request. It's the core building block of the request processing pipeline, which is essentially a series of middleware components that handle the request one after the other.
+In ASP. NET Core, a Request delegate is a function that processes and handles an incoming HTTP request. It's the core building block of the request processing pipeline, which is essentially a series of middleware components that handle the request one after the other.
 
 ### Main Points
 
-- Represents a function that handles HTTP requests
-- Core building block of the middleware pipeline
-- Takes `HttpContext` as a parameter
-- Returns a `Task` (asynchronous operation)
-- Can be chained together to form the pipeline
-- Used internally by `Use`, `Run`, and `Map` methods
-- Signature: `Func<HttpContext, Task>` or `Func<HttpContext, Func<Task>, Task>`
+* Represents a function that handles HTTP requests
+* Core building block of the middleware pipeline
+* Takes `HttpContext` as a parameter
+* Returns a `Task` (asynchronous operation)
+* Can be chained together to form the pipeline
+* Used internally by `Use`,  `Run`, and `Map` methods
+* Signature: `Func<HttpContext, Task>` or `Func<HttpContext, Func<Task>, Task>`
 
 ### Example
 
@@ -620,24 +621,24 @@ public class CustomMiddleware
 
 ### Key Points
 
-- **RequestDelegate** is the function signature that all middleware uses
-- It enables the chaining of middleware components
-- Each middleware receives the next `RequestDelegate` to call
-- This creates the pipeline pattern for request processing
+* **RequestDelegate** is the function signature that all middleware uses
+* It enables the chaining of middleware components
+* Each middleware receives the next `RequestDelegate` to call
+* This creates the pipeline pattern for request processing
 
 ---
 
-## Q. What is the difference between AddScoped, AddTransient, and AddSingleton in ASP.NET Core?
+## Q. What is the difference between AddScoped, AddTransient, and AddSingleton in ASP. NET Core?
 
 **A.**
 
-`AddScoped`, `AddTransient`, and `AddSingleton` define the lifetime of dependency injection services in ASP.NET Core. They control how many instances are created and when they are reused.
+`AddScoped` , `AddTransient` , and `AddSingleton` define the lifetime of dependency injection services in ASP. NET Core. They control how many instances are created and when they are reused.
 
 ### Main Points
 
-- **AddScoped** → One instance per HTTP request (shared within the same request)
-- **AddTransient** → New instance every time it is injected (even within the same request)
-- **AddSingleton** → One instance for the entire application lifetime (shared across all requests)
+* **AddScoped** → One instance per HTTP request (shared within the same request)
+* **AddTransient** → New instance every time it is injected (even within the same request)
+* **AddSingleton** → One instance for the entire application lifetime (shared across all requests)
 
 ### AddScoped Example
 
@@ -745,7 +746,7 @@ public class OrderController : ControllerBase
 
 ---
 
-## Q. What is the difference between Middleware, Filters, and DelegatingHandler in ASP.NET Core?
+## Q. What is the difference between Middleware, Filters, and DelegatingHandler in ASP. NET Core?
 
 **A.**
 
@@ -753,9 +754,9 @@ Middleware, Filters, and DelegatingHandler are three different components that h
 
 ### Main Points
 
-- **Middleware** → Handles incoming HTTP requests globally (entire application pipeline)
-- **Filters** → Executes inside MVC pipeline around controller actions
-- **DelegatingHandler** → Processes outgoing HTTP requests via HttpClient
+* **Middleware** → Handles incoming HTTP requests globally (entire application pipeline)
+* **Filters** → Executes inside MVC pipeline around controller actions
+* **DelegatingHandler** → Processes outgoing HTTP requests via HttpClient
 
 ### Middleware
 
@@ -856,7 +857,7 @@ builder.Services.AddHttpClient<IExternalApiClient, ExternalApiClient>()
 
 ---
 
-## Q. What are Cross-Cutting Concerns and how do you handle them in ASP.NET Core?
+## Q. What are Cross-Cutting Concerns and how do you handle them in ASP. NET Core?
 
 **A.**
 
@@ -864,14 +865,14 @@ Cross-cutting concerns are common functionalities that are required across multi
 
 ### Examples
 
-- Logging
-- Authentication & Authorization
-- Exception handling
-- Caching
-- Validation
-- Performance monitoring
+* Logging
+* Authentication & Authorization
+* Exception handling
+* Caching
+* Validation
+* Performance monitoring
 
-### How to handle them in ASP.NET Core?
+### How to handle them in ASP. NET Core?
 
 | Concern | Recommended Approach |
 |---------|---------------------|
@@ -884,14 +885,14 @@ Cross-cutting concerns are common functionalities that are required across multi
 
 ---
 
-## Q. How do you control Middleware execution order in ASP.NET Core?
+## Q. How do you control Middleware execution order in ASP. NET Core?
 
 **A.**
 
 Middleware execution order is controlled by the order in which they are added in the request pipeline inside Program.cs (or Startup.cs).
 
-- Middleware executes in the same order for the incoming request.
-- Middleware executes in reverse order for the outgoing response.
+* Middleware executes in the same order for the incoming request.
+* Middleware executes in reverse order for the outgoing response.
 
 ### Example
 
@@ -904,10 +905,10 @@ app.UseMiddleware<ThirdMiddleware>();
 ### Execution Flow
 
 **Request:**
-- First → Second → Third → Controller
+* First → Second → Third → Controller
 
 **Response:**
-- Controller → Third → Second → First
+* Controller → Third → Second → First
 
 ### Important Note
 
@@ -960,15 +961,15 @@ You short-circuit when the request should not continue further, such as:
 | Maintenance mode | Return service unavailable |
 | Caching | Return cached response without hitting controller |
 
-Yes, middleware can short-circuit a request by not calling `next()`, and it's used when you need to stop further processing, such as for authentication failure, validation errors, caching, or rate limiting.
+Yes, middleware can short-circuit a request by not calling `next()` , and it's used when you need to stop further processing, such as for authentication failure, validation errors, caching, or rate limiting.
 
 ---
 
-## Q. How do you reload configuration without restarting the app in ASP.NET Core?
+## Q. How do you reload configuration without restarting the app in ASP. NET Core?
 
 **A.**
 
-ASP.NET Core supports automatic configuration reload when configuration files change by using the `reloadOnChange: true` option and accessing values through `IOptionsSnapshot` or `IOptionsMonitor`.
+ASP. NET Core supports automatic configuration reload when configuration files change by using the `reloadOnChange: true` option and accessing values through `IOptionsSnapshot` or `IOptionsMonitor` .
 
 ### 1. Enable reload on change
 
@@ -1020,8 +1021,8 @@ public class MyService
 }
 ```
 
-- Works with Singleton services.
-- Always provides the latest configuration.
+* Works with Singleton services.
+* Always provides the latest configuration.
 
 ### 3. Bind configuration
 
@@ -1034,15 +1035,15 @@ Configuration can be reloaded without restarting by enabling `reloadOnChange` an
 
 ---
 
-## Q. How do you implement Event-Driven Architecture in .NET using Kafka? (Short)
+## Q. How do you implement Event-Driven Architecture in . NET using Kafka? (Short)
 
 **A.**
 
 In Kafka-based event-driven architecture:
 
-- A service (Producer) publishes events to a Kafka topic
-- Other services (Consumers) subscribe to the topic and process events asynchronously
-- In .NET, we use `Confluent.Kafka` package
+* A service (Producer) publishes events to a Kafka topic
+* Other services (Consumers) subscribe to the topic and process events asynchronously
+* In . NET, we use `Confluent.Kafka` package
 
 ### Producer (Publish Event)
 
@@ -1078,4 +1079,68 @@ while (true)
 
 Producer → Kafka Topic → Consumer
 
-In .NET, Kafka is implemented using `Confluent.Kafka` where producers publish events to a topic and consumers (often hosted services) process them asynchronously for loose coupling and scalability.
+In . NET, Kafka is implemented using `Confluent.Kafka` where producers publish events to a topic and consumers (often hosted services) process them asynchronously for loose coupling and scalability.
+
+---
+
+## Q. Why do we use Event-Driven Architecture instead of direct API-to-API communication?
+
+**A.**
+
+Event-driven architecture allows services to communicate asynchronously through events, making the system more flexible, scalable, and reliable compared to direct synchronous API calls.
+
+### Main Points
+
+* **Loose Coupling** – Services don't depend on each other directly
+* **Asynchronous Processing** – No waiting for immediate responses
+* **Better Performance** – Faster user response; background processing
+* **Scalability** – Multiple consumers can handle increased load
+* **Fault Tolerance** – Events stay in the queue if a service is down
+* **Easy to Extend** – New consumers can be added without changing the publisher
+* **Failure Isolation** – One service failure doesn't break the entire flow
+
+### Comparison Table
+
+| Aspect | Direct API Communication | Event-Driven Architecture |
+|--------|-------------------------|---------------------------|
+| **Coupling** | Tight – Service A must know Service B | Loose – Services communicate via events |
+| **Communication** | Synchronous – Waits for response | Asynchronous – Fire and forget |
+| **Availability** | If Service B is down, call fails | Events queued until consumer is ready |
+| **Scalability** | Limited by single service capacity | Multiple consumers can process events |
+| **Performance** | Slower – Waits for all services | Faster – Returns immediately |
+| **Failure Handling** | One failure breaks entire flow | Isolated – Other services continue working |
+
+### Example: Order Processing
+
+**Direct API (Synchronous):**
+
+```csharp
+// User waits for all services to complete
+var order = await CreateOrder(request);
+await ProcessPayment(order);      // Waits
+await UpdateInventory(order);     // Waits
+await SendNotification(order);    // Waits
+// If any service fails → entire request fails
+```
+
+**Event-Driven (Asynchronous):**
+
+```csharp
+// Create order and publish event
+var order = await CreateOrder(request);
+await PublishEvent("order-created", order);
+// Returns immediately - consumers process independently
+```
+
+### When to Use
+
+**Use Event-Driven When:**
+* Services can work independently
+* Long-running background tasks
+* High scalability needed
+* Fault tolerance is critical
+
+**Use Direct API When:**
+* Need immediate response/confirmation
+* Simple, quick operations
+* Strong consistency required
